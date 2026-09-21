@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>海狸波波與晶透神殿：排列花瓶 - 運算思維互動冒險</title>
+  <!-- 載入 Tailwind CSS 提供流暢響應式設計 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            eyecare: {
+              bg: '#F5F2EB',       // 柔和低刺激米灰底色，保護孩童視力
+              card: '#FFFFFF',
+              darkBg: '#1B2430',   // 護眼深色模式
+              darkCard: '#273444',
+              text: '#2D3748',     // 高對比深炭灰（> 7:1 對比度）
+              accent: '#3182CE',   // 和煦神殿藍
+              amber: '#D97706',    // 溫暖琥珀金
+              emerald: '#059669',  // 成功翡翠綠
+              crimson: '#DC2626'   // 柔和警示紅
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 國小四年級學童視力保健專用樣式規範 */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
+      font-size: 19px; /* 基準文字不低於 18px，保護學童閱讀舒適度 */
+      line-height: 1.6;
+      background-color: #F5F2EB;
+      color: #242D3D;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* 全鍵盤焦點高對比指示環 (符合 WCAG 2.0 AA 規範) */
+    *:focus-visible {
+      outline: 4px solid #2563EB !important;
+      outline-offset: 3px !important;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35) !important;
+    }
+
+    /* 平滑無眩光過渡，嚴禁刺眼頻閃 */
+    .smooth-transition {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 花瓶拖曳或選擇光暈 */
+    .slot-hover {
+      border-color: #3B82F6 !important;
+      background-color: rgba(59, 130, 246, 0.08) !important;
+    }
+
+    /* 護眼高對比夜間模式 */
+    body.dark-mode {
+      background-color: #161F2C;
+      color: #F1F5F9;
+    }
+    body.dark-mode .bg-white {
+      background-color: #212E3F !important;
+      color: #F1F5F9 !important;
+    }
+    body.dark-mode .border-gray-200, body.dark-mode .border-gray-300 {
+      border-color: #334155 !important;
+    }
+    body.dark-mode .text-gray-600 {
+      color: #CBD5E1 !important;
+    }
+    body.dark-mode .text-gray-700 {
+      color: #E2E8F0 !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-3 md:p-6 flex flex-col justify-between" id="game-body">
+
+  <main class="max-w-5xl mx-auto w-full flex-grow flex flex-col gap-5" role="main" aria-label="海狸波波與晶透神殿遊戲主視窗">
+
+    <!-- 頂部資訊列：標題、視力模式切換、生命探索石 -->
+    <header class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 flex flex-wrap items-center justify-between gap-3" role="banner">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl" aria-hidden="true">🦫</span>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+            海狸波波與晶透神殿：排列花瓶
+          </h1>
+          <p class="text-sm md:text-base text-gray-600 font-medium">
+            國際運算思維挑戰賽 (Bebras) 國小四年級冒險篇
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- 視力護眼深色模式切換按鈕 -->
+        <button id="btn-theme-toggle" 
+                class="px-4 py-2 rounded-xl text-base font-semibold border border-gray-300 hover:bg-gray-100 flex items-center gap-2 smooth-transition"
+                aria-label="切換護眼夜間模式"
+                title="切換柔和護眼模式">
+          <span id="theme-icon" aria-hidden="true">🌙</span>
+          <span id="theme-text">夜間護眼</span>
+        </button>
+
+        <!-- 音效開關 -->
+        <button id="btn-sound-toggle" 
+                class="px-4 py-2 rounded-xl text-base font-semibold border border-gray-300 hover:bg-gray-100 flex items-center gap-2 smooth-transition"
+                aria-label="切換音效開關">
+          <span id="sound-icon" aria-hidden="true">🔊</span>
+          <span id="sound-text">音效</span>
+        </button>
+
+        <!-- 探索能量水晶（生命值） -->
+        <div class="bg-amber-50 px-3 py-2 rounded-xl border border-amber-200 flex items-center gap-1.5" 
+             role="status" 
+             aria-live="polite" 
+             aria-label="剩餘探索水晶：3 顆">
+          <span class="text-sm font-bold text-amber-800 mr-1">探索石:</span>
+          <span id="crystal-1" class="text-xl" title="能量水晶1">💎</span>
+          <span id="crystal-2" class="text-xl" title="能量水晶2">💎</span>
+          <span id="crystal-3" class="text-xl" title="能量水晶3">💎</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- NPC 導師海狸長老「波波」對話框 -->
+    <section class="bg-white rounded-2xl p-5 shadow-sm border-2 border-blue-100 relative" 
+             aria-labelledby="npc-dialogue-heading">
+      <h2 id="npc-dialogue-heading" class="sr-only">海狸長老對話指引</h2>
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 flex flex-col items-center">
+          <div class="w-16 h-16 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-4xl shadow-inner">
+            🦫
+          </div>
+          <span class="mt-1 text-sm font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full">長老波波</span>
+        </div>
+        <div class="flex-grow">
+          <div id="npc-bubble" 
+               class="bg-blue-50 border border-blue-200 text-gray-800 rounded-2xl p-4 text-lg md:text-xl font-medium"
+               role="status"
+               aria-live="assertive">
+            「小冒險家！神殿祭壇上有 5 個神聖花瓶（A、B、C、D、E）。
+            遠古石碑說：<span class="text-blue-800 font-bold bg-blue-100 px-1.5 py-0.5 rounded">『由後到前縱向排列，站在正前方時，每個花瓶都要露出一部分，絕對不能被完全遮住！』</span>
+            你能找出唯一的正確排列嗎？」
+          </div>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <button id="btn-socrates-hint" 
+                    class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-xl text-base flex items-center gap-2 smooth-transition shadow-sm"
+                    aria-label="索取海狸長老的蘇格拉底提示">
+              <span>💡</span> 聽長老給點提示
+            </button>
+            <button id="btn-rule-explanation" 
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-4 py-2 rounded-xl text-base flex items-center gap-2 smooth-transition border border-gray-300"
+                    aria-label="查看什麼是縱向排列與遮蔽規則">
+              <span>📖</span> 什麼叫「由後到前」？
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 核心視覺互動區：五個花瓶展示 + 祭壇底座 -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      
+      <!-- 左側：花瓶特徵展示與觀察台 (5 欄寬) -->
+      <section class="lg:col-span-5 bg-white rounded-2xl p-5 shadow-sm border border-gray-200 flex flex-col justify-between"
+               aria-labelledby="vases-inspect-title">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 id="vases-inspect-title" class="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <span>🏺</span> 花瓶特徵庫（點擊觀察）
+            </h3>
+            <span class="text-xs md:text-sm text-gray-500 font-medium">比一比高矮與胖瘦</span>
+          </div>
+          <p class="text-base text-gray-600 mb-4">
+            點擊各花瓶查看特徵，也可以直接把花瓶拖放或點入右邊的祭壇中！
+          </p>
+        </div>
+
+        <!-- 5 個花瓶向量繪製區 (SVG) -->
+        <div class="grid grid-cols-5 gap-2 items-end justify-items-center bg-gray-50 p-3 rounded-xl border border-gray-200 min-h-[220px]" 
+             id="vase-inventory"
+             role="region"
+             aria-label="可用花瓶列表">
+          <!-- 花瓶 A 到 E 將由 JavaScript 精確渲染並支援點選 -->
+        </div>
+
+        <!-- 花瓶觀察卡 -->
+        <div id="vase-info-card" class="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-3 text-base text-blue-900 flex items-center gap-2">
+          <span>🔍</span> <span>點選上方花瓶，看看長老對它的胖瘦觀察分析！</span>
+        </div>
+      </section>
+
+      <!-- 右側：神殿縱向祭壇與「正前方透視預覽」（7 欄寬） -->
+      <section class="lg:col-span-7 bg-white rounded-2xl p-5 shadow-sm border border-gray-200 flex flex-col justify-between"
+               aria-labelledby="altar-title">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 id="altar-title" class="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <span>🏛️</span> 神殿祭壇與正前方透視模擬
+            </h3>
+            <span class="text-xs md:text-sm font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded-md">
+              由後（遠）➜ 到前（近）
+            </span>
+          </div>
+          <p class="text-base text-gray-600 mb-3">
+            祭壇由遠到近共有 5 個底座。下方同時會即時顯現「站正前方看」的遮蔽投影！
+          </p>
+        </div>
+
+        <!-- 祭壇 5 個位置 (1 號最遠/後，5 號最近/前) -->
+        <div class="bg-amber-50/70 p-3.5 rounded-xl border-2 border-dashed border-amber-300">
+          <div class="text-xs md:text-sm font-bold text-amber-900 mb-2 flex justify-between">
+            <span>⬅️ 祭壇深處（最後方）</span>
+            <span>站在神殿正前方（最前面）➡️</span>
+          </div>
+
+          <div class="grid grid-cols-5 gap-2" id="altar-slots" role="list" aria-label="祭壇由後到前的5個位置">
+            <!-- 5 個底座由 JS 生成 -->
+          </div>
+        </div>
+
+        <!-- 站在正前方看到的視覺重疊檢驗窗 (Raycast Silhouette Preview) -->
+        <div class="mt-4 bg-slate-900 text-white rounded-xl p-3.5 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between mb-2 text-xs md:text-sm text-slate-300">
+            <span class="flex items-center gap-1 font-bold text-amber-300">
+              <span>👁️</span> 正前方雙眼視角（投影檢驗）
+            </span>
+            <span id="occlusion-status-badge" class="px-2 py-0.5 rounded-full text-xs font-bold bg-gray-700 text-gray-300">
+              等待完整排列...
+            </span>
+          </div>
+
+          <!-- 透視投影渲染區 -->
+          <div class="w-full h-44 bg-slate-800 rounded-lg flex items-center justify-center relative overflow-hidden border border-slate-700" 
+               id="perspective-screen"
+               aria-label="正前方透視投影結果畫面">
+            <span class="text-slate-400 text-sm font-medium">（排列後將在此投影出前方輪廓）</span>
+          </div>
+
+          <div id="perspective-detail-text" class="text-xs text-slate-300 mt-2 text-center">
+            提示：只有排滿 5 個花瓶時，透視光線才會被完全啟動喔！
+          </div>
+        </div>
+
+        <!-- 祭壇操作輔助按鈕 -->
+        <div class="flex items-center justify-between mt-3">
+          <button id="btn-clear-altar" 
+                  class="text-sm font-bold text-gray-600 hover:text-red-600 px-3 py-1.5 rounded-lg border border-gray-300 hover:border-red-300 smooth-transition"
+                  aria-label="清空祭壇上的所有花瓶重新排列">
+            🔄 清空重排
+          </button>
+          <div class="text-xs text-gray-500 font-medium">
+            點擊底座上的花瓶可將其取下
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 下方：挑戰選擇與作答控制區 -->
+    <section class="bg-white rounded-2xl p-5 shadow-sm border border-gray-200" aria-labelledby="challenge-options-title">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <h3 id="challenge-options-title" class="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <span>🎯</span> 請選擇你的解答（由後到前縱向排列）：
+        </h3>
+        <span class="text-sm font-medium text-gray-500">你可以直接點選選項快速排定，或手動排好後點選！</span>
+      </div>
+
+      <!-- 4 個選項按鈕（WCAG 鍵盤全支援、高對比大字體） -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="挑戰排列選項">
+        <button class="quiz-option-btn text-left p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50/50 font-bold text-lg md:text-xl text-gray-800 smooth-transition flex items-center justify-between group"
+                data-sequence="EDCBA"
+                aria-label="選項 A: 由後到前 EDCBA">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg group-hover:bg-blue-600 group-hover:text-white smooth-transition">A</span>
+            <span>E ➔ D ➔ C ➔ B ➔ A</span>
+          </div>
+          <span class="text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">選擇測試 ➜</span>
+        </button>
+
+        <button class="quiz-option-btn text-left p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50/50 font-bold text-lg md:text-xl text-gray-800 smooth-transition flex items-center justify-between group"
+                data-sequence="DBCAE"
+                aria-label="選項 B: 由後到前 DBCAE">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg group-hover:bg-blue-600 group-hover:text-white smooth-transition">B</span>
+            <span>D ➔ B ➔ C ➔ A ➔ E</span>
+          </div>
+          <span class="text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">選擇測試 ➜</span>
+        </button>
+
+        <button class="quiz-option-btn text-left p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50/50 font-bold text-lg md:text-xl text-gray-800 smooth-transition flex items-center justify-between group"
+                data-sequence="ECDAB"
+                aria-label="選項 C: 由後到前 ECDAB">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg group-hover:bg-blue-600 group-hover:text-white smooth-transition">C</span>
+            <span>E ➔ C ➔ D ➔ A ➔ B</span>
+          </div>
+          <span class="text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">選擇測試 ➜</span>
+        </button>
+
+        <button class="quiz-option-btn text-left p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50/50 font-bold text-lg md:text-xl text-gray-800 smooth-transition flex items-center justify-between group"
+                data-sequence="DCEBA"
+                aria-label="選項 D: 由後到前 DCEBA">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg group-hover:bg-blue-600 group-hover:text-white smooth-transition">D</span>
+            <span>D ➔ C ➔ E ➔ B ➔ A</span>
+          </div>
+          <span class="text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">選擇測試 ➜</span>
+        </button>
+      </div>
+
+      <!-- 送出驗證祭壇按鈕 -->
+      <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-gray-100">
+        <div class="text-base font-semibold text-gray-700" id="current-arrangement-label">
+          目前祭壇順序（由後到前）：<span id="active-sequence-text" class="font-bold text-blue-600">尚未排滿</span>
+        </div>
+        <button id="btn-verify-altar" 
+                class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-8 py-3.5 rounded-xl shadow-md smooth-transition flex items-center justify-center gap-2"
+                aria-label="向神殿祭壇送出當前排列進行神聖檢驗">
+          <span>✨</span> 送出神殿驗證
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 彈跳視窗：運算思維魔法解密筆記 (Success Modal) -->
+  <div id="modal-success" 
+       class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="modal-success-title">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border-4 border-amber-400 max-h-[90vh] overflow-y-auto">
+      <div class="text-center mb-4">
+        <span class="text-6xl animate-bounce inline-block" aria-hidden="true">🎉</span>
+        <h2 id="modal-success-title" class="text-2xl md:text-3xl font-extrabold text-amber-800 mt-2">
+          晶透神殿的光芒重新點亮了！
+        </h2>
+        <p class="text-base md:text-lg text-gray-600 font-medium mt-1">
+          恭喜你！冒險學徒，你成功解開了古老花瓶的排列秘密！
+        </p>
+      </div>
+
+      <!-- 運算思維核心四大能力解說（四年級易懂圖解卡） -->
+      <div class="bg-amber-50/80 rounded-2xl p-5 border border-amber-200 space-y-4 text-gray-800">
+        <div class="font-extrabold text-lg md:text-xl text-amber-900 border-b border-amber-200 pb-2 flex items-center gap-2">
+          <span>📜</span> 運算思維魔法筆記本 (Computational Thinking)
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-base">
+          <!-- 1. 拆解 -->
+          <div class="bg-white p-3.5 rounded-xl shadow-sm border border-amber-100">
+            <div class="font-bold text-blue-700 flex items-center gap-1.5 mb-1">
+              <span>🧩</span> 1. 拆解問題 (Decomposition)
+            </div>
+            <p class="text-sm text-gray-600">
+              面對 5 個花瓶混亂在一起，我們先逐一觀察每個花瓶的高矮胖瘦，化繁為簡！
+            </p>
+          </div>
+
+          <!-- 2. 模式識別 -->
+          <div class="bg-white p-3.5 rounded-xl shadow-sm border border-amber-100">
+            <div class="font-bold text-green-700 flex items-center gap-1.5 mb-1">
+              <span>🔍</span> 2. 模式識別 (Pattern)
+            </div>
+            <p class="text-sm text-gray-600">
+              你發現了「合照不擋臉規律」：站在前面的花瓶，一定要比後面瘦小，才能露出特徵！
+            </p>
+          </div>
+
+          <!-- 3. 抽象化 -->
+          <div class="bg-white p-3.5 rounded-xl shadow-sm border border-amber-100">
+            <div class="font-bold text-purple-700 flex items-center gap-1.5 mb-1">
+              <span>💡</span> 3. 抽象化特徵 (Abstraction)
+            </div>
+            <p class="text-sm text-gray-600">
+              忽略花瓶的顏色與材質，只專注比對「幾何輪廓與覆蓋面積」關鍵特徵。
+            </p>
+          </div>
+
+          <!-- 4. 排序演算法 -->
+          <div class="bg-white p-3.5 rounded-xl shadow-sm border border-amber-100">
+            <div class="font-bold text-amber-700 flex items-center gap-1.5 mb-1">
+              <span>⚡</span> 4. 排序演算法 (Sorting)
+            </div>
+            <p class="text-sm text-gray-600">
+              由後到前規則：【最大最胖(E)】➔【D】➔【C】➔【B】➔【最小最瘦(A)】！
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-blue-100/70 p-3 rounded-xl text-sm md:text-base text-blue-900 font-medium">
+          🌟 <strong>日常應用連結：</strong> 電腦幫我們在圖書館依編號找書、搜尋引擎依熱門度排序網頁，都是運用了這個厲害的「排序演算法」喔！
+        </div>
+      </div>
+
+      <!-- 關閉 / 再玩一次按鈕 -->
+      <div class="mt-6 flex justify-center gap-4">
+        <button id="btn-replay-game" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-8 py-3 rounded-xl shadow-lg smooth-transition">
+          🔄 再挑戰一次
+        </button>
+        <button id="btn-close-modal" 
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold text-lg px-6 py-3 rounded-xl smooth-transition">
+          關閉筆記
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 頁尾宣告與版權 (視力保健溫馨提醒) -->
+  <footer class="mt-6 text-center text-xs md:text-sm text-gray-500 font-medium" role="contentinfo">
+    <p>教育部 運算思維推動計畫教材改編 ｜ 依據 WCAG 2.0 AA 與國小學童視力保健原則設計</p>
+    <p class="mt-1 text-gray-400">貼心提醒：遊玩 30 分鐘請讓眼睛休息 10 分鐘，遠眺綠色植物喔！</p>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: 運算思維演算法、幾何遮蔽投影與遊戲邏輯                       -->
+  <!-- ========================================================================= -->
+  <script>
+    // 使用 Web Audio API 建立自帶的柔和音效（無外部依賴、低延遲、符合低刺激原則）
+    let audioEnabled = true;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.08) {
+      if (!audioEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {
+        console.warn("Audio Context waiting for interaction");
+      }
+    }
+
+    function playSuccessChime() {
+      if (!audioEnabled) return;
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 溫暖大和弦
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playTone(freq, 'triangle', 0.35, 0.1), idx * 100);
+      });
+    }
+
+    function playFailureTone() {
+      if (!audioEnabled) return;
+      playTone(330, 'sawtooth', 0.25, 0.06);
+      setTimeout(() => playTone(247, 'sawtooth', 0.35, 0.06), 180);
+    }
+
+    function playPlaceSound() {
+      playTone(440, 'sine', 0.08, 0.05);
+    }
+
+    // 花瓶幾何與特徵數據：精確對應 Bebras 2017 排列花瓶
+    // 依輪廓排序（由小到大）：A < B < C < D < E
+    const VASES = {
+      'A': {
+        id: 'A',
+        name: '花瓶 A',
+        tag: '最瘦最小',
+        width: 38,
+        height: 75,
+        color: '#E53E3E', // 柔紅
+        accent: '#FEB2B2',
+        bodyPath: 'M 21 0 Q 15 25 10 50 Q 10 75 25 75 Q 40 75 40 50 Q 35 25 29 0 Z',
+        desc: '身材最為苗條嬌小，腰身只有 38 寬。最容易被大花瓶完全擋住！'
+      },
+      'B': {
+        id: 'B',
+        name: '花瓶 B',
+        tag: '中偏瘦小',
+        width: 54,
+        height: 95,
+        color: '#DD6B20', // 溫暖橙
+        accent: '#FBD38D',
+        bodyPath: 'M 22 0 Q 10 35 6 65 Q 6 95 32 95 Q 58 95 58 65 Q 54 35 42 0 Z',
+        desc: '身材微胖於 A，高 95、寬 54。若排在 A 前方，會把 A 徹底藏起來。'
+      },
+      'C': {
+        id: 'C',
+        name: '花瓶 C',
+        tag: '波浪瓶頸・中等',
+        width: 72,
+        height: 115,
+        color: '#319795', // 青綠
+        accent: '#B2F5EA',
+        bodyPath: 'M 24 0 Q 10 20 20 40 Q 6 70 4 115 L 68 115 Q 66 70 52 40 Q 62 20 48 0 Z',
+        desc: '瓶口有特別的波浪頸，寬 72、高 115。特徵比 B 明顯更大。'
+      },
+      'D': {
+        id: 'D',
+        name: '花瓶 D',
+        tag: '粗腰身・偏大',
+        width: 90,
+        height: 135,
+        color: '#2B6CB0', // 寶石藍
+        accent: '#BEE3F8',
+        bodyPath: 'M 26 0 Q 8 30 2 80 Q 0 135 48 135 Q 96 135 94 80 Q 88 30 70 0 Z',
+        desc: '腹部圓滾滾的大花瓶，寬達 90、高 135，遮蔽力極強！'
+      },
+      'E': {
+        id: 'E',
+        name: '花瓶 E',
+        tag: '巨型花瓶・最大最寬',
+        width: 112,
+        height: 155,
+        color: '#6B46C1', // 典雅紫
+        accent: '#E9D8FD',
+        bodyPath: 'M 28 0 Q 4 35 0 95 Q 0 155 58 155 Q 116 155 116 95 Q 112 35 88 0 Z',
+        desc: '神殿裡最高大、腰圍最寬 (112) 的巨無霸花瓶！如果站前面，會形成大盲區。'
+      }
+    };
+
+    // 遊戲狀態機
+    const gameState = {
+      // 5 個祭壇槽位：Slot 0 (最後方/最遠) ➔ Slot 4 (最前方/最近)
+      slots: [null, null, null, null, null],
+      crystals: 3,
+      solved: false,
+      selectedVaseId: null
+    };
+
+    // 遮蔽檢測核心演算法：
+    // 當從正前方看時，順序為 slot 4 (前) ➔ slot 3 ➔ slot 2 ➔ slot 1 ➔ slot 0 (後)
+    // 前方物體會遮蔽後方物體。若「後方物體的每一處輪廓」，寬度與高度都小於等於前面某個花瓶，它就被「完全遮蔽」！
+    function evaluateOcclusion(sequence) {
+      if (sequence.length !== 5 || sequence.includes(null)) {
+        return { isComplete: false, message: '祭壇尚未擺滿 5 個花瓶' };
+      }
+
+      // 檢查由後到前（sequence[0] 是最遠，sequence[4] 是最近）
+      // 在正前方視角中，最前面的是 sequence[4]，接著是 3, 2, 1, 0
+      // 任何排在較後面的花瓶 i（i < j），如果它的寬度和高度都小於等於排在它前面的某個花瓶 j（j > i），
+      // 則花瓶 i 就會被花瓶 j 完全擋住！
+      
+      const hiddenVases = [];
+      const orderFromFront = [sequence[4], sequence[3], sequence[2], sequence[1], sequence[0]];
+
+      // 計算每個後方花瓶是否被前方遮擋
+      for (let backIdx = 0; backIdx < 5; backIdx++) {
+        const backVaseKey = sequence[backIdx];
+        const backVase = VASES[backVaseKey];
+        let fullyOccluded = false;
+        let occludedBy = null;
+
+        // 檢查所有排在它前面（更靠近視點，即 slot 索引大於 backIdx）的花瓶
+        for (let frontIdx = backIdx + 1; frontIdx < 5; frontIdx++) {
+          const frontVaseKey = sequence[frontIdx];
+          const frontVase = VASES[frontVaseKey];
+
+          // 判斷幾何包容：若前方的寬度大於等於後方，且高度也大於等於後方，則完全遮擋
+          if (frontVase.width >= backVase.width && frontVase.height >= backVase.height) {
+            fullyOccluded = true;
+            occludedBy = frontVaseKey;
+            break;
+          }
+        }
+
+        if (fullyOccluded) {
+          hiddenVases.push({ vase: backVaseKey, by: occludedBy });
+        }
+      }
+
+      const isCorrect = (sequence.join('') === 'EDCBA');
+
+      return {
+        isComplete: true,
+        isCorrect: isCorrect,
+        hiddenVases: hiddenVases,
+        sequenceStr: sequence.join('')
+      };
+    }
+
+    // 渲染可用花瓶庫 (SVG 幾何手繪圖)
+    function renderVaseInventory() {
+      const inventoryEl = document.getElementById('vase-inventory');
+      inventoryEl.innerHTML = '';
+
+      Object.keys(VASES).forEach(key => {
+        const v = VASES[key];
+        const isPlaced = gameState.slots.includes(key);
+
+        const btn = document.createElement('button');
+        btn.id = `inv-vase-${key}`;
+        btn.className = `group flex flex-col items-center p-1.5 rounded-xl border-2 smooth-transition ${
+          isPlaced 
+            ? 'opacity-35 cursor-not-allowed border-dashed border-gray-300 bg-gray-100' 
+            : 'border-transparent hover:border-blue-400 hover:bg-white cursor-pointer shadow-sm hover:shadow'
+        }`;
+        btn.setAttribute('aria-label', `${v.name}：${v.tag}。${isPlaced ? '已擺上祭壇' : '點擊選取擺放'}`);
+        btn.disabled = isPlaced;
+
+        // SVG 向量花瓶，使用 viewbox 保證銳利不失真
+        btn.innerHTML = `
+          <div class="relative flex items-end justify-center h-28 w-full">
+            <svg width="${v.width * 0.75}" height="${v.height * 0.7}" viewBox="0 0 ${v.width + 10} ${v.height + 5}" class="drop-shadow-sm filter transition-transform group-hover:scale-105" aria-hidden="true">
+              <!-- 瓶身底色 -->
+              <path d="${v.bodyPath}" fill="${v.color}" stroke="#1E293B" stroke-width="2.5" />
+              <!-- 特徵高光紋飾 -->
+              <path d="${v.bodyPath}" fill="${v.accent}" opacity="0.35" />
+              <ellipse cx="${(v.width + 10) / 2}" cy="5" rx="${v.width * 0.25}" ry="3" fill="#FFFFFF" opacity="0.8" />
+            </svg>
+          </div>
+          <span class="mt-1 font-extrabold text-base md:text-lg text-gray-800">${v.id}</span>
+          <span class="text-xs text-gray-500 font-semibold truncate max-w-[50px]">${v.tag.split('・')[0]}</span>
+        `;
+
+        btn.addEventListener('click', () => {
+          handleVaseSelection(key);
+        });
+
+        inventoryEl.appendChild(btn);
+      });
+    }
+
+    // 渲染 5 個祭壇卡槽
+    function renderAltarSlots() {
+      const altarEl = document.getElementById('altar-slots');
+      altarEl.innerHTML = '';
+
+      const slotLabels = [
+        '第 1 位 (最遠/最後)',
+        '第 2 位',
+        '第 3 位 (中央)',
+        '第 4 位',
+        '第 5 位 (最近/最前)'
+      ];
+
+      for (let i = 0; i < 5; i++) {
+        const slotVaseKey = gameState.slots[i];
+        const slotDiv = document.createElement('div');
+        slotDiv.className = `flex flex-col items-center bg-white rounded-xl p-2 border-2 min-h-[140px] justify-between relative smooth-transition ${
+          slotVaseKey ? 'border-blue-400 shadow-sm' : 'border-dashed border-amber-300 hover:border-blue-300'
+        }`;
+        slotDiv.setAttribute('role', 'listitem');
+        slotDiv.setAttribute('aria-label', `${slotLabels[i]}，目前放置：${slotVaseKey ? VASES[slotVaseKey].name : '尚未放置'}`);
+
+        if (slotVaseKey) {
+          const v = VASES[slotVaseKey];
+          slotDiv.innerHTML = `
+            <div class="text-xs font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">
+              位置 ${i + 1}
+            </div>
+            <div class="flex items-end justify-center h-20 w-full my-1">
+              <svg width="${v.width * 0.6}" height="${v.height * 0.55}" viewBox="0 0 ${v.width + 10} ${v.height + 5}">
+                <path d="${v.bodyPath}" fill="${v.color}" stroke="#1E293B" stroke-width="2.5" />
+              </svg>
+            </div>
+            <div class="w-full flex items-center justify-between">
+              <span class="font-extrabold text-gray-900 text-base">${v.id}</span>
+              <button class="text-xs text-red-600 hover:text-red-800 font-bold p-1 rounded hover:bg-red-50"
+                      onclick="removeFromSlot(${i})"
+                      aria-label="從位置 ${i + 1} 取下花瓶 ${v.id}">
+                ✕ 取下
+              </button>
+            </div>
+          `;
+        } else {
+          slotDiv.innerHTML = `
+            <div class="text-xs font-bold text-gray-400">
+              位置 ${i + 1}
+            </div>
+            <div class="flex flex-col items-center justify-center flex-grow text-gray-300">
+              <span class="text-2xl">⭕</span>
+              <span class="text-xs font-medium text-gray-400 mt-1">空位</span>
+            </div>
+            <button class="w-full py-1 text-xs font-bold text-blue-600 bg-blue-50 rounded hover:bg-blue-100 smooth-transition"
+                    onclick="placeFirstAvailable(${i})"
+                    aria-label="點擊放入選取的花瓶到位置 ${i + 1}">
+              + 放入
+            </button>
+          `;
+        }
+
+        altarEl.appendChild(slotDiv);
+      }
+
+      // 更新下方當前序列標籤
+      updateCurrentSequenceDisplay();
+      // 重新計算正前方透視投影
+      updatePerspectivePreview();
+    }
+
+    // 處理花瓶選取與自動放置至第一個空格
+    function handleVaseSelection(vaseKey) {
+      playPlaceSound();
+      showVaseInfo(vaseKey);
+
+      // 找第一個空的 slot 放入
+      const firstEmptyIndex = gameState.slots.indexOf(null);
+      if (firstEmptyIndex !== -1) {
+        gameState.slots[firstEmptyIndex] = vaseKey;
+        renderAltarSlots();
+        renderVaseInventory();
+      } else {
+        showNpcDialogue(`「祭壇上的 5 個底座已經滿囉！你可以先點擊『取下』某個花瓶，或是按『清空重排』！」`);
+      }
+    }
+
+    // 將特定槽位清空
+    window.removeFromSlot = function(slotIndex) {
+      if (gameState.slots[slotIndex]) {
+        playTone(320, 'sine', 0.08, 0.04);
+        gameState.slots[slotIndex] = null;
+        renderAltarSlots();
+        renderVaseInventory();
+      }
+    };
+
+    // 放入第一個尚未放置的花瓶
+    window.placeFirstAvailable = function(slotIndex) {
+      const placed = gameState.slots.filter(Boolean);
+      const available = Object.keys(VASES).find(k => !placed.includes(k));
+      if (available) {
+        playPlaceSound();
+        gameState.slots[slotIndex] = available;
+        renderAltarSlots();
+        renderVaseInventory();
+      } else {
+        showNpcDialogue(`「所有花瓶都已經在祭壇上了，你可以交換位置試試看！」`);
+      }
+    };
+
+    // 顯示花瓶資訊卡
+    function showVaseInfo(vaseKey) {
+      const v = VASES[vaseKey];
+      const card = document.getElementById('vase-info-card');
+      card.innerHTML = `
+        <span class="text-xl">🏺</span>
+        <div>
+          <strong class="text-blue-900">${v.name} (${v.tag})</strong>：
+          <span class="text-blue-800">${v.desc}</span>
+        </div>
+      `;
+    }
+
+    // 更新目前序列文字
+    function updateCurrentSequenceDisplay() {
+      const seqTextEl = document.getElementById('active-sequence-text');
+      const hasNull = gameState.slots.includes(null);
+      if (hasNull) {
+        const count = gameState.slots.filter(Boolean).length;
+        seqTextEl.textContent = `已放 ${count} / 5 個 (由後到前：${gameState.slots.map(s => s || '?').join(' ➔ ')})`;
+        seqTextEl.className = "font-bold text-gray-500";
+      } else {
+        const seq = gameState.slots.join('');
+        seqTextEl.textContent = `${gameState.slots.join(' ➔ ')} (${seq})`;
+        seqTextEl.className = "font-bold text-blue-600 text-lg";
+      }
+    }
+
+    // 更新正前方視覺透視檢驗儀 (Silhouette Screen)
+    function updatePerspectivePreview() {
+      const screenEl = document.getElementById('perspective-screen');
+      const badgeEl = document.getElementById('occlusion-status-badge');
+      const detailEl = document.getElementById('perspective-detail-text');
+
+      const evaluation = evaluateOcclusion(gameState.slots);
+
+      if (!evaluation.isComplete) {
+        badgeEl.textContent = '等待擺滿 5 個花瓶...';
+        badgeEl.className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-gray-700 text-gray-300';
+        screenEl.innerHTML = `
+          <div class="text-center text-slate-400">
+            <span class="text-2xl block mb-1">🔭</span>
+            <span class="text-sm">請將 5 個花瓶依序放置到祭壇上</span>
+          </div>
+        `;
+        detailEl.textContent = '小技巧：點擊下方快速選項 (A、B、C、D) 也可以一鍵將花瓶排上祭壇做實驗！';
+        return;
+      }
+
+      // 由後到前渲染 SVG 疊加
+      // sequence[0] (最遠，放最底層 SVG) ➔ sequence[4] (最近，放最上層 SVG)
+      let svgLayers = '';
+      const seq = gameState.slots;
+
+      // 檢查每一個是否有被完全擋住
+      const hiddenKeys = evaluation.hiddenVases.map(item => item.vase);
+
+      seq.forEach((key, idx) => {
+        const v = VASES[key];
+        const isHidden = hiddenKeys.includes(key);
+        // 疊加時依遠近自然置中
+        svgLayers += `
+          <g id="layer-${key}" transform="translate(150, 80)">
+            <!-- 瓶身輪廓 -->
+            <path d="${v.bodyPath}" 
+                  transform="translate(-${v.width/2}, -${v.height/2})" 
+                  fill="${v.color}" 
+                  stroke="${isHidden ? '#EF4444' : '#FFFFFF'}" 
+                  stroke-width="${isHidden ? '3' : '1.5'}"
+                  opacity="0.9" />
+            <!-- 標籤小字母 -->
+            <text x="0" y="${-v.height/2 + 20}" fill="#FFFFFF" font-size="14" font-weight="bold" text-anchor="middle">
+              ${v.id}
+            </text>
+          </g>
+        `;
+      });
+
+      screenEl.innerHTML = `
+        <svg viewBox="0 0 300 160" class="w-full h-full" aria-label="5個花瓶正前方重疊輪廓圖">
+          <!-- 投影基準地平線 -->
+          <line x1="20" y1="145" x2="280" y2="145" stroke="#475569" stroke-width="2" stroke-dasharray="4"/>
+          ${svgLayers}
+        </svg>
+      `;
+
+      if (evaluation.isCorrect) {
+        badgeEl.textContent = '✨ 完美！無任何花瓶被遮蔽';
+        badgeEl.className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white';
+        detailEl.innerHTML = `<span class="text-emerald-400 font-bold">太精彩了！從正前方看過去，五個花瓶的輪廓都露出來了！</span>`;
+      } else {
+        const names = evaluation.hiddenVases.map(h => `${h.vase}號(被${h.by}擋住)`).join('、');
+        badgeEl.textContent = `⚠️ 警告：發現 ${evaluation.hiddenVases.length} 個花瓶被完全遮蔽！`;
+        badgeEl.className = 'px-2 py-0.5 rounded-full text-xs font-bold bg-red-600 text-white';
+        detailEl.innerHTML = `<span class="text-rose-300 font-medium">透視光線受阻！ ${names} 在鏡頭前徹底消失了！</span>`;
+      }
+    }
+
+    // 顯示 NPC 訊息 (具備淡入效果與無障礙報讀)
+    function showNpcDialogue(text) {
+      const bubble = document.getElementById('npc-bubble');
+      bubble.style.opacity = '0.4';
+      setTimeout(() => {
+        bubble.innerHTML = text;
+        bubble.style.opacity = '1';
+      }, 150);
+    }
+
+    // 蘇格拉底式引導提示分支
+    function triggerSocratesHint() {
+      playTone(587.33, 'triangle', 0.2, 0.08); // D5 提示音
+      showNpcDialogue(`
+        「<strong>長老思考題：</strong><br>
+        冒險家，想想看學校拍<strong>全班大合照</strong>！<br>
+        如果把班上個子最小、最嬌弱的同學，排在最高大魁梧的同學正後方，相機拍得到他嗎？<br>
+        👉 <strong>哪一個花瓶身材最苗條嬌小？它應該站在神殿的最前方，還是最後方呢？</strong>」
+      `);
+    }
+
+    function triggerRuleExplanation() {
+      playTone(493.88, 'sine', 0.15, 0.06);
+      showNpcDialogue(`
+        「<strong>祭壇的排列規則：</strong><br>
+        我們是<strong>由後（深處遠處）排到前（最靠近我們）</strong>！<br>
+        這意味著：<strong>第 1 位是最後方</strong>，而<strong>第 5 位是最前方</strong>。<br>
+        站在正前方拍照時，前面的東西會擋住後面的東西。所以越小的東西，越需要往前站喔！」
+      `);
+    }
+
+    // 處理答案驗證與回饋
+    function verifyCurrentAltar() {
+      const evaluation = evaluateOcclusion(gameState.slots);
+
+      if (!evaluation.isComplete) {
+        playFailureTone();
+        showNpcDialogue(`「祭壇還沒放滿 5 個花瓶呢！快把所有花瓶都請上底座吧！」`);
+        return;
+      }
+
+      if (evaluation.isCorrect) {
+        // 成功通關！
+        playSuccessChime();
+        gameState.solved = true;
+        showNpcDialogue(`
+          「🎉 <strong>太神奇了！神殿祭壇亮起了金色光芒！</strong><br>
+          你看！最瘦小的 A 站在最前面，依序是 B、C、D，最後由最巨大的 E 在後方壓陣。<br>
+          層層疊疊，誰也擋不住誰！恭喜你破解了古代的排序魔法！」
+        `);
+        // 彈出運算思維魔法解密筆記
+        setTimeout(() => {
+          document.getElementById('modal-success').classList.remove('hidden');
+        }, 800);
+
+      } else {
+        // 錯誤引導（扣除 1 顆生命水晶）
+        playFailureTone();
+        deductCrystal();
+
+        // 依據玩家具體的錯誤進行蘇格拉底式引導
+        const seq = gameState.slots.join('');
+        if (seq === 'DBCAE') {
+          showNpcDialogue(`
+            「哎呀！最胖最巨大的 <strong>E 花瓶</strong> 竟然被放在第 5 位（最前面）！<br>
+            它那寬達 112 的巨無霸大肚子，把身後所有的花瓶全部擋得死死的，從前面看只能看見一個大水桶啦！<br>
+            💡 <strong>想一想：身材最胖最大的花瓶，應該退到第幾位才不會遮住別人？</strong>」
+          `);
+        } else if (seq === 'ECDAB') {
+          showNpcDialogue(`
+            「唔！稍微接近了，可是你看看 <strong>C 和 D</strong> 的順序！<br>
+            D 比 C 更高更胖。如果把較胖的 D 放在較瘦的 C 後面，那 C 站在前面可以嗎？<br>
+            等等，再看一下最前面的 <strong>A 和 B</strong>，A 比 B 還小，A 怎麼跑到 B 後面被吃掉了呢？」
+          `);
+        } else if (seq === 'DCEBA') {
+          showNpcDialogue(`
+            「小心！最高大的 <strong>E</strong> 竟然被夾在中間！<br>
+            而且最前面的 D 和 C 位置好像顛倒了？<br>
+            試著用<strong>『由大到小、從遠到近』</strong>的規律重新調整看看！」
+          `);
+        } else {
+          showNpcDialogue(`
+            「神殿的光線被擋住了！有花瓶被完全遮蔽囉！<br>
+            請記住關鍵心法：<strong>『排在前面的花瓶，一定要比排在它後面的花瓶更瘦更小』</strong>，才不會擋住後面的視野喔！」
+          `);
+        }
+      }
+    }
+
+    // 扣除生命水晶邏輯
+    function deductCrystal() {
+      if (gameState.crystals > 1) {
+        const crystalEl = document.getElementById(`crystal-${gameState.crystals}`);
+        if (crystalEl) crystalEl.textContent = '🩶';
+        gameState.crystals--;
+      } else {
+        const crystalEl = document.getElementById('crystal-1');
+        if (crystalEl) crystalEl.textContent = '🩶';
+        gameState.crystals = 0;
+        showNpcDialogue(`
+          「探索水晶暫時耗盡了！但別灰心，長老施展時光倒流魔法幫你重新充能！<br>
+          失敗是探索演算法最寶貴的經驗，我們深呼吸，再試一次！」
+        `);
+        // 重置水晶
+        setTimeout(resetCrystals, 2500);
+      }
+    }
+
+    function resetCrystals() {
+      gameState.crystals = 3;
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById(`crystal-${i}`).textContent = '💎';
+      }
+    }
+
+    // 快速套用題目的選項排列 (EDCBA, DBCAE, etc.)
+    function applySequencePreset(seqString) {
+      playPlaceSound();
+      const chars = seqString.split('');
+      gameState.slots = [...chars];
+      renderAltarSlots();
+      renderVaseInventory();
+      showNpcDialogue(`「你已將祭壇排成 <strong>${chars.join(' ➔ ')}</strong>！請點擊『送出神殿驗證』或觀察上方透視圖！」`);
+    }
+
+    // 綁定事件監聽器與無障礙鍵盤支援
+    function bindEventListeners() {
+      // 快速選項按鈕
+      document.querySelectorAll('.quiz-option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const seq = btn.getAttribute('data-sequence');
+          applySequencePreset(seq);
+        });
+      });
+
+      // 驗證按鈕
+      document.getElementById('btn-verify-altar').addEventListener('click', verifyCurrentAltar);
+
+      // 清空按鈕
+      document.getElementById('btn-clear-altar').addEventListener('click', () => {
+        playTone(280, 'sine', 0.1, 0.05);
+        gameState.slots = [null, null, null, null, null];
+        renderAltarSlots();
+        renderVaseInventory();
+        showNpcDialogue(`「祭壇已清空！冒險家，重新規劃你的隊伍吧！」`);
+      });
+
+      // 蘇格拉底提示與規則按鈕
+      document.getElementById('btn-socrates-hint').addEventListener('click', triggerSocratesHint);
+      document.getElementById('btn-rule-explanation').addEventListener('click', triggerRuleExplanation);
+
+      // 彈窗操作
+      document.getElementById('btn-close-modal').addEventListener('click', () => {
+        document.getElementById('modal-success').classList.add('hidden');
+      });
+
+      document.getElementById('btn-replay-game').addEventListener('click', () => {
+        document.getElementById('modal-success').classList.add('hidden');
+        gameState.slots = [null, null, null, null, null];
+        resetCrystals();
+        renderAltarSlots();
+        renderVaseInventory();
+        showNpcDialogue(`「歡迎再次挑戰！試著閉上眼睛想一想：由後到前的排序邏輯是什麼呢？」`);
+      });
+
+      // 視力保健夜間模式切換
+      const themeBtn = document.getElementById('btn-theme-toggle');
+      themeBtn.addEventListener('click', () => {
+        const body = document.getElementById('game-body');
+        const icon = document.getElementById('theme-icon');
+        const text = document.getElementById('theme-text');
+        body.classList.toggle('dark-mode');
+
+        if (body.classList.contains('dark-mode')) {
+          icon.textContent = '☀️';
+          text.textContent = '日間護眼';
+        } else {
+          icon.textContent = '🌙';
+          text.textContent = '夜間護眼';
+        }
+      });
+
+      // 音效切換
+      const soundBtn = document.getElementById('btn-sound-toggle');
+      soundBtn.addEventListener('click', () => {
+        audioEnabled = !audioEnabled;
+        const icon = document.getElementById('sound-icon');
+        const text = document.getElementById('sound-text');
+        if (audioEnabled) {
+          icon.textContent = '🔊';
+          text.textContent = '音效';
+          initAudio();
+          playTone(440, 'sine', 0.1, 0.05);
+        } else {
+          icon.textContent = '🔇';
+          text.textContent = '靜音';
+        }
+      });
+
+      // 全域 Esc 鍵可關閉彈窗
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const modal = document.getElementById('modal-success');
+          if (!modal.classList.contains('hidden')) {
+            modal.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    // 初始化遊戲
+    window.onload = function() {
+      renderVaseInventory();
+      renderAltarSlots();
+      bindEventListeners();
+      console.log("🎮 海狸波波的晶透神殿：排列花瓶 運算思維遊戲載入完成！");
+    };
+  </script>
+</body>
+</html>

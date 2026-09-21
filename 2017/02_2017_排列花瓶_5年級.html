@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>神殿水晶瓶的透視封印 - Bebras 運算思維互動遊戲</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Sans TC for readability -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 依據護眼規範：設定基礎字級 >= 18px，採用柔和大地護眼色調 */
+    :root {
+      --font-base: 'Noto Sans TC', sans-serif;
+      --bg-warm: #F7F5F0;
+      --text-main: #1A202C;
+      --focus-outline: #2B6CB0;
+    }
+    body {
+      font-family: var(--font-base);
+      background-color: var(--bg-warm);
+      color: var(--text-main);
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    /* 高對比無障礙焦點框 (WCAG 2.0 AAA) */
+    *:focus-visible {
+      outline: 3px solid #2B6CB0 !important;
+      outline-offset: 3px !important;
+      box-shadow: 0 0 0 5px rgba(66, 153, 225, 0.4) !important;
+    }
+    /* 護眼漸變與質感背景，避免高頻閃爍 */
+    .temple-floor {
+      background: linear-gradient(180deg, #E2D9CC 0%, #D4C5B2 100%);
+      perspective: 800px;
+    }
+    .track-line {
+      background: repeating-linear-gradient(90deg, #B5A28A 0, #B5A28A 15px, transparent 15px, transparent 25px);
+    }
+    /* 輪廓透視圖透明度堆疊 */
+    .silhouette-layer {
+      mix-blend-mode: multiply;
+      transition: all 0.3s ease;
+    }
+    /* 輕量平滑動畫 */
+    .bounce-gentle {
+      animation: bounceGentle 2.5s infinite ease-in-out;
+    }
+    @keyframes bounceGentle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    /* 鍵盤操作提示卡 */
+    .sr-only-focusable:focus {
+      position: static !important;
+      width: auto !important;
+      height: auto !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-3 md:p-6 select-none">
+
+  <!-- 無障礙螢幕朗讀器快速跳轉 -->
+  <a href="#main-puzzle-area" class="sr-only sr-only-focusable bg-blue-800 text-white p-3 rounded-lg z-50">
+    跳至主要解謎操作區
+  </a>
+
+  <!-- 頂部導覽列與遊戲標題 -->
+  <header class="w-full max-w-5xl flex flex-col md:flex-row items-center justify-between bg-white border-2 border-amber-900/20 rounded-2xl p-4 md:p-5 shadow-sm mb-5 gap-3" role="banner">
+    <div class="flex items-center gap-3">
+      <span class="text-3xl" aria-hidden="true">🏛️</span>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-black text-amber-950 tracking-wide">
+          神殿水晶瓶的透視封印
+        </h1>
+        <p class="text-stone-700 text-base font-semibold">
+          國際運算思維挑戰賽 (Bebras) 探索任務 ‧ 國小五年級適讀版
+        </p>
+      </div>
+    </div>
+    
+    <!-- 功能按鈕列 (重置、音效切換、操作引導) -->
+    <div class="flex items-center gap-2">
+      <button id="sound-btn" 
+              class="flex items-center gap-1.5 px-4 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border-2 border-amber-800/30 rounded-xl font-bold text-base transition-colors" 
+              aria-label="音效開關，目前已開啟"
+              aria-pressed="true">
+        <span id="sound-icon" aria-hidden="true">🔊</span>
+        <span id="sound-text">語音音效</span>
+      </button>
+
+      <button id="reset-btn" 
+              class="flex items-center gap-1.5 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-900 border-2 border-stone-400 rounded-xl font-bold text-base transition-colors" 
+              aria-label="重新重置全部瓶子位置">
+        <span aria-hidden="true">🔄</span>
+        <span>重設排位</span>
+      </button>
+
+      <button id="help-btn" 
+              class="flex items-center gap-1.5 px-4 py-2.5 bg-sky-50 hover:bg-sky-100 text-sky-900 border-2 border-sky-400 rounded-xl font-bold text-base transition-colors" 
+              aria-label="查看遊戲玩法說明">
+        <span aria-hidden="true">💡</span>
+        <span>任務法則</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-puzzle-area" class="w-full max-w-5xl flex flex-col gap-6" role="main">
+
+    <!-- NPC 海狸導師波波對話框 -->
+    <section class="bg-amber-50/90 border-2 border-amber-600/40 rounded-2xl p-4 md:p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-4" 
+             aria-labelledby="npc-speaker-name" 
+             aria-live="polite">
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="w-16 h-16 rounded-2xl bg-amber-200 border-2 border-amber-800 flex items-center justify-center text-4xl shadow-inner bounce-gentle" aria-hidden="true">
+          🦫
+        </div>
+        <div class="sm:hidden font-bold text-amber-950 text-lg">海狸導師‧波波</div>
+      </div>
+      <div class="flex-1">
+        <div class="hidden sm:block font-bold text-amber-900 text-lg mb-0.5" id="npc-speaker-name">
+          海狸導師‧波波（解謎引導官）
+        </div>
+        <div id="npc-dialogue-text" class="text-stone-800 font-medium text-lg leading-relaxed">
+          「年輕的解謎官，歡迎來到光影祭壇！請將下方 5 個水晶瓶放置在光軌上（由遠處後方排到近處前方）。記住神殿法則：<span class="font-bold text-amber-900 bg-amber-100 px-1 rounded">每一個瓶子都必須露臉，誰也不能被完全擋住！</span>」
+        </div>
+      </div>
+    </section>
+
+    <!-- 正前方平視透視穿透預覽 (Front-View Projection Preview) -->
+    <section class="bg-white border-2 border-stone-300 rounded-2xl p-4 md:p-5 shadow-sm" aria-labelledby="preview-heading">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-200 gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl" aria-hidden="true">👁️</span>
+          <h2 id="preview-heading" class="text-xl md:text-2xl font-bold text-stone-900">
+            正前方平視透視圖（冒險者站位視角）
+          </h2>
+        </div>
+        <span class="text-stone-600 text-sm font-semibold bg-stone-100 px-3 py-1 rounded-full w-fit">
+          站在祭壇最前方向前看，檢查輪廓是否被吃掉！
+        </span>
+      </div>
+
+      <!-- 透視渲染畫布 (SVG 即時疊層) -->
+      <div class="relative w-full h-64 sm:h-72 mt-3 bg-gradient-to-b from-sky-50/50 via-stone-50 to-amber-100/40 rounded-xl border-2 border-dashed border-stone-300 flex items-end justify-center overflow-hidden pb-4">
+        
+        <!-- 背景對齊基準輔助線 -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+          <div class="w-full border-t-2 border-stone-400"></div>
+          <div class="h-full border-l-2 border-stone-400 absolute"></div>
+        </div>
+
+        <!-- 視角說明浮水文字 -->
+        <div class="absolute top-2 left-3 text-xs md:text-sm font-bold text-stone-500 bg-white/80 px-2 py-0.5 rounded shadow-sm">
+          光影重疊投影 (Front Perspective View)
+        </div>
+
+        <!-- 放置提示訊息（當尚未放置任何瓶子時顯示） -->
+        <div id="empty-preview-tip" class="absolute inset-0 flex items-center justify-center text-stone-500 font-semibold text-center p-4">
+          點擊下方「選擇放置」將瓶子排入軌道，<br>這裡將即時顯現由前向後觀測的重疊輪廓！
+        </div>
+
+        <!-- SVG 輪廓渲染容器 -->
+        <svg id="front-projection-svg" 
+             viewBox="0 0 400 240" 
+             class="w-full h-full max-h-60" 
+             role="img" 
+             aria-label="正面重疊輪廓投影圖：呈現目前排列下所有瓶子的重疊狀態">
+          <!-- 動態由 JavaScript 依序（由後到前）注入瓶子 SVG 輪廓 -->
+        </svg>
+
+        <!-- 遮擋狀態即時診斷標籤列 -->
+        <div id="occlusion-status-bar" class="absolute bottom-1.5 left-2 right-2 flex flex-wrap items-center justify-center gap-1.5 text-xs md:text-sm font-bold">
+          <!-- 動態指示每個已放瓶子的可見度狀態 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 神殿光軌走道（排位槽位 1~5） -->
+    <section class="bg-stone-50 border-2 border-stone-300 rounded-2xl p-4 md:p-5 shadow-sm" aria-labelledby="track-heading">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-200 mb-4 gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl" aria-hidden="true">🛤️</span>
+          <h2 id="track-heading" class="text-xl md:text-2xl font-bold text-stone-900">
+            神殿光軌走道（請依序安排 5 個槽位）
+          </h2>
+        </div>
+        <div class="flex items-center gap-2 text-stone-700 text-sm font-bold bg-amber-100/70 px-3 py-1 rounded-lg">
+          <span>⬅ 最遠處（後方）</span>
+          <span class="text-amber-600">➔ ➔ ➔</span>
+          <span>最近處（前方 冒險者站位） ➡</span>
+        </div>
+      </div>
+
+      <!-- 5 個走道槽位 -->
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-3" role="region" aria-label="5個光軌槽位">
+        
+        <!-- Slot 1: 最深處 (後方) -->
+        <div class="slot-container flex flex-col items-center bg-white border-2 border-amber-900/30 rounded-xl p-3 min-h-[170px] justify-between relative transition-all"
+             data-slot="1" 
+             tabindex="0"
+             role="button"
+             aria-label="槽位 1，神殿最深處後方位置。點擊或按 Enter 選擇更換此槽位瓶子">
+          <span class="text-xs font-black px-2 py-0.5 rounded bg-stone-200 text-stone-800">
+            位置 1（最深處 後方）
+          </span>
+          <div class="slot-content flex-1 w-full flex flex-col items-center justify-center py-2" id="slot-content-1">
+            <span class="text-stone-400 text-sm font-semibold border-2 border-dashed border-stone-300 rounded-lg p-3 w-full text-center">
+              ( 空槽 )
+            </span>
+          </div>
+          <button class="remove-btn text-xs text-rose-700 hover:text-rose-900 font-bold hidden py-1 px-2 bg-rose-50 rounded border border-rose-200" 
+                  data-slot="1" 
+                  aria-label="移除位置 1 的瓶子">
+            ✕ 卸下瓶子
+          </button>
+        </div>
+
+        <!-- Slot 2 -->
+        <div class="slot-container flex flex-col items-center bg-white border-2 border-amber-900/30 rounded-xl p-3 min-h-[170px] justify-between relative transition-all"
+             data-slot="2" 
+             tabindex="0"
+             role="button"
+             aria-label="槽位 2，中間偏後位置。點擊或按 Enter 選擇更換此槽位瓶子">
+          <span class="text-xs font-black px-2 py-0.5 rounded bg-stone-200 text-stone-800">
+            位置 2（中後）
+          </span>
+          <div class="slot-content flex-1 w-full flex flex-col items-center justify-center py-2" id="slot-content-2">
+            <span class="text-stone-400 text-sm font-semibold border-2 border-dashed border-stone-300 rounded-lg p-3 w-full text-center">
+              ( 空槽 )
+            </span>
+          </div>
+          <button class="remove-btn text-xs text-rose-700 hover:text-rose-900 font-bold hidden py-1 px-2 bg-rose-50 rounded border border-rose-200" 
+                  data-slot="2" 
+                  aria-label="移除位置 2 的瓶子">
+            ✕ 卸下瓶子
+          </button>
+        </div>
+
+        <!-- Slot 3 -->
+        <div class="slot-container flex flex-col items-center bg-white border-2 border-amber-900/30 rounded-xl p-3 min-h-[170px] justify-between relative transition-all"
+             data-slot="3" 
+             tabindex="0"
+             role="button"
+             aria-label="槽位 3，正中間位置。點擊或按 Enter 選擇更換此槽位瓶子">
+          <span class="text-xs font-black px-2 py-0.5 rounded bg-stone-200 text-stone-800">
+            位置 3（中心）
+          </span>
+          <div class="slot-content flex-1 w-full flex flex-col items-center justify-center py-2" id="slot-content-3">
+            <span class="text-stone-400 text-sm font-semibold border-2 border-dashed border-stone-300 rounded-lg p-3 w-full text-center">
+              ( 空槽 )
+            </span>
+          </div>
+          <button class="remove-btn text-xs text-rose-700 hover:text-rose-900 font-bold hidden py-1 px-2 bg-rose-50 rounded border border-rose-200" 
+                  data-slot="3" 
+                  aria-label="移除位置 3 的瓶子">
+            ✕ 卸下瓶子
+          </button>
+        </div>
+
+        <!-- Slot 4 -->
+        <div class="slot-container flex flex-col items-center bg-white border-2 border-amber-900/30 rounded-xl p-3 min-h-[170px] justify-between relative transition-all"
+             data-slot="4" 
+             tabindex="0"
+             role="button"
+             aria-label="槽位 4，中間偏前位置。點擊或按 Enter 選擇更換此槽位瓶子">
+          <span class="text-xs font-black px-2 py-0.5 rounded bg-stone-200 text-stone-800">
+            位置 4（中前）
+          </span>
+          <div class="slot-content flex-1 w-full flex flex-col items-center justify-center py-2" id="slot-content-4">
+            <span class="text-stone-400 text-sm font-semibold border-2 border-dashed border-stone-300 rounded-lg p-3 w-full text-center">
+              ( 空槽 )
+            </span>
+          </div>
+          <button class="remove-btn text-xs text-rose-700 hover:text-rose-900 font-bold hidden py-1 px-2 bg-rose-50 rounded border border-rose-200" 
+                  data-slot="4" 
+                  aria-label="移除位置 4 的瓶子">
+            ✕ 卸下瓶子
+          </button>
+        </div>
+
+        <!-- Slot 5: 最靠近冒險者 (前方) -->
+        <div class="slot-container flex flex-col items-center bg-white border-2 border-amber-900/30 rounded-xl p-3 min-h-[170px] justify-between relative transition-all"
+             data-slot="5" 
+             tabindex="0"
+             role="button"
+             aria-label="槽位 5，祭壇最前方冒險者眼前位置。點擊或按 Enter 選擇更換此槽位瓶子">
+          <span class="text-xs font-black px-2 py-0.5 rounded bg-amber-600 text-white">
+            位置 5（最近處 正前方）
+          </span>
+          <div class="slot-content flex-1 w-full flex flex-col items-center justify-center py-2" id="slot-content-5">
+            <span class="text-stone-400 text-sm font-semibold border-2 border-dashed border-stone-300 rounded-lg p-3 w-full text-center">
+              ( 空槽 )
+            </span>
+          </div>
+          <button class="remove-btn text-xs text-rose-700 hover:text-rose-900 font-bold hidden py-1 px-2 bg-rose-50 rounded border border-rose-200" 
+                  data-slot="5" 
+                  aria-label="移除位置 5 的瓶子">
+            ✕ 卸下瓶子
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 待選瓶子保管區 (Vase Inventory) -->
+    <section class="bg-white border-2 border-stone-300 rounded-2xl p-4 md:p-5 shadow-sm" aria-labelledby="inventory-heading">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-200 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl" aria-hidden="true">⚗️</span>
+          <h2 id="inventory-heading" class="text-xl md:text-2xl font-bold text-stone-900">
+            待選魔藥瓶庫（點擊瓶子放置到下一個可用空位）
+          </h2>
+        </div>
+        <span class="text-sm font-bold text-stone-500 hidden sm:inline">
+          共 5 款不同胖瘦輪廓的水晶瓶
+        </span>
+      </div>
+
+      <!-- 5 個瓶子卡片 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3" id="vases-inventory-list">
+        
+        <!-- Vase A -->
+        <button class="vase-card flex flex-col items-center bg-stone-50 hover:bg-amber-50 border-2 border-stone-300 rounded-xl p-3 text-center transition-all cursor-pointer group focus:ring-4 focus:ring-blue-400"
+                data-vase="A"
+                aria-label="瓶子 A：小雨滴晶瓶。全場最細長苗條，腰圍最小。點擊放置到軌道。">
+          <div class="w-full h-24 flex items-center justify-center mb-2">
+            <!-- SVG A: 苗條試管雨滴型 -->
+            <svg viewBox="0 0 100 120" class="h-20 w-auto text-sky-600" fill="currentColor">
+              <path d="M 45 10 L 55 10 L 55 35 Q 60 55 60 85 Q 60 110 50 110 Q 40 110 40 85 Q 40 55 45 35 Z" stroke="#1E3A8A" stroke-width="3" fill="#93C5FD" fill-opacity="0.8"/>
+              <rect x="42" y="6" width="16" height="6" rx="2" fill="#1D4ED8" />
+            </svg>
+          </div>
+          <span class="font-black text-lg text-stone-900">瓶 A：小雨滴晶瓶</span>
+          <span class="text-xs text-stone-600 mt-1 font-semibold">特徵：最瘦小、最細長</span>
+        </button>
+
+        <!-- Vase B -->
+        <button class="vase-card flex flex-col items-center bg-stone-50 hover:bg-amber-50 border-2 border-stone-300 rounded-xl p-3 text-center transition-all cursor-pointer group focus:ring-4 focus:ring-blue-400"
+                data-vase="B"
+                aria-label="瓶子 B：雙環咕嚕瓶。葫蘆雙環造型，比 A 略胖。點擊放置到軌道。">
+          <div class="w-full h-24 flex items-center justify-center mb-2">
+            <!-- SVG B: 葫蘆雙環型 -->
+            <svg viewBox="0 0 100 120" class="h-20 w-auto text-emerald-600" fill="currentColor">
+              <path d="M 44 12 L 56 12 L 56 25 Q 66 38 58 55 Q 70 75 68 100 Q 66 112 50 112 Q 34 112 32 100 Q 30 75 42 55 Q 34 38 44 25 Z" stroke="#065F46" stroke-width="3" fill="#6EE7B7" fill-opacity="0.8"/>
+              <rect x="40" y="7" width="20" height="6" rx="2" fill="#047857" />
+            </svg>
+          </div>
+          <span class="font-black text-lg text-stone-900">瓶 B：雙環咕嚕瓶</span>
+          <span class="text-xs text-stone-600 mt-1 font-semibold">特徵：中偏瘦、上下雙圓環</span>
+        </button>
+
+        <!-- Vase C -->
+        <button class="vase-card flex flex-col items-center bg-stone-50 hover:bg-amber-50 border-2 border-stone-300 rounded-xl p-3 text-center transition-all cursor-pointer group focus:ring-4 focus:ring-blue-400"
+                data-vase="C"
+                aria-label="瓶子 C：圓肚珍珠瓶。圓球腰身，中等體積。點擊放置到軌道。">
+          <div class="w-full h-24 flex items-center justify-center mb-2">
+            <!-- SVG C: 圓肚珍珠型 -->
+            <svg viewBox="0 0 100 120" class="h-20 w-auto text-violet-600" fill="currentColor">
+              <path d="M 42 12 L 58 12 L 58 30 Q 78 50 78 78 Q 78 112 50 112 Q 22 112 22 78 Q 22 50 42 30 Z" stroke="#5B21B6" stroke-width="3" fill="#C4B5FD" fill-opacity="0.8"/>
+              <rect x="38" y="7" width="24" height="6" rx="2" fill="#6D28D9" />
+            </svg>
+          </div>
+          <span class="font-black text-lg text-stone-900">瓶 C：圓肚珍珠瓶</span>
+          <span class="text-xs text-stone-600 mt-1 font-semibold">特徵：腰身圓滾滾、肚大頸細</span>
+        </button>
+
+        <!-- Vase D -->
+        <button class="vase-card flex flex-col items-center bg-stone-50 hover:bg-amber-50 border-2 border-stone-300 rounded-xl p-3 text-center transition-all cursor-pointer group focus:ring-4 focus:ring-blue-400"
+                data-vase="D"
+                aria-label="瓶子 D：巨鐘守護瓶。寬大底座與圓弧肩部。點擊放置到軌道。">
+          <div class="w-full h-24 flex items-center justify-center mb-2">
+            <!-- SVG D: 寬鐘型 -->
+            <svg viewBox="0 0 100 120" class="h-20 w-auto text-amber-600" fill="currentColor">
+              <path d="M 40 12 L 60 12 L 62 26 Q 85 45 84 90 L 86 112 L 14 112 L 16 90 Q 15 45 38 26 Z" stroke="#92400E" stroke-width="3" fill="#FCD34D" fill-opacity="0.8"/>
+              <rect x="36" y="7" width="28" height="6" rx="2" fill="#B45309" />
+            </svg>
+          </div>
+          <span class="font-black text-lg text-stone-900">瓶 D：巨鐘守護瓶</span>
+          <span class="text-xs text-stone-600 mt-1 font-semibold">特徵：寬底座、大圓鐘肩膀</span>
+        </button>
+
+        <!-- Vase E -->
+        <button class="vase-card flex flex-col items-center bg-stone-50 hover:bg-amber-50 border-2 border-stone-300 rounded-xl p-3 text-center transition-all cursor-pointer group focus:ring-4 focus:ring-blue-400"
+                data-vase="E"
+                aria-label="瓶子 E：泰坦古樹巨瓶。全場最高大、最寬廣。點擊放置到軌道。">
+          <div class="w-full h-24 flex items-center justify-center mb-2">
+            <!-- SVG E: 泰坦古巨瓶 -->
+            <svg viewBox="0 0 100 120" class="h-20 w-auto text-rose-700" fill="currentColor">
+              <path d="M 36 6 L 64 6 L 66 20 Q 94 38 94 80 Q 94 115 50 115 Q 6 115 6 80 Q 6 38 34 20 Z" stroke="#9F1239" stroke-width="3" fill="#FDA4AF" fill-opacity="0.8"/>
+              <rect x="32" y="2" width="36" height="6" rx="2" fill="#BE123C" />
+            </svg>
+          </div>
+          <span class="font-black text-lg text-stone-900">瓶 E：泰坦古樹巨瓶</span>
+          <span class="text-xs text-stone-600 mt-1 font-semibold">特徵：全場最高、全場最寬</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- 驗證按鈕與快捷操作提示 -->
+    <div class="flex flex-col sm:flex-row items-center justify-between bg-amber-950 text-white rounded-2xl p-4 md:p-5 shadow-md gap-4">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl" aria-hidden="true">🔑</span>
+        <div>
+          <div class="font-bold text-lg text-amber-200">準備好啟動封印了嗎？</div>
+          <p class="text-stone-300 text-sm">
+            請確認五個瓶子都已就位，且站在前方能同時看見全部身影！
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <button id="verify-order-btn" 
+                class="w-full sm:w-auto px-8 py-3.5 bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-lg rounded-xl shadow transition-transform active:scale-95 disabled:opacity-50 disabled:pointer-events-none focus:ring-4 focus:ring-white"
+                disabled>
+          🌟 注入光芒 ‧ 驗證陣型
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 運算思維素養解密彈跳視窗 (Debrief Modal) -->
+  <div id="success-modal" 
+       class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden"
+       role="dialog" 
+       aria-modal="true" 
+       aria-labelledby="modal-title">
+    
+    <div class="bg-white max-w-2xl w-full rounded-3xl p-6 md:p-8 border-4 border-amber-500 shadow-2xl overflow-y-auto max-h-[90vh] text-stone-900 animate-in fade-in zoom-in-95">
+      
+      <!-- 標頭榮耀 -->
+      <div class="text-center pb-4 border-b border-stone-200">
+        <div class="text-5xl mb-2" aria-hidden="true">🏆✨🏛️</div>
+        <h2 id="modal-title" class="text-2xl md:text-3xl font-black text-amber-950">
+          神殿大門開啟！透視封印完美解除！
+        </h2>
+        <p class="text-stone-600 font-semibold mt-1">
+          恭喜你，五年級見習解謎官！你的光影陣型成功讓所有魔藥瓶同時露臉！
+        </p>
+      </div>
+
+      <!-- 核心運算思維剖析 (小學五年級適讀版) -->
+      <div class="mt-6 flex flex-col gap-4 text-left">
+        <div class="text-xl font-black text-amber-900 flex items-center gap-2">
+          <span>🧠</span>
+          <span>本次冒險的【運算思維大解密】</span>
+        </div>
+
+        <!-- 概念 1：排序演算法 -->
+        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4">
+          <h3 class="font-black text-amber-950 text-lg flex items-center gap-1.5">
+            <span>1. 排序演算法 (Sorting Algorithm)</span>
+          </h3>
+          <p class="text-stone-700 text-base mt-1">
+            就像全班排隊拍照時「**矮的站前面、高的站後面**」一樣。這次我們將瓶子依照體型胖瘦進行了由大到小（由後到前：<span class="font-bold text-amber-900">E ➔ D ➔ C ➔ B ➔ A</span>）的排序。電腦在整理大量資料時，也常用這樣的排序規則，讓資訊一目了然！
+          </p>
+        </div>
+
+        <!-- 概念 2：抽象化 -->
+        <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-4">
+          <h3 class="font-black text-sky-950 text-lg flex items-center gap-1.5">
+            <span>2. 抽象化思維 (Abstraction)</span>
+          </h3>
+          <p class="text-stone-700 text-base mt-1">
+            每個瓶子有不同的顏色、名稱與功用，但為了破解遮擋難題，我們只專注在關鍵特徵——「**外圍寬度與身形輪廓**」。把不相關的細節忽略、只聚焦在關鍵資訊上，就是運算思維中最強大的「抽象化能力」！
+          </p>
+        </div>
+
+        <!-- 概念 3：模式識別 -->
+        <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4">
+          <h3 class="font-black text-emerald-950 text-lg flex items-center gap-1.5">
+            <span>3. 模式識別 (Pattern Recognition)</span>
+          </h3>
+          <p class="text-stone-700 text-base mt-1">
+            你發現了規律：「只要胖的瓶子擋在瘦的瓶子前面，瘦的瓶子就會被完全遮蔽」。掌握了這項幾何光影規律，就能推導出唯一的完美解答！
+          </p>
+        </div>
+      </div>
+
+      <!-- 關閉與再來一次按鈕 -->
+      <div class="mt-7 flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-stone-200">
+        <button id="modal-replay-btn" 
+                class="w-full sm:w-auto px-6 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-lg rounded-xl transition-all">
+          再挑戰一次
+        </button>
+        <button id="modal-close-btn" 
+                class="w-full sm:w-auto px-6 py-3 bg-stone-200 hover:bg-stone-300 text-stone-900 font-bold text-lg rounded-xl transition-all">
+          返回神殿觀察
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 任務說明視窗 (Help Modal) -->
+  <div id="help-modal" 
+       class="fixed inset-0 bg-stone-900/75 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden"
+       role="dialog" 
+       aria-modal="true" 
+       aria-labelledby="help-title">
+    
+    <div class="bg-white max-w-lg w-full rounded-2xl p-6 border-2 border-stone-400 shadow-xl max-h-[85vh] overflow-y-auto">
+      <div class="flex justify-between items-center pb-3 border-b border-stone-200">
+        <h2 id="help-title" class="text-2xl font-bold text-amber-950">📜 神殿法則與操作指南</h2>
+        <button id="help-modal-close" class="text-2xl font-bold p-1 hover:bg-stone-100 rounded-lg text-stone-600" aria-label="關閉說明視窗">✕</button>
+      </div>
+
+      <div class="mt-4 space-y-4 text-stone-800 text-base leading-relaxed">
+        <div>
+          <strong class="text-amber-900 block text-lg">🎯 冒險目標：</strong>
+          將 5 個水晶瓶擺在神殿走道上（位置 1 是最遠的後方，位置 5 是最近的正前方）。
+        </div>
+        <div>
+          <strong class="text-amber-900 block text-lg">👀 通關要求：</strong>
+          當冒險者站在最前方（位置 5 的前方平視）看過去時，<span class="font-bold underline text-amber-950">必須同時看見所有 5 個瓶子的輪廓</span>，任何瓶子都不能被完全擋住！
+        </div>
+        <div>
+          <strong class="text-amber-900 block text-lg">⌨️ 鍵盤無障礙支援：</strong>
+          使用 <kbd class="px-2 py-0.5 bg-stone-100 border rounded font-mono text-sm">Tab</kbd> 與 <kbd class="px-2 py-0.5 bg-stone-100 border rounded font-mono text-sm">Enter</kbd> 即可選取瓶子與槽位，完全不需要滑鼠！
+        </div>
+      </div>
+
+      <div class="mt-6 text-right">
+        <button id="help-confirm-btn" class="px-6 py-2.5 bg-amber-800 text-white font-bold rounded-xl hover:bg-amber-900 transition-colors">
+          我明白了，開始解謎！
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* 遊戲核心狀態物件 */
+    const gameState = {
+      // 軌道五個槽位，0-based index 代表 Slot 1 至 Slot 5
+      slots: [null, null, null, null, null],
+      soundEnabled: true,
+      selectedSlotIndex: null,
+      correctSequence: ['E', 'D', 'C', 'B', 'A'] // 由後到前標準解
+    };
+
+    /* 瓶子資料定義（幾何特徵與無障礙描述） */
+    const VASE_DATA = {
+      A: {
+        name: '小雨滴晶瓶',
+        color: '#3B82F6',
+        fill: '#93C5FD',
+        stroke: '#1E3A8A',
+        width: 24, // 輪廓寬度
+        height: 100, // 輪廓高度
+        description: '最瘦小、最細長試管瓶',
+        // SVG 路徑相對於 200, 200 地平線基準
+        path: "M 194 90 L 206 90 L 206 130 Q 212 160 212 185 Q 212 210 200 210 Q 188 210 188 185 Q 188 160 194 130 Z"
+      },
+      B: {
+        name: '雙環咕嚕瓶',
+        color: '#10B981',
+        fill: '#6EE7B7',
+        stroke: '#065F46',
+        width: 44,
+        height: 130,
+        description: '中偏瘦、上下葫蘆雙環瓶',
+        path: "M 192 65 L 208 65 L 208 85 Q 222 105 210 130 Q 226 160 224 195 Q 222 212 200 212 Q 178 212 176 195 Q 174 160 190 130 Q 178 105 192 85 Z"
+      },
+      C: {
+        name: '圓肚珍珠瓶',
+        color: '#8B5CF6',
+        fill: '#C4B5FD',
+        stroke: '#5B21B6',
+        width: 76,
+        height: 155,
+        description: '圓滾滾肚腹、中型體積',
+        path: "M 188 45 L 212 45 L 212 75 Q 242 105 242 150 Q 242 212 200 212 Q 158 212 158 150 Q 158 105 188 75 Z"
+      },
+      D: {
+        name: '巨鐘守護瓶',
+        color: '#F59E0B',
+        fill: '#FCD34D',
+        stroke: '#92400E',
+        width: 110,
+        height: 175,
+        description: '寬大底座、廣口大圓肩鐘型',
+        path: "M 185 30 L 215 30 L 218 55 Q 258 85 256 165 L 260 212 L 140 212 L 144 165 Q 142 85 182 55 Z"
+      },
+      E: {
+        name: '泰坦古樹巨瓶',
+        color: '#F43F5E',
+        fill: '#FDA4AF',
+        stroke: '#9F1239',
+        width: 146,
+        height: 200,
+        description: '全場最高、全場最寬碩',
+        path: "M 180 12 L 220 12 L 224 35 Q 275 65 275 135 Q 275 212 200 212 Q 125 212 125 135 Q 125 65 176 35 Z"
+      }
+    };
+
+    // 使用 Web Audio API 原生合成音效，免除外部 CDN 故障或被擋風險
+    let audioCtx = null;
+    function playTone(type = 'click') {
+      if (!gameState.soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'remove') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(360, now);
+          osc.frequency.linearRampToValueAtTime(200, now + 0.1);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+          osc.start(now);
+          osc.stop(now + 0.1);
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(180, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'success') {
+          // 和弦凱旋音
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const chordOsc = audioCtx.createOscillator();
+            const chordGain = audioCtx.createGain();
+            chordOsc.type = 'triangle';
+            chordOsc.frequency.setValueAtTime(freq, now + i * 0.09);
+            chordGain.gain.setValueAtTime(0.1, now + i * 0.09);
+            chordGain.gain.exponentialRampToValueAtTime(0.001, now + 0.8 + i * 0.09);
+            chordOsc.connect(chordGain);
+            chordGain.connect(audioCtx.destination);
+            chordOsc.start(now + i * 0.09);
+            chordOsc.stop(now + 0.8 + i * 0.09);
+          });
+        }
+      } catch (err) {
+        // 音效靜音防禦，避免阻斷主流程
+        console.warn('Audio context init warning', err);
+      }
+    }
+
+    /**
+     * 將瓶子放至第一個可用槽位，或指定槽位
+     */
+    function placeVase(vaseKey, targetSlotIndex = null) {
+      // 檢查此瓶子是否已經擺在軌道上了
+      const existingSlot = gameState.slots.indexOf(vaseKey);
+
+      if (targetSlotIndex === null) {
+        if (existingSlot !== -1) {
+          // 已在場上，提示冒險者
+          speakNPC(`「${VASE_DATA[vaseKey].name}」已經在軌道的位置 ${existingSlot + 1} 囉！若要換位置，可以先點擊卸下它。`);
+          return;
+        }
+        // 尋找第一個空槽
+        const emptyIndex = gameState.slots.findIndex(s => s === null);
+        if (emptyIndex === -1) {
+          speakNPC("「軌道上的 5 個位置都放滿囉！請按『驗證陣型』來啟動封印，或是點擊卸下更換瓶子。」");
+          return;
+        }
+        gameState.slots[emptyIndex] = vaseKey;
+      } else {
+        // 指定替換
+        if (existingSlot !== -1 && existingSlot !== targetSlotIndex) {
+          // 如果已在其他槽位，進行對調 (Swap)
+          gameState.slots[existingSlot] = gameState.slots[targetSlotIndex];
+        }
+        gameState.slots[targetSlotIndex] = vaseKey;
+      }
+
+      playTone('click');
+      updateUI();
+    }
+
+    /**
+     * 移除特定槽位的瓶子
+     */
+    function removeSlot(slotIndex) {
+      if (gameState.slots[slotIndex] !== null) {
+        playTone('remove');
+        gameState.slots[slotIndex] = null;
+        updateUI();
+        speakNPC(`已將位置 ${slotIndex + 1} 的瓶子收回保管庫。`);
+      }
+    }
+
+    /**
+     * 更新正面平視重疊透視圖 (Front-View Projection)
+     * 關鍵物理規則：
+     * 站在前方（近處）看過去：
+     * 在前面的瓶子會擋住後面的瓶子！
+     * 在 SVG 渲染中，先繪製後面的（Slot 0 / 位置 1），最後繪製最前面的（Slot 4 / 位置 5）！
+     */
+    function renderFrontProjection() {
+      const svg = document.getElementById('front-projection-svg');
+      const emptyTip = document.getElementById('empty-preview-tip');
+      const statusBar = document.getElementById('occlusion-status-bar');
+
+      // 清空舊渲染
+      svg.innerHTML = '';
+      statusBar.innerHTML = '';
+
+      const placedVases = [];
+      gameState.slots.forEach((key, index) => {
+        if (key) placedVases.push({ key, slot: index });
+      });
+
+      if (placedVases.length === 0) {
+        emptyTip.classList.remove('hidden');
+        return;
+      }
+      emptyTip.classList.add('hidden');
+
+      // 檢查遮蔽關係
+      // 站在位置 5（前方）。若某瓶子 A 前方（槽位大於 A）有任何一個瓶子 B，
+      // 且 B 的寬度 >= A 的寬度 且 B 的高度 >= A 的高度，則 A 就會被「完全遮擋」！
+      const visibilityMap = {};
+
+      placedVases.forEach(item => {
+        let isCompletelyHidden = false;
+        let hiddenBy = null;
+
+        // 搜尋所有排在它前面（近處，即 slot 序號更大）的瓶子
+        for (let j = item.slot + 1; j < 5; j++) {
+          const frontKey = gameState.slots[j];
+          if (frontKey) {
+            const currV = VASE_DATA[item.key];
+            const frontV = VASE_DATA[frontKey];
+            if (frontV.width >= currV.width && frontV.height >= currV.height) {
+              isCompletelyHidden = true;
+              hiddenBy = frontV.name;
+              break;
+            }
+          }
+        }
+        visibilityMap[item.key] = { isCompletelyHidden, hiddenBy, slot: item.slot };
+      });
+
+      // 依照「由後到前」渲染（後方的在底層，前方的覆蓋在頂層）
+      for (let s = 0; s < 5; s++) {
+        const key = gameState.slots[s];
+        if (!key) continue;
+
+        const vase = VASE_DATA[key];
+        const vis = visibilityMap[key];
+
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "silhouette-layer");
+        g.setAttribute("id", `proj-vase-${key}`);
+
+        // 繪製陰影輪廓
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", vase.path);
+        path.setAttribute("fill", vase.fill);
+        path.setAttribute("fill-opacity", vis.isCompletelyHidden ? "0.15" : "0.78");
+        path.setAttribute("stroke", vase.stroke);
+        path.setAttribute("stroke-width", vis.isCompletelyHidden ? "1" : "3");
+        if (vis.isCompletelyHidden) {
+          path.setAttribute("stroke-dasharray", "4,4");
+        }
+
+        // 標註代號在瓶身上方
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", "200");
+        text.setAttribute("y", `${220 - vase.height - 8}`);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("font-weight", "900");
+        text.setAttribute("font-size", "14");
+        text.setAttribute("fill", vis.isCompletelyHidden ? "#9CA3AF" : vase.stroke);
+        text.textContent = `瓶 ${key}`;
+
+        g.appendChild(path);
+        g.appendChild(text);
+        svg.appendChild(g);
+
+        // 狀態列標籤
+        const badge = document.createElement('span');
+        badge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+          vis.isCompletelyHidden 
+            ? 'bg-rose-100 text-rose-800 border-rose-300' 
+            : 'bg-emerald-100 text-emerald-900 border-emerald-300'
+        }`;
+        badge.textContent = vis.isCompletelyHidden 
+          ? `瓶 ${key} (位置${s+1})：完全被擋住！` 
+          : `瓶 ${key} (位置${s+1})：輪廓清晰可見 ✓`;
+        statusBar.appendChild(badge);
+      }
+    }
+
+    /**
+     * 更新整個遊戲介面外觀
+     */
+    function updateUI() {
+      // 1. 更新 5 個槽位
+      for (let i = 0; i < 5; i++) {
+        const slotKey = gameState.slots[i];
+        const contentDiv = document.getElementById(`slot-content-${i + 1}`);
+        const removeBtn = document.querySelector(`.remove-btn[data-slot="${i + 1}"]`);
+        const slotContainer = document.querySelector(`.slot-container[data-slot="${i + 1}"]`);
+
+        if (slotKey) {
+          const v = VASE_DATA[slotKey];
+          contentDiv.innerHTML = `
+            <div class="flex flex-col items-center animate-in zoom-in-75">
+              <span class="text-3xl font-black text-amber-950">${slotKey}</span>
+              <span class="text-xs font-bold text-stone-700 mt-1">${v.name}</span>
+              <span class="text-[11px] text-stone-500 font-semibold">(${v.description.split('、')[0]})</span>
+            </div>
+          `;
+          slotContainer.classList.add('bg-amber-50/60', 'border-amber-600');
+          slotContainer.classList.remove('bg-white');
+          removeBtn.classList.remove('hidden');
+          slotContainer.setAttribute('aria-label', `位置 ${i + 1} 目前放置了 瓶 ${slotKey}：${v.name}。按 Enter 卸下。`);
+        } else {
+          contentDiv.innerHTML = `
+            <span class="text-stone-400 text-sm font-semibold border-2 border-dashed border-stone-300 rounded-lg p-3 w-full text-center">
+              ( 空位 )
+            </span>
+          `;
+          slotContainer.classList.remove('bg-amber-50/60', 'border-amber-600');
+          slotContainer.classList.add('bg-white');
+          removeBtn.classList.add('hidden');
+          slotContainer.setAttribute('aria-label', `位置 ${i + 1} 目前是空槽。`);
+        }
+      }
+
+      // 2. 更新下方瓶子卡片的「已放置」禁用/高亮狀態
+      document.querySelectorAll('.vase-card').forEach(card => {
+        const vKey = card.getAttribute('data-vase');
+        const isPlaced = gameState.slots.includes(vKey);
+        if (isPlaced) {
+          card.classList.add('opacity-45', 'bg-stone-200', 'cursor-not-allowed');
+          card.classList.remove('hover:bg-amber-50', 'bg-stone-50');
+          card.setAttribute('aria-disabled', 'true');
+        } else {
+          card.classList.remove('opacity-45', 'bg-stone-200', 'cursor-not-allowed');
+          card.classList.add('hover:bg-amber-50', 'bg-stone-50');
+          card.removeAttribute('aria-disabled');
+        }
+      });
+
+      // 3. 更新驗證按鈕可用狀態（必須 5 個瓶子都放滿）
+      const allFilled = gameState.slots.every(s => s !== null);
+      const verifyBtn = document.getElementById('verify-order-btn');
+      verifyBtn.disabled = !allFilled;
+
+      // 4. 重繪上方正前方投影
+      renderFrontProjection();
+    }
+
+    /**
+     * 海狸導師波波發言函式（包含螢幕報讀與語氣）
+     */
+    function speakNPC(text) {
+      const dialogueEl = document.getElementById('npc-dialogue-text');
+      dialogueEl.innerHTML = text;
+    }
+
+    /**
+     * 驗證排位與多層次回饋引導（核心蘇格拉底式反饋）
+     */
+    function handleVerification() {
+      const s = gameState.slots;
+      // 答案是否完全正確：由後到前 E, D, C, B, A
+      const isCorrect = (s[0] === 'E' && s[1] === 'D' && s[2] === 'C' && s[3] === 'B' && s[4] === 'A');
+
+      if (isCorrect) {
+        playTone('success');
+        speakNPC("「太令人驚嘆了！🌟 光芒完全穿透祭壇！你看，最大的泰坦巨瓶 E 站在最遠方，依序縮小，最苗條的小雨滴瓶 A 站在最前面！五個瓶子的身影全都看得一清二楚！神殿大門打開了！」");
+        
+        // 延遲跳出運算思維素養解密面板
+        setTimeout(() => {
+          document.getElementById('success-modal').classList.remove('hidden');
+        }, 1200);
+        return;
+      }
+
+      // 錯誤診斷與分流引導（符合企劃書情境設定）
+      playTone('error');
+
+      // 情境二：完全倒置 (A -> B -> C -> D -> E)
+      if (s[0] === 'A' && s[1] === 'B' && s[2] === 'C' && s[3] === 'D' && s[4] === 'E') {
+        speakNPC("「哇哇！等等看～你看你把最巨大的 <span class='font-bold text-rose-700'>泰坦巨瓶 E</span> 放在最前方的正門口，它的體積那麼龐大，後面嬌小的 A、B、C 瓶全被擋得無影無蹤啦！<br><strong>思考提示：</strong>想看清楚全部的隊員，個子最嬌小的隊友應該排在隊伍的最前面、還是最後面呢？」");
+        return;
+      }
+
+      // 情境三：A 瓶沒有放在最前排 (位置 5)
+      if (s[4] !== 'A') {
+        speakNPC("「注意看～最細小的小雨滴 <span class='font-bold text-sky-700'>A 瓶</span> 是不是不見了？因為 A 是全場最苗條、最小的瓶子，只要有任何比它胖的瓶子擋在它前面，A 就會被完全遮住！<br><strong>思考提示：</strong>哪一個位置才能保證最瘦小的 A 瓶絕對不會被前面的大傢伙遮住呢？」");
+        return;
+      }
+
+      // 情境四：E 瓶沒有放在最遠的後排 (位置 1)
+      if (s[0] !== 'E') {
+        speakNPC("「仔細觀察最巨大的 <span class='font-bold text-rose-700'>泰坦巨瓶 E</span>！因為它是全場最高又最寬的，如果把它往前放，它後方的瓶子很難不被它龐大的身軀吃掉。<br><strong>思考提示：</strong>體積最大的守護者，是不是該退到最深處的『位置 1』當靠山呢？」");
+        return;
+      }
+
+      // 情境五：中間順序錯位（例如 C 與 D 顛倒）
+      speakNPC("「我們離成功非常近了！但是仔細看中間那幾瓶——是不是有某個較寬的瓶子排在了比較瘦的瓶子前面，導致輪廓被吃掉了一部分？<br><strong>思考提示：</strong>試著把中間的瓶子也按照『由胖到瘦（由後到前）』重新排排看喔！」");
+    }
+
+    /**
+     * 將待選區的 5 個瓶子卡片隨機打亂順序 (Fisher-Yates 洗牌演算法)
+     */
+    function shuffleInventory() {
+      const container = document.getElementById('vases-inventory-list');
+      if (!container) return;
+      const cards = Array.from(container.children);
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      cards.forEach(card => container.appendChild(card));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 點擊瓶子卡片放置
+      document.querySelectorAll('.vase-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const vKey = card.getAttribute('data-vase');
+          placeVase(vKey);
+        });
+
+        // 支援鍵盤 Enter/Space
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const vKey = card.getAttribute('data-vase');
+            placeVase(vKey);
+          }
+        });
+      });
+
+      // 槽位移除按鈕
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const slotNum = parseInt(btn.getAttribute('data-slot'), 10);
+          removeSlot(slotNum - 1);
+        });
+      });
+
+      // 槽位點擊（若有瓶子則移除或切換）
+      document.querySelectorAll('.slot-container').forEach(slotEl => {
+        slotEl.addEventListener('click', () => {
+          const slotNum = parseInt(slotEl.getAttribute('data-slot'), 10);
+          const index = slotNum - 1;
+          if (gameState.slots[index]) {
+            removeSlot(index);
+          }
+        });
+
+        slotEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const slotNum = parseInt(slotEl.getAttribute('data-slot'), 10);
+            const index = slotNum - 1;
+            if (gameState.slots[index]) {
+              removeSlot(index);
+            }
+          }
+        });
+      });
+
+      // 驗證按鈕
+      document.getElementById('verify-order-btn').addEventListener('click', handleVerification);
+
+      // 重置按鈕
+      document.getElementById('reset-btn').addEventListener('click', () => {
+        gameState.slots = [null, null, null, null, null];
+        playTone('remove');
+        shuffleInventory();
+        updateUI();
+        speakNPC("「已經把所有水晶瓶放回保管庫並重新打亂順序囉！重新觀察它們的胖瘦輪廓，再次挑戰吧！」");
+      });
+
+      // 音效切換
+      const soundBtn = document.getElementById('sound-btn');
+      const soundIcon = document.getElementById('sound-icon');
+      const soundText = document.getElementById('sound-text');
+      soundBtn.addEventListener('click', () => {
+        gameState.soundEnabled = !gameState.soundEnabled;
+        soundIcon.textContent = gameState.soundEnabled ? '🔊' : '🔇';
+        soundText.textContent = gameState.soundEnabled ? '語音音效' : '靜音模式';
+        soundBtn.setAttribute('aria-pressed', gameState.soundEnabled ? 'true' : 'false');
+        soundBtn.setAttribute('aria-label', `音效開關，目前已${gameState.soundEnabled ? '開啟' : '關閉'}`);
+      });
+
+      // 說明彈窗
+      const helpModal = document.getElementById('help-modal');
+      document.getElementById('help-btn').addEventListener('click', () => {
+        helpModal.classList.remove('hidden');
+      });
+      document.getElementById('help-modal-close').addEventListener('click', () => {
+        helpModal.classList.add('hidden');
+      });
+      document.getElementById('help-confirm-btn').addEventListener('click', () => {
+        helpModal.classList.add('hidden');
+      });
+
+      // 成功通關視窗控制
+      const successModal = document.getElementById('success-modal');
+      document.getElementById('modal-close-btn').addEventListener('click', () => {
+        successModal.classList.add('hidden');
+      });
+      document.getElementById('modal-replay-btn').addEventListener('click', () => {
+        successModal.classList.add('hidden');
+        gameState.slots = [null, null, null, null, null];
+        shuffleInventory();
+        updateUI();
+        speakNPC("「重設完成！瓶子已重新隨機排列，看看這次能否以更快的速度完成透視排序！」");
+      });
+
+      // 鍵盤無障礙快速鍵：按 Esc 關閉開啟的彈跳視窗
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (!helpModal.classList.contains('hidden')) helpModal.classList.add('hidden');
+          if (!successModal.classList.contains('hidden')) successModal.classList.add('hidden');
+        }
+      });
+
+      // 初始化初次渲染（先隨機洗牌待選庫）
+      shuffleInventory();
+      updateUI();
+    });
+  </script>
+</body>
+</html>
