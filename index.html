@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bebras 國際運算思維挑戰賽 - 時空冒險遊戲基地</title>
+  <title>Bebras 國際運算思維挑戰賽 - 時空冒險基地 (GitHub Pages 整合版)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Phosphor Icons for high-contrast, scalable SVG icons -->
   <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
-  <!-- Canvas Confetti for celebrations -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
   <script>
     tailwind.config = {
       theme: {
@@ -26,13 +23,6 @@
               800: '#0f3a20',
               900: '#052e16',
             },
-            wood: {
-              100: '#fef3c7',
-              200: '#fde68a',
-              600: '#d97706',
-              800: '#92400e',
-              900: '#78350f'
-            },
             eye: {
               cream: '#fbfbf7',
               slate: '#1e293b',
@@ -41,7 +31,7 @@
             }
           },
           fontSize: {
-            'base': ['1.125rem', { lineHeight: '1.75rem' }], // 18px sight care baseline
+            'base': ['1.125rem', { lineHeight: '1.75rem' }], /* 18px minimum base for sight care */
             'lg': ['1.25rem', { lineHeight: '1.875rem' }],
             'xl': ['1.5rem', { lineHeight: '2rem' }],
             '2xl': ['1.875rem', { lineHeight: '2.25rem' }],
@@ -58,7 +48,7 @@
       outline-offset: 4px !important;
       border-radius: 6px;
     }
-    /* Soft Paper Tint to prevent visual eye fatigue */
+    /* Soft Paper Tint to prevent visual fatigue */
     body {
       background-color: #fbfbf7;
       color: #1e293b;
@@ -70,7 +60,7 @@
       overflow: hidden;
     }
     .gentle-shadow {
-      box-shadow: 0 4px 16px -2px rgba(22, 101, 52, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 14px -2px rgba(22, 101, 52, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
     }
     .custom-scroll::-webkit-scrollbar {
       width: 8px;
@@ -84,34 +74,12 @@
       background: #94a3b8;
       border-radius: 4px;
     }
-    /* L-Game Board Pattern Textures for Color-Blind Inclusivity */
-    .pattern-kiki {
-      background-color: #d97706;
-      background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.28) 0, rgba(255,255,255,0.28) 8px, transparent 8px, transparent 16px);
-    }
-    .pattern-vivi {
-      background-color: #4338ca;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.35) 25%, transparent 25%);
-      background-size: 10px 10px;
-    }
-    .pattern-empty {
-      background-color: #ffffff;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    .pattern-preview-valid {
-      background-color: rgba(34, 197, 94, 0.3) !important;
-      border-color: #15803d !important;
-    }
-    .pattern-preview-invalid {
-      background-color: rgba(239, 68, 68, 0.25) !important;
-      border-color: #b91c1c !important;
-    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
+<body class="min-h-screen flex flex-col selection:bg-amber-100 selection:text-amber-900">
 
   <!-- Skip Link for Keyboard Navigation (WCAG 2.0 Compliance) -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-emerald-800 focus:text-white focus:font-bold focus:rounded-lg focus:shadow-xl">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-emerald-800 focus:text-white focus:font-bold focus:rounded-xl focus:shadow-xl">
     跳至主要內容區塊 (Skip to main content)
   </a>
 
@@ -135,7 +103,7 @@
 
       <!-- Quick Accessibility & Action Controls -->
       <div class="flex items-center gap-3">
-        <!-- Font Size Adjuster for Low Vision & Sight Care -->
+        <!-- Font Size Adjuster for Sight Care -->
         <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-300" role="group" aria-label="文字大小切換">
           <button id="font-decrease" type="button" class="p-2 rounded hover:bg-white text-slate-700 font-bold transition focus:ring-2 focus:ring-emerald-700" title="縮小字體" aria-label="縮小文字字體">
             <span class="text-sm font-semibold">A-</span>
@@ -148,16 +116,16 @@
           </button>
         </div>
 
-        <!-- Sound Toggle -->
-        <button id="sound-toggle-btn" type="button" class="p-2 bg-slate-100 hover:bg-white text-slate-800 font-bold rounded-lg border border-slate-300 transition flex items-center gap-1 text-sm" aria-pressed="true" aria-label="切換遊戲音效">
-          <i id="sound-icon" class="ph-bold ph-speaker-high text-lg text-emerald-800"></i>
-          <span id="sound-text">音效開</span>
-        </button>
-
-        <!-- Direct Launch 2017 L-Game -->
-        <button onclick="launchLGameModal('3')" type="button" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-amber-800">
+        <!-- Open Featured 2017 L-Game in Modal -->
+        <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" type="button" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-amber-800">
           <i class="ph-bold ph-game-controller text-xl" aria-hidden="true"></i>
           <span>特選：2017 L遊戲</span>
+        </button>
+
+        <!-- Create Quest / Add Future Year Button -->
+        <button id="open-creator-modal-btn" type="button" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-emerald-800">
+          <i class="ph-bold ph-plus-circle text-xl" aria-hidden="true"></i>
+          <span class="hidden sm:inline">轉化新教材</span>
         </button>
       </div>
 
@@ -167,11 +135,11 @@
   <main id="main-content" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8" role="main">
     
     <!-- Hero Banner with Sight Care Friendly Soft Contrast -->
-    <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-amber-950 text-white rounded-2xl p-6 sm:p-8 shadow-lg relative overflow-hidden" aria-labelledby="hero-title">
+    <section class="bg-gradient-to-r from-emerald-900 via-slate-900 to-amber-950 text-white rounded-2xl p-6 sm:p-8 shadow-lg relative overflow-hidden" aria-labelledby="hero-title">
       <div class="relative z-10 max-w-4xl space-y-4">
         <div class="inline-flex items-center gap-2 text-amber-300 text-sm font-semibold bg-emerald-950/80 px-3 py-1 rounded-full border border-amber-600/50">
           <i class="ph-fill ph-star" aria-hidden="true"></i>
-          <span>焦點特輯：2017 年 3~6 年級《L 遊戲：水壩晶石保衛戰》全階螺旋整合</span>
+          <span>焦點收錄：2017 年 3~6 年級《L 遊戲：水壩晶石保衛戰》全階螺旋整合</span>
         </div>
         <h2 id="hero-title" class="text-2xl sm:text-3xl font-extrabold text-white tracking-wide leading-snug">
           解鎖邏輯超能力！Bebras 國際運算思維挑戰賽教材庫
@@ -180,27 +148,27 @@
           不背語法、不用死記！將國際運算思維難題化為沉浸式故事謎題。引導學童在決策中掌握「問題拆解、模式識別、抽象化、遊戲樹與剪枝演算法」。
         </p>
         
-        <!-- 2017 L-Game Quick Launch Bar -->
+        <!-- 2017 L-Game Quick Launch Bar (Points accurately to 2017/ directory) -->
         <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 mt-2 flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="flex items-center gap-3">
             <span class="text-3xl">🦫</span>
             <div>
               <h3 class="font-bold text-amber-300 text-base">2017 創始經典：海狸村的 L 遊戲爭霸戰</h3>
-              <p class="text-xs text-slate-200">支援 3、4、5、6 年級四個獨立進階難度版本，點擊下方立即啟動！</p>
+              <p class="text-xs text-slate-200">收錄於 <code>2017/</code> 資料夾，點選按鈕立即啟動對應關卡！</p>
             </div>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button onclick="launchLGameModal('3')" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow flex items-center gap-1">
-              <span>3年級 初階版</span>
+            <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+              3年級 初階版
             </button>
-            <button onclick="launchLGameModal('4')" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow flex items-center gap-1">
-              <span>4年級 進階版</span>
+            <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_4年級.html', '2017 年 4 年級：符文水壩對決')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+              4年級 進階版
             </button>
-            <button onclick="launchLGameModal('5')" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow flex items-center gap-1">
-              <span>5年級 深化版</span>
+            <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_5年級.html', '2017 年 5 年級：防洪石板深搜')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+              5年級 深化版
             </button>
-            <button onclick="launchLGameModal('6')" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow flex items-center gap-1">
-              <span>6年級 挑戰版</span>
+            <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_6年級.html', '2017 年 6 年級：九重封印與剪枝')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+              6年級 挑戰版
             </button>
           </div>
         </div>
@@ -244,7 +212,7 @@
               <option value="ALL">全部思維向度 (All Pillars)</option>
               <option value="演算法">演算法 (Algorithms / 遊戲樹與剪枝)</option>
               <option value="拆解">拆解思考 (Decomposition)</option>
-              <option value="模式識別">模式識別 (Pattern Recognition)</option>
+              <option value="模式識別">模式識別 (Pattern)</option>
               <option value="抽象化">抽象化 (Abstraction)</option>
             </select>
           </div>
@@ -290,7 +258,7 @@
 
     <section aria-label="挑戰遊戲清單">
       <div id="games-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Injected dynamically via JavaScript -->
+        <!-- Injected via JavaScript -->
       </div>
 
       <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border-2 border-dashed border-slate-300 p-8">
@@ -307,693 +275,303 @@
 
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-eye-border mt-12 py-8 text-slate-700" role="contentinfo">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-      <div>
-        <p class="font-bold text-slate-900 text-base">國際運算思維挑戰賽教材互動遊戲化平台 (Bebras Game Portal)</p>
-        <p class="text-sm text-slate-500 mt-1">
-          遵循 W3C WCAG 2.0 AA 無障礙設計標準 ｜ 視力保健高舒適字級 ｜ 完美支援 GitHub Pages 獨立運行
-        </p>
-      </div>
-      <div class="flex items-center gap-4 text-sm font-semibold">
-        <span class="inline-flex items-center gap-1 text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded-lg">
-          <i class="ph-bold ph-check-circle" aria-hidden="true"></i> 支援全鍵盤 Tab 操作
-        </span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- 2017 L-Game Interactive Full Arena Modal -->
-  <div id="l-game-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="lgame-modal-title">
-    <div class="bg-white w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[95vh] overflow-hidden border-2 border-emerald-700">
+  <!-- Standalone Game Modal for 2017 Full Screen Games -->
+  <div id="standalone-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="standalone-modal-title">
+    <div class="bg-white w-full max-w-5xl h-[92vh] rounded-2xl shadow-2xl border-2 border-amber-500 flex flex-col overflow-hidden">
       
-      <!-- Modal Header -->
-      <div class="px-5 py-3.5 bg-emerald-900 text-white flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <span class="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xl">
-            🦫
-          </span>
-          <div>
-            <h3 id="lgame-modal-title" class="text-lg sm:text-xl font-bold tracking-wide">
-              2017 創始經典：L 遊戲水壩保衛戰
-            </h3>
-            <p class="text-xs text-emerald-200">
-              固定方向 L 晶石對決 ｜ 螺旋難度進階架構 (3~6 年級)
-            </p>
-          </div>
-        </div>
-        
+      <!-- Modal Top Bar -->
+      <div class="px-4 py-3 bg-slate-900 text-white flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <a id="lgame-standalone-link" href="01 2017_L遊戲_3年級.html" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold bg-emerald-800 hover:bg-emerald-700 text-white rounded-lg border border-emerald-600 transition" title="另開獨立全螢幕檔案">
+          <span class="px-2 py-0.5 rounded text-xs font-black bg-amber-500 text-slate-950">獨立關卡</span>
+          <h3 id="standalone-modal-title" class="text-base sm:text-lg font-bold truncate">遊戲載入中</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="standalone-open-newtab" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center gap-1 border border-slate-600 transition">
             <i class="ph-bold ph-arrow-square-out"></i>
-            <span>獨立全螢幕檔案</span>
+            <span>全螢幕新分頁</span>
           </a>
-          <button onclick="closeLGameModal()" type="button" class="text-slate-300 hover:text-white p-1 rounded-lg transition" aria-label="關閉遊戲視窗">
+          <button onclick="closeStandaloneModal()" type="button" class="text-slate-300 hover:text-white p-1 rounded-lg transition" aria-label="關閉遊戲視窗">
             <i class="ph-bold ph-x text-2xl"></i>
           </button>
         </div>
       </div>
 
-      <!-- 3 to 6 Grade Spiral Tab Switcher -->
-      <div class="bg-emerald-950 px-4 py-2 border-b border-emerald-800 flex flex-wrap items-center justify-between gap-2">
-        <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-          <i class="ph-bold ph-stairs text-base"></i>
-          <span>選擇挑戰年級：</span>
+      <!-- IFrame Container -->
+      <div class="flex-grow w-full bg-slate-100 relative">
+        <iframe id="standalone-iframe" src="" class="w-full h-full border-0" title="Bebras 遊戲互動視窗"></iframe>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Spiral In-Page Interactive Modal -->
+  <div id="game-modal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-game-title">
+    
+    <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 bg-emerald-800 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span id="modal-game-badge" class="px-2.5 py-0.5 rounded text-xs font-black bg-emerald-950 text-emerald-200">2017 年</span>
+          <h3 id="modal-game-title" class="text-xl font-bold tracking-wide">遊戲標題</h3>
         </div>
-        <div class="inline-flex rounded-xl bg-emerald-900/80 p-1 border border-emerald-700/60" role="tablist" aria-label="3至6年級螺旋學習切換">
-          <button type="button" role="tab" id="lgame-tab-3" onclick="switchLGameGrade('3')" class="lgame-tab px-3.5 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white">
-            3年級 初階探索
+        <button id="close-modal-btn" type="button" class="text-white hover:bg-emerald-900 p-2 rounded-lg transition" aria-label="關閉遊戲視窗">
+          <i class="ph-bold ph-x text-2xl" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- 3 to 6 Grade Spiral Tab Switcher -->
+      <div class="bg-emerald-900/90 px-6 py-2 border-b border-emerald-700/50 flex flex-wrap items-center justify-between gap-2">
+        <span class="text-xs font-bold text-emerald-200 flex items-center gap-1">
+          <i class="ph-bold ph-stairs text-base"></i> 螺旋學習階梯（即時切換年級）：
+        </span>
+        <div class="inline-flex rounded-xl bg-emerald-950 p-1 border border-emerald-700/60" role="tablist" aria-label="3至6年級難度階梯切換">
+          <button type="button" role="tab" id="modal-tab-grade-3" onclick="switchModalGrade('3')" class="modal-grade-tab px-3 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white">
+            3年級 初階
           </button>
-          <button type="button" role="tab" id="lgame-tab-4" onclick="switchLGameGrade('4')" class="lgame-tab px-3.5 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white">
-            4年級 遊戲樹分支
+          <button type="button" role="tab" id="modal-tab-grade-4" onclick="switchModalGrade('4')" class="modal-grade-tab px-3 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white">
+            4年級 進階
           </button>
-          <button type="button" role="tab" id="lgame-tab-5" onclick="switchLGameGrade('5')" class="lgame-tab px-3.5 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white">
-            5年級 狀態空間深搜
+          <button type="button" role="tab" id="modal-tab-grade-5" onclick="switchModalGrade('5')" class="modal-grade-tab px-3 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white">
+            5年級 深化
           </button>
-          <button type="button" role="tab" id="lgame-tab-6" onclick="switchLGameGrade('6')" class="lgame-tab px-3.5 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white">
-            6年級 剪枝演算法
+          <button type="button" role="tab" id="modal-tab-grade-6" onclick="switchModalGrade('6')" class="modal-grade-tab px-3 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white">
+            6年級 挑戰
           </button>
         </div>
       </div>
 
-      <!-- Main Game Arena Area -->
-      <div class="p-4 sm:p-6 overflow-y-auto custom-scroll space-y-5 flex-1 bg-eye-cream">
+      <!-- Modal Body (Dynamic Game Area) -->
+      <div class="p-6 overflow-y-auto custom-scroll space-y-6 flex-1 bg-eye-cream">
         
-        <!-- Story Background Card -->
-        <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-300 shadow-sm flex flex-col md:flex-row items-start justify-between gap-4">
-          <div class="space-y-1.5 flex-1">
-            <div class="flex items-center gap-2 text-emerald-800 font-bold text-sm">
-              <span id="lgame-grade-badge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-300">
-                3 年級任務
-              </span>
-              <h4 id="lgame-stage-title" class="font-bold text-slate-900 text-base sm:text-lg">
-                神探眼力大考驗：薇薇手牌能放哪？
-              </h4>
-            </div>
-            <p id="lgame-story-desc" class="text-slate-700 text-sm sm:text-base leading-relaxed">
-              琪琪第一手搶先佔領了 4×4 棋盤正中央！請在棋盤上找出薇薇的手牌在剩下的空間中，總共有哪 3 個合法位置放得下？
-            </p>
+        <!-- Story Background Section -->
+        <div class="bg-white p-5 rounded-xl border border-slate-300 shadow-sm">
+          <div class="flex items-center gap-2 text-emerald-800 font-bold text-base mb-2">
+            <i class="ph-fill ph-book-open text-xl" aria-hidden="true"></i>
+            <h4>冒險情境任務 (Story Scenario)</h4>
           </div>
-
-          <!-- L-Shape Pattern Guide Widget -->
-          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center gap-3 shrink-0">
-            <!-- Kiki shape preview -->
-            <div class="text-center">
-              <span class="block text-[11px] font-black text-amber-800 mb-1">琪琪 (倒 L)</span>
-              <div class="grid grid-cols-2 gap-0.5 w-12 h-12 bg-white p-0.5 rounded border border-amber-300 shadow-sm" aria-label="琪琪木片：佔據左上、右上、左下">
-                <div class="pattern-kiki rounded-sm"></div>
-                <div class="pattern-kiki rounded-sm"></div>
-                <div class="pattern-kiki rounded-sm"></div>
-                <div class="bg-slate-100 border border-dashed border-slate-300"></div>
-              </div>
-            </div>
-            <!-- Vivi shape preview -->
-            <div class="text-center">
-              <span class="block text-[11px] font-black text-indigo-800 mb-1">薇薇 (正 L)</span>
-              <div class="grid grid-cols-2 gap-0.5 w-12 h-12 bg-white p-0.5 rounded border border-indigo-300 shadow-sm" aria-label="薇薇木片：佔據右上、左下、右下">
-                <div class="bg-slate-100 border border-dashed border-slate-300"></div>
-                <div class="pattern-vivi rounded-sm"></div>
-                <div class="pattern-vivi rounded-sm"></div>
-                <div class="pattern-vivi rounded-sm"></div>
-              </div>
-            </div>
-          </div>
+          <p id="modal-game-story" class="text-slate-800 text-base leading-relaxed">
+            故事載入中...
+          </p>
         </div>
 
-        <!-- Two-column Play Area: Controls vs 4x4 Dam Board -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          
-          <!-- Left: Guided Interaction Panel (5 cols) -->
-          <div class="lg:col-span-5 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            
-            <div class="flex items-center justify-between border-b pb-2.5 border-slate-200">
-              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-                <i class="ph-bold ph-faders text-emerald-700"></i> 操作決策盤
-              </span>
-              <span id="lgame-turn-tag" class="px-2.5 py-0.5 rounded text-xs font-black bg-indigo-100 text-indigo-900 border border-indigo-300">
-                薇薇的回合
-              </span>
-            </div>
-
-            <!-- Dynamic Grade Action Component -->
-            <div id="lgame-interactive-controls" class="space-y-3">
-              <!-- Dynamically populated based on active grade -->
-            </div>
-
-            <!-- Hint Prompt Box -->
-            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed space-y-1">
-              <div class="font-bold flex items-center gap-1">
-                <i class="ph-bold ph-lightbulb text-amber-700"></i>
-                <span>蘇格拉底引導提示：</span>
-              </div>
-              <p id="lgame-hint-text">
-                請觀察棋盤右側與下側的 2×2 窗口，是否有完整的空位放進薇薇的正 L 木片？
-              </p>
-            </div>
-
-            <!-- Action buttons -->
-            <div class="flex items-center gap-2 pt-1">
-              <button onclick="resetCurrentLGameStage()" type="button" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition border border-slate-300 flex items-center justify-center gap-1">
-                <i class="ph-bold ph-arrow-counter-clockwise"></i>
-                <span>重設當前關卡</span>
-              </button>
-              <button onclick="solveCurrentLGameStage()" type="button" class="py-2 px-3 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold rounded-xl text-xs transition border border-emerald-300 flex items-center justify-center gap-1">
-                <i class="ph-bold ph-check"></i>
-                <span>驗證解答</span>
-              </button>
-            </div>
-
+        <!-- Launch Standalone Full Game Button Banner -->
+        <div id="modal-standalone-launcher" class="p-4 bg-amber-50 rounded-xl border-2 border-amber-300 flex items-center justify-between gap-3">
+          <div class="text-sm text-amber-900 font-bold">
+            <span class="block">🎮 想體驗本年級專屬的「完整版沉浸對戰」嗎？</span>
+            <span class="text-xs text-amber-700 font-normal">包含完整棋盤、語音與動態遊戲樹，檔案收錄於 <code>2017/</code> 資料夾！</span>
           </div>
-
-          <!-- Right: 4x4 Dam Grid (7 cols) -->
-          <div class="lg:col-span-7 bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-inner border-4 border-slate-800 flex flex-col items-center justify-center">
-            
-            <div class="w-full flex items-center justify-between text-slate-300 text-xs font-bold mb-3">
-              <span class="flex items-center gap-1.5 text-amber-400">
-                <i class="ph-bold ph-grid-four text-base"></i> 4 × 4 水壩閘門底盤
-              </span>
-              <span class="text-slate-400 text-[11px]">
-                點擊格子嘗試擺放 ｜ 不可旋轉與翻面
-              </span>
-            </div>
-
-            <!-- 4x4 Board Container -->
-            <div class="w-full max-w-[340px] aspect-square bg-slate-800 p-2 sm:p-3 rounded-2xl border-2 border-slate-700 shadow-2xl">
-              <div id="lgame-board-grid" class="grid grid-cols-4 gap-2 w-full h-full" role="grid" aria-label="4乘4水壩棋盤">
-                <!-- 16 Cells rendered by JS -->
-              </div>
-            </div>
-
-            <!-- Board Legend -->
-            <div class="w-full max-w-[340px] flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
-              <span class="flex items-center gap-1">
-                <span class="w-3 h-3 pattern-kiki rounded"></span> 琪琪 (金色倒L)
-              </span>
-              <span class="flex items-center gap-1">
-                <span class="w-3 h-3 pattern-vivi rounded"></span> 薇薇 (藍色正L)
-              </span>
-              <span class="flex items-center gap-1">
-                <span class="w-3 h-3 bg-white border border-slate-400 rounded"></span> 空石槽
-              </span>
-            </div>
-
-          </div>
-
+          <button id="modal-open-standalone-btn" type="button" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-lg text-xs transition shrink-0 shadow">
+            開啟完整遊戲 ➔
+          </button>
         </div>
 
-        <!-- Educational Debrief Section -->
-        <div id="lgame-debrief-box" class="hidden bg-emerald-50 border-2 border-emerald-300 p-5 rounded-xl space-y-3">
-          <div class="flex items-center gap-2 text-emerald-950 font-black text-lg">
-            <i class="ph-fill ph-lightbulb text-2xl text-emerald-700"></i>
+        <!-- Interactive Playground Container -->
+        <div id="modal-interactive-area" class="bg-slate-50 p-6 rounded-xl border-2 border-emerald-600/30 text-center space-y-4">
+          <!-- Interactive widgets will render here -->
+        </div>
+
+        <!-- Socratic Feedback & Guidance Box -->
+        <div id="modal-feedback-box" class="hidden p-4 rounded-xl border text-base font-semibold leading-relaxed" role="status" aria-live="polite">
+          <!-- Dynamic feedback injected here -->
+        </div>
+
+        <!-- CT Concept Debrief (Hidden until solved or toggled) -->
+        <div id="modal-ct-debrief" class="hidden bg-emerald-50 border-2 border-emerald-300 p-5 rounded-xl space-y-3">
+          <div class="flex items-center gap-2 text-emerald-900 font-black text-lg">
+            <i class="ph-fill ph-lightbulb text-2xl text-emerald-700" aria-hidden="true"></i>
             <h4>🎯 運算思維解密 (Computational Thinking Debrief)</h4>
           </div>
-          <p id="lgame-debrief-text" class="text-slate-800 text-sm sm:text-base leading-relaxed">
+          <p id="modal-debrief-text" class="text-slate-800 text-base leading-relaxed">
             觀念說明載入中...
           </p>
         </div>
 
       </div>
 
-      <!-- Modal Footer -->
-      <div class="px-5 py-3 bg-slate-100 border-t border-slate-200 flex items-center justify-between">
-        <span class="text-xs text-slate-600 font-bold">
-          Bebras 2017 國際經典考題 ✕ 台灣資訊教育螺旋學習
-        </span>
-        <button onclick="closeLGameModal()" type="button" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition">
-          關閉遊戲
+      <!-- Modal Footer Controls -->
+      <div class="px-6 py-4 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <button id="modal-hint-btn" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-emerald-900 bg-emerald-100 hover:bg-emerald-200 transition">
+          <i class="ph-bold ph-chats-circle text-lg" aria-hidden="true"></i>
+          <span>蘇格拉底導師提示</span>
         </button>
+        <div class="flex items-center gap-2">
+          <button id="modal-reset-btn" type="button" class="px-4 py-2.5 rounded-xl font-bold text-slate-700 hover:bg-slate-100 border border-slate-300 transition">
+            重設關卡
+          </button>
+          <button id="modal-submit-btn" type="button" class="px-6 py-2.5 rounded-xl font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-md transition">
+            送出解答
+          </button>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <script>
-    /* Web Audio API Sound Synthesizer (Zero external dependencies, WCAG safe) */
-    class SoundFX {
-      constructor() {
-        this.ctx = null;
-        this.enabled = true;
-      }
-      init() {
-        if (!this.ctx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (AudioContext) this.ctx = new AudioContext();
-        }
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
-      }
-      playTone(freq, type = 'sine', duration = 0.12, volume = 0.1) {
-        if (!this.enabled) return;
-        try {
-          this.init();
-          if (!this.ctx) return;
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = type;
-          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-          gain.gain.setValueAtTime(volume, this.ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start();
-          osc.stop(this.ctx.currentTime + duration);
-        } catch (e) {
-          // Graceful fallback
-        }
-      }
-      click() { this.playTone(400, 'sine', 0.08, 0.08); }
-      place() { this.playTone(320, 'triangle', 0.15, 0.12); }
-      success() {
-        if (!this.enabled) return;
-        this.playTone(523.25, 'sine', 0.1, 0.1);
-        setTimeout(() => this.playTone(659.25, 'sine', 0.12, 0.1), 90);
-        setTimeout(() => this.playTone(783.99, 'sine', 0.25, 0.12), 190);
-      }
-      error() {
-        this.playTone(200, 'sawtooth', 0.18, 0.1);
-      }
-    }
-    const sfx = new SoundFX();
-  </script>
-
-  <script>
-    /* Shapes & Geometry in 4x4 board
-       Kiki (倒 L): covers top-left (0,0), top-right (0,1), bottom-left (1,0) in 2x2 bounding box
-       Vivi (正 L): covers top-right (0,1), bottom-left (1,0), bottom-right (1,1) in 2x2 bounding box
-    */
-    const KIKI_SHAPE = [
-      { r: 0, c: 0 },
-      { r: 0, c: 1 },
-      { r: 1, c: 0 }
-    ];
-
-    const VIVI_SHAPE = [
-      { r: 0, c: 1 },
-      { r: 1, c: 0 },
-      { r: 1, c: 1 }
-    ];
-
-    // Grade Level Content Specifications
-    const LGAME_CONFIGS = {
-      "3": {
-        title: "三年級：神探眼力大考驗 (尋找薇薇的合法出路)",
-        gradeBadge: "3 年級 初階探索",
-        standaloneFile: "01 2017_L遊戲_3年級.html",
-        story: "琪琪第一手搶先佔領了 4×4 棋盤的正中央！請觀察薇薇手上的『正 L 型木片』，在剩下的空間中，總共只剩下哪 3 個合法位置放得下？請在棋盤上點選找出來！",
-        hint: "提示：請檢查右上方、正下方與右下角，每一處是否剛好有 3 格完整的空位！",
-        debrief: "恭喜破關！本題訓練【空間幾何約束】與【規則遵循】。電腦程式在處理拼圖或俄羅斯方塊時，也是依據相同的座標與邊界限制進行合法性檢查！",
-        turn: "薇薇的回合",
-        expectedPositions: ["1,2", "2,1", "2,2"] // Anchors for Vivi
-      },
-      "4": {
-        title: "四年級：遊戲樹第一層分支 (琪琪的關鍵封殺)",
-        gradeBadge: "4 年級 進階版",
-        standaloneFile: "01 2017_L遊戲_4年級.html",
-        story: "薇薇選擇了反擊路線！輪到琪琪的第二手。琪琪應該將她的倒 L 型晶石放在哪一個關鍵位置，才能確保在下一回合徹底封鎖全場，讓薇薇無路可走？",
-        hint: "提示：仔細看看棋盤的『左上角』(第 1、2 列最左側)，一旦被琪琪佔領，整張盤面就再也沒有任何連續的 3 格空間了！",
-        debrief: "太神了！這屬於【遊戲樹 (Game Tree)】的致勝決策。我們在腦海中模擬對手走法，並預先準備好『必定能反制』的最佳解法！",
-        turn: "琪琪的回合",
-        winningAnchor: { r: 0, c: 0 }
-      },
-      "5": {
-        title: "五年級：狀態空間與反制驗證 (九大起手點深搜)",
-        gradeBadge: "5 年級 深化版",
-        standaloneFile: "01 2017_L遊戲_5年級.html",
-        story: "在 4×4 棋盤上，2×2 的窗口一共只有 9 個起始位置。經過深搜推演，琪琪第一手究竟有幾個位置能夠保證『100% 絕對必勝』？點選下方起手點進行測試！",
-        hint: "提示：如果放在角落或邊緣，另一邊會留下大片完整空地，薇薇就會有逆轉贏棋的機會！",
-        debrief: "這題是【狀態空間 (State Space)】的核心檢驗。藉由探索狀態轉移，我們發現中央位置能同時控制四個象限，達成唯一的致勝結構！",
-        turn: "測試起手式",
-        winningAnchor: { r: 1, c: 1 }
-      },
-      "6": {
-        title: "六年級：極小化極大與剪枝策略 (Alpha-Beta Pruning)",
-        gradeBadge: "6 年級 挑戰版",
-        standaloneFile: "01 2017_L遊戲_6年級.html",
-        story: "若要驗證所有開局，電腦若窮舉所有可能走法會耗費巨量資源。資訊科學家使用的『剪枝演算法 (Pruning)』在遇到會失敗的分支時會怎麼做？點選按鈕體驗自動剪枝！",
-        hint: "提示：只要在樹枝上發現『這條路可能讓我輸掉』，這根樹枝後面就不用再看了，立刻剪掉回溯！",
-        debrief: "這正是經典的【極小化極大演算法 (Minimax)】與【Alpha-Beta 剪枝 (Pruning)】！從深藍西洋棋電腦到 AlphaGo，都是運用剪枝演算法在毫秒內省下數百萬次無效計算！",
-        turn: "演算法推演"
-      }
-    };
-
-    // State Variables for L-Game Modal
-    let activeGrade = "3";
-    let lGameBoard = Array(16).fill(null); // null, 'kiki', 'vivi'
-    let grade3Found = new Set();
-    let grade4ViviChoice = 0;
-    let grade5TestedCount = 0;
-  </script>
-
-  <script>
-    function toIdx(r, c) { return r * 4 + c; }
-    function toPos(i) { return { r: Math.floor(i / 4), c: i % 4 }; }
-
-    function canPlace(board, shape, topR, topC) {
-      if (topR < 0 || topR + 1 >= 4 || topC < 0 || topC + 1 >= 4) return false;
-      for (const pt of shape) {
-        const tr = topR + pt.r;
-        const tc = topC + pt.c;
-        const idx = toIdx(tr, tc);
-        if (board[idx] !== null) return false;
-      }
-      return true;
-    }
-
-    function placePiece(board, shape, topR, topC, tag) {
-      for (const pt of shape) {
-        const idx = toIdx(topR + pt.r, topC + pt.c);
-        board[idx] = tag;
-      }
-    }
-
-    function renderLGameBoard() {
-      const grid = document.getElementById("lgame-board-grid");
-      grid.innerHTML = "";
-
-      for (let i = 0; i < 16; i++) {
-        const { r, c } = toPos(i);
-        const cell = document.createElement("button");
-        cell.id = `lcell-${i}`;
-        cell.setAttribute("role", "gridcell");
-        cell.setAttribute("aria-rowindex", r + 1);
-        cell.setAttribute("aria-colindex", c + 1);
-        cell.className = "w-full h-full rounded-xl flex items-center justify-center font-black text-xs sm:text-sm border-2 transition-all ";
-
-        const val = lGameBoard[i];
-        if (val === "kiki") {
-          cell.className += "pattern-kiki text-white border-amber-500 shadow-md";
-          cell.innerHTML = `<span>🌸</span>`;
-        } else if (val === "vivi") {
-          cell.className += "pattern-vivi text-white border-indigo-400 shadow-md";
-          cell.innerHTML = `<span>🌿</span>`;
-        } else {
-          cell.className += "pattern-empty border-slate-700 text-slate-400 hover:border-amber-400";
-          cell.innerHTML = `<span class="opacity-30 text-[10px] select-none">${r + 1},${c + 1}</span>`;
-        }
-
-        cell.addEventListener("click", () => handleLCellClick(r, c));
-        grid.appendChild(cell);
-      }
-    }
-  </script>
-
-  <script>
-    function switchLGameGrade(grade) {
-      activeGrade = grade;
-      const cfg = LGAME_CONFIGS[grade];
-
-      // Update Tabs
-      ["3", "4", "5", "6"].forEach(g => {
-        const tab = document.getElementById(`lgame-tab-${g}`);
-        if (g === grade) {
-          tab.className = "lgame-tab px-3.5 py-1 rounded-lg text-xs sm:text-sm font-black transition bg-amber-500 text-slate-950 shadow";
-          tab.setAttribute("aria-selected", "true");
-        } else {
-          tab.className = "lgame-tab px-3.5 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white";
-          tab.setAttribute("aria-selected", "false");
-        }
-      });
-
-      // Update Text Headers
-      document.getElementById("lgame-stage-title").textContent = cfg.title;
-      document.getElementById("lgame-grade-badge").textContent = cfg.gradeBadge;
-      document.getElementById("lgame-story-desc").textContent = cfg.story;
-      document.getElementById("lgame-hint-text").textContent = cfg.hint;
-      document.getElementById("lgame-turn-tag").textContent = cfg.turn;
+  <!-- Quest Creator Modal -->
+  <div id="creator-modal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="creator-modal-title">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
       
-      // Update standalone link to folder structure
-      const standaloneLink = document.getElementById("lgame-standalone-link");
-      if (standaloneLink) {
-        standaloneLink.href = cfg.standaloneFile;
-        const textSpan = document.getElementById("lgame-standalone-text");
-        if (textSpan) {
-          textSpan.textContent = `${cfg.standaloneFile}`;
-        }
-      }
+      <div class="px-6 py-4 bg-slate-800 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-magic-wand text-2xl text-emerald-400" aria-hidden="true"></i>
+          <h3 id="creator-modal-title" class="text-xl font-bold tracking-wide">轉化 Bebras 題目為全新教材</h3>
+        </div>
+        <button id="close-creator-btn" type="button" class="text-white hover:bg-slate-700 p-2 rounded-lg transition" aria-label="關閉轉化視窗">
+          <i class="ph-bold ph-x text-2xl" aria-hidden="true"></i>
+        </button>
+      </div>
 
-      // Hide debrief box
-      document.getElementById("lgame-debrief-box").classList.add("hidden");
+      <form id="creator-form" class="p-6 overflow-y-auto custom-scroll space-y-4 text-base flex-1 bg-eye-cream">
+        <div>
+          <label for="create-year" class="block font-bold text-slate-800 mb-1">對應年度：</label>
+          <select id="create-year" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
+            <option value="2017">2017 (經典 L 遊戲)</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+          </select>
+        </div>
 
-      // Load specific mechanics
-      resetCurrentLGameStage();
-    }
+        <div>
+          <label for="create-title" class="block font-bold text-slate-800 mb-1">題目主題名稱：</label>
+          <input type="text" id="create-title" required placeholder="例如：水獺工程師的排程、秘密傳訊密碼" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl focus:border-emerald-700">
+        </div>
 
-    function resetCurrentLGameStage() {
-      lGameBoard = Array(16).fill(null);
-      const ctrls = document.getElementById("lgame-interactive-controls");
-      sfx.click();
+        <div>
+          <label for="create-ct" class="block font-bold text-slate-800 mb-1">運算思維核心維度：</label>
+          <select id="create-ct" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
+            <option value="演算法">演算法設計 (Algorithm Design)</option>
+            <option value="拆解">拆解思考 (Decomposition)</option>
+            <option value="模式識別">模式識別 (Pattern Recognition)</option>
+            <option value="抽象化">抽象化 (Abstraction)</option>
+          </select>
+        </div>
 
-      if (activeGrade === "3") {
-        // Kiki at center (1,1)
-        placePiece(lGameBoard, KIKI_SHAPE, 1, 1, "kiki");
-        grade3Found.clear();
-        ctrls.innerHTML = `
-          <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-              <span>已發現合法位置：</span>
-              <span id="g3-count" class="text-amber-700 font-black">0 / 3</span>
-            </div>
-            <div class="grid grid-cols-3 gap-2" id="g3-indicators">
-              <div class="p-2 bg-slate-100 rounded-lg text-center text-xs font-bold text-slate-400 border">位置 1</div>
-              <div class="p-2 bg-slate-100 rounded-lg text-center text-xs font-bold text-slate-400 border">位置 2</div>
-              <div class="p-2 bg-slate-100 rounded-lg text-center text-xs font-bold text-slate-400 border">位置 3</div>
-            </div>
-            <p class="text-xs text-slate-500">點擊右側 4x4 盤面上符合正 L 型的空位試放！</p>
-          </div>
-        `;
-      } else if (activeGrade === "4") {
-        // Kiki center + Vivi branch
-        grade4ViviChoice = 0;
-        setupGrade4Board(0);
-        ctrls.innerHTML = `
-          <div class="space-y-2.5">
-            <span class="text-xs font-bold text-slate-700 block">切換薇薇的 3 種反擊情境：</span>
-            <div class="grid grid-cols-3 gap-2">
-              <button onclick="setupGrade4Board(0)" class="g4-btn p-2 rounded-xl text-xs font-bold border transition bg-indigo-600 text-white border-indigo-700">情境 A (右上)</button>
-              <button onclick="setupGrade4Board(1)" class="g4-btn p-2 rounded-xl text-xs font-bold border transition bg-slate-100 text-slate-700 border-slate-300">情境 B (正下)</button>
-              <button onclick="setupGrade4Board(2)" class="g4-btn p-2 rounded-xl text-xs font-bold border transition bg-slate-100 text-slate-700 border-slate-300">情境 C (右下)</button>
-            </div>
-            <p class="text-xs text-slate-600 font-medium">
-              輪到琪琪！請在棋盤上找一個關鍵位置放下倒 L 晶石，讓薇薇在下一輪無路可走！
-            </p>
-          </div>
-        `;
-      } else if (activeGrade === "5") {
-        ctrls.innerHTML = `
-          <div class="space-y-2">
-            <span class="text-xs font-bold text-slate-700 block">測試 9 個起手位置 (點擊進行深搜)：</span>
-            <div class="grid grid-cols-3 gap-1.5" id="g5-grid-btns">
-              ${[
-                "(0,0) 左上", "(0,1) 中上", "(0,2) 右上",
-                "(1,0) 左中", "(1,1) 正中⭐", "(1,2) 右中",
-                "(2,0) 左下", "(2,1) 中下", "(2,2) 右下"
-              ].map((name, idx) => {
-                const r = Math.floor(idx / 3);
-                const c = idx % 3;
-                return `
-                  <button onclick="testGrade5Anchor(${r}, ${c})" class="p-2 bg-slate-50 hover:bg-amber-100 rounded-lg text-xs font-bold text-slate-700 border border-slate-300">
-                    ${name}
-                  </button>
-                `;
-              }).join("")}
-            </div>
-          </div>
-        `;
-      } else if (activeGrade === "6") {
-        ctrls.innerHTML = `
-          <div class="space-y-3">
-            <span class="text-xs font-bold text-slate-700 block">資訊科學 DFS 與剪枝決策：</span>
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
-              <div>• 角落起手：邊緣過寬，薇薇可逆轉 ➔ <strong class="text-red-600">剪枝淘汰</strong></div>
-              <div>• 邊緣起手：防守失衡，薇薇反制 ➔ <strong class="text-red-600">剪枝淘汰</strong></div>
-              <div>• 正中央起手：控制四個象限 ➔ <strong class="text-emerald-700">唯一 100% 必勝</strong></div>
-            </div>
-            <button onclick="runGrade6PruningSim()" class="w-full py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
-              <i class="ph-bold ph-scissors"></i>
-              <span>一鍵執行 DFS Alpha-Beta 剪枝模擬</span>
-            </button>
-          </div>
-        `;
-      }
+        <div>
+          <label for="create-story" class="block font-bold text-slate-800 mb-1">原始題目或改編構想：</label>
+          <textarea id="create-story" rows="3" required placeholder="簡述題目情境，系統將為您自動螺旋生成 3~6 年級任務..." class="w-full p-2.5 bg-white border border-slate-300 rounded-xl focus:border-emerald-700"></textarea>
+        </div>
 
-      renderLGameBoard();
-    }
+        <div class="pt-2 flex justify-end gap-3">
+          <button type="button" id="cancel-creator-btn" class="px-5 py-2.5 rounded-xl font-bold text-slate-700 hover:bg-slate-200">
+            取消
+          </button>
+          <button type="submit" class="px-6 py-2.5 rounded-xl font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow">
+            ✨ 加入題庫
+          </button>
+        </div>
+      </form>
 
-    function setupGrade4Board(idx) {
-      grade4ViviChoice = idx;
-      lGameBoard = Array(16).fill(null);
-      // Kiki center
-      placePiece(lGameBoard, KIKI_SHAPE, 1, 1, "kiki");
-      
-      const viviMoves = [{ r: 1, c: 2 }, { r: 2, c: 1 }, { r: 2, c: 2 }];
-      const v = viviMoves[idx];
-      placePiece(lGameBoard, VIVI_SHAPE, v.r, v.c, "vivi");
+    </div>
+  </div>
 
-      document.querySelectorAll(".g4-btn").forEach((btn, i) => {
-        if (i === idx) {
-          btn.className = "g4-btn p-2 rounded-xl text-xs font-bold border transition bg-indigo-600 text-white border-indigo-700 shadow";
-        } else {
-          btn.className = "g4-btn p-2 rounded-xl text-xs font-bold border transition bg-slate-100 text-slate-700 border-slate-300";
-        }
-      });
-
-      renderLGameBoard();
-      sfx.click();
-    }
-
-    function handleLCellClick(r, c) {
-      if (activeGrade === "3") {
-        // Try placing Vivi piece at anchor (r,c)
-        if (canPlace(lGameBoard, VIVI_SHAPE, r, c)) {
-          const key = `${r},${c}`;
-          if (!grade3Found.has(key)) {
-            grade3Found.add(key);
-            placePiece(lGameBoard, VIVI_SHAPE, r, c, "vivi");
-            sfx.success();
-            renderLGameBoard();
-            updateGrade3Indicators();
-
-            if (grade3Found.size === 3) {
-              triggerVictory("太棒了！你找齊了薇薇全部 3 種合法的反擊空間！");
-            }
-          } else {
-            sfx.click();
-          }
-        } else {
-          sfx.error();
-        }
-      } else if (activeGrade === "4") {
-        // Player tries to place Kiki's second piece
-        if (r === 0 && c === 0) {
-          if (canPlace(lGameBoard, KIKI_SHAPE, 0, 0)) {
-            placePiece(lGameBoard, KIKI_SHAPE, 0, 0, "kiki");
-            sfx.success();
-            renderLGameBoard();
-            triggerVictory("太漂亮了！一擊封鎖！琪琪佔領左上角 (0,0) 後，薇薇在全場再也沒有任何合法位置可放！琪琪獲得必勝！");
-          }
-        } else {
-          sfx.error();
-        }
-      } else if (activeGrade === "5") {
-        testGrade5Anchor(r, c);
-      }
-    }
-
-    function updateGrade3Indicators() {
-      const countEl = document.getElementById("g3-count");
-      const container = document.getElementById("g3-indicators");
-      if (!countEl || !container) return;
-
-      countEl.textContent = `${grade3Found.size} / 3`;
-      container.innerHTML = ["位置 1", "位置 2", "位置 3"].map((label, idx) => {
-        const found = idx < grade3Found.size;
-        return `
-          <div class="p-2 rounded-lg text-center text-xs font-bold border ${found ? 'bg-indigo-600 text-white border-indigo-700 shadow' : 'bg-slate-100 text-slate-400 border-slate-200'}">
-            ${found ? '✓ 已發現' : label}
-          </div>
-        `;
-      }).join("");
-    }
-
-    function testGrade5Anchor(r, c) {
-      if (r > 2 || c > 2) return;
-      lGameBoard = Array(16).fill(null);
-      placePiece(lGameBoard, KIKI_SHAPE, r, c, "kiki");
-      renderLGameBoard();
-
-      if (r === 1 && c === 1) {
-        sfx.success();
-        triggerVictory("🎯 答對了！【正中央 (1,1)】是全部 9 個起手位置中，唯一保證 100% 絕對必勝的位置！因為它切斷了所有象限！");
-      } else {
-        sfx.error();
-        // Counter move by Vivi
-        if (canPlace(lGameBoard, VIVI_SHAPE, 2, 2)) {
-          placePiece(lGameBoard, VIVI_SHAPE, 2, 2, "vivi");
-        }
-        renderLGameBoard();
-      }
-    }
-
-    function runGrade6PruningSim() {
-      sfx.click();
-      let step = 0;
-      const anchors = [
-        { r: 0, c: 0 }, { r: 0, c: 2 }, { r: 2, c: 0 }, { r: 2, c: 2 },
-        { r: 0, c: 1 }, { r: 1, c: 0 }, { r: 1, c: 2 }, { r: 2, c: 1 },
-        { r: 1, c: 1 }
-      ];
-
-      const interval = setInterval(() => {
-        if (step >= anchors.length) {
-          clearInterval(interval);
-          triggerVictory("🎉 剪枝演算法完成！所有邊角分支因『對手能反擊』均在第 2 層被剪枝淘汰！唯有正中央起手能順利通過 Minimax 驗證！");
-          return;
-        }
-        const a = anchors[step];
-        testGrade5Anchor(a.r, a.c);
-        step++;
-      }, 350);
-    }
-
-    function solveCurrentLGameStage() {
-      if (activeGrade === "3") {
-        lGameBoard = Array(16).fill(null);
-        placePiece(lGameBoard, KIKI_SHAPE, 1, 1, "kiki");
-        placePiece(lGameBoard, VIVI_SHAPE, 1, 2, "vivi");
-        grade3Found = new Set(["1,2", "2,1", "2,2"]);
-        updateGrade3Indicators();
-        renderLGameBoard();
-        triggerVictory("薇薇的 3 個合法位置分別位於棋盤的右上、正下與右下 2×2 窗口！");
-      } else if (activeGrade === "4") {
-        setupGrade4Board(0);
-        placePiece(lGameBoard, KIKI_SHAPE, 0, 0, "kiki");
-        renderLGameBoard();
-        triggerVictory("琪琪只要下在左上角 (0,0)，薇薇下一輪即無路可走！");
-      } else {
-        testGrade5Anchor(1, 1);
-      }
-    }
-
-    function triggerVictory(msg) {
-      sfx.success();
-      try {
-        confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
-      } catch (e) {}
-
-      const debriefBox = document.getElementById("lgame-debrief-box");
-      const debriefText = document.getElementById("lgame-debrief-text");
-      debriefText.textContent = `${msg} ${LGAME_CONFIGS[activeGrade].debrief}`;
-      debriefBox.classList.remove("hidden");
-      debriefBox.scrollIntoView({ behavior: "smooth" });
-    }
-  </script>
+  <footer class="bg-white border-t border-eye-border mt-12 py-8 text-slate-700" role="contentinfo">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+      <div>
+        <p class="font-bold text-slate-900 text-base">國際運算思維挑戰賽教材互動遊戲化平台 (Bebras Game Portal)</p>
+        <p class="text-sm text-slate-500 mt-1">
+          GitHub Pages 部署版 ｜ 2017 經典獨立遊戲收錄於 <code>2017/</code> 目錄 ｜ 遵循 W3C WCAG 2.0 AA 標準
+        </p>
+        <!-- 開發者資料標註 -->
+        <p class="text-sm font-semibold text-emerald-900 mt-2 flex flex-wrap items-center justify-center md:justify-start gap-2">
+          <span class="inline-flex items-center gap-1 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-300">
+            <i class="ph-bold ph-code" aria-hidden="true"></i> 開發維護：新北市信義國小 蔡明光
+          </span>
+          <a href="mailto:tmkedu@gmail.com" class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-900 hover:underline bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 transition">
+            <i class="ph-bold ph-envelope-simple" aria-hidden="true"></i> tmkedu@gmail.com
+          </a>
+        </p>
+      </div>
+      <div class="flex items-center gap-4 text-sm font-semibold">
+        <span class="inline-flex items-center gap-1 text-emerald-800 bg-emerald-100 px-3 py-1.5 rounded-lg">
+          <i class="ph-bold ph-check-circle" aria-hidden="true"></i> 支援鍵盤 Tab 全機能導航
+        </span>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    function launchLGameModal(grade = "3") {
-      const modal = document.getElementById("l-game-modal");
-      modal.classList.remove("hidden");
-      document.body.classList.add("modal-active");
-      switchLGameGrade(grade);
-    }
-
-    function closeLGameModal() {
-      const modal = document.getElementById("l-game-modal");
-      modal.classList.add("hidden");
-      document.body.classList.remove("modal-active");
-    }
-
-    /* Additional Quest Dataset for the Portal */
-    const questList = [
+    /* Bebras Curated Database with 2017 L-Game Spiral Integration */
+    const initialBebrasQuests = [
       {
         id: "2017-l-game",
         year: 2017,
         ctPillar: "演算法",
-        titleTheme: "2017 創始經典：水壩晶石 L 遊戲保衛戰",
-        originalBebras: "2017 國際挑戰賽 - The L-Game Dam Protection",
-        description: "海狸琪琪與水獺薇薇在 4×4 水壩上進行固定方向 L 晶石對決！從 3 年級的直觀空間封鎖，一步步遞進至 6 年級的遊戲樹展開與 DFS 深度剪枝。",
-        estTime: "5~10 分鐘"
+        titleTheme: "海狸村的 L 遊戲：水壩晶石保衛戰",
+        originalBebras: "2017 台灣 Bebras 國際運算思維挑戰賽 - L 遊戲",
+        description: "琪琪與薇薇爭奪水壩控制權！在 4×4 的棋盤上依序擺放不可旋轉的 L 晶石。體驗如何從直觀擺放深化到遊戲樹狀態空間與剪枝演算法！",
+        estTime: "5~12 分鐘",
+        // Standalone file paths pointing directly to 2017/ folder
+        standaloneFiles: {
+          "3": "2017/01 2017_L遊戲_3年級.html",
+          "4": "2017/01 2017_L遊戲_4年級.html",
+          "5": "2017/01 2017_L遊戲_5年級.html",
+          "6": "2017/01 2017_L遊戲_6年級.html"
+        },
+        gradeVariants: {
+          "3": {
+            gradeName: "三年級 (初階：誰是森林築壩王)",
+            difficulty: "初階",
+            interactiveType: "single-choice",
+            options: [
+              "琪琪放在棋盤正中央 (1,1)，能最大程度限制薇薇的空間",
+              "隨便放在最外圍的角落 (0,0)",
+              "放棄擺放，讓薇薇先擺兩塊",
+              "把木片旋轉 90 度擺放"
+            ],
+            correctIndex: 0,
+            storyDetails: "【三年級任務】河狸長老放下了 4×4 浮動河道底板。琪琪的木片不能旋轉，如果琪琪想在一開始就佔據最好的位置，她第一步應該放在哪裡？",
+            hint: "導師提示：中央是兵家必爭之地！放在最中間可以把整個棋盤分割開來喔！",
+            debrief: "本題訓練【空間感知與中心佔位】。在遊戲對奕中，佔領核心位置可以限制對手的選擇分支，這是博弈演算法最基礎的直觀起點！"
+          },
+          "4": {
+            gradeName: "四年級 (進階：符文水壩對決)",
+            difficulty: "基礎",
+            interactiveType: "single-choice",
+            options: [
+              "恰好只剩下 3 種合法的擺放位置",
+              "剩下超過 8 種位置可以自由擺放",
+              "完全沒有任何位置可以放，直接輸掉",
+              "只有 1 種位置可以擺放"
+            ],
+            correctIndex: 0,
+            storyDetails: "【四年級任務】琪琪已經搶先將第一塊木片放在水壩正中央。現在輪到薇薇下棋，請推算薇薇手上不可旋轉的晶石，在棋盤上究竟還能塞進幾個合法位置？",
+            hint: "導師提示：請檢查棋盤的右側與下方，扣除被琪琪重疊與超出邊界的情況，數數看還剩幾個 2x2 空間？",
+            debrief: "這屬於【狀態空間列舉 (State Space Enumeration)】。在電腦科學中，列出所有合法的下一步可能，就是構建『遊戲樹 (Game Tree)』第一層分支的關鍵步驟！"
+          },
+          "5": {
+            gradeName: "五年級 (深化：防洪石板深搜)",
+            difficulty: "進階",
+            interactiveType: "single-choice",
+            options: [
+              "將第二塊木片放在『左上角』，能徹底封死薇薇的所有可能！",
+              "放在正右方邊緣",
+              "放在右下角角落",
+              "任選位置都不影響結果"
+            ],
+            correctIndex: 0,
+            storyDetails: "【五年級任務】不管薇薇在第二回合選擇了哪一種反擊路線，琪琪在第三回合只要將第二塊晶石放在『哪一個關鍵位置』，就能讓薇薇下一輪完全動彈不得、保證獲勝？",
+            hint: "導師提示：仔細看棋盤的左上角 (0,0)！那裡是琪琪第二塊木片的必勝關鍵樞紐！",
+            debrief: "這是著名的【Minimax 必勝策略搜尋】！無論對手做出何種最佳回應，我方都能預先找到對應的最佳反制手段，達成 100% 必勝封殺！"
+          },
+          "6": {
+            gradeName: "六年級 (挑戰：九重封印與剪枝)",
+            difficulty: "挑戰",
+            interactiveType: "single-choice",
+            options: [
+              "在全部 9 個起手位置中，【只有正中央 1 個】能保證琪琪必勝！",
+              "全部 9 個位置都能保證琪琪必勝",
+              "有 4 個角落位置都能必勝",
+              "沒有任何位置可以保證必勝"
+            ],
+            correctIndex: 0,
+            storyDetails: "【六年級任務】在 4×4 棋盤上，琪琪第一步共有 9 個合法的 2×2 起手窗口。若運用深度優先搜尋 (DFS) 與剪枝法評估，共有幾個起手點能保證琪琪 100% 必勝？",
+            hint: "導師提示：只要某個起手點會讓薇薇找到反制逃脫的路徑，電腦就會立刻觸發『剪枝 (Pruning)』淘汰該分支！",
+            debrief: "這就是資訊科學中最核心的【遊戲樹剪枝 (Alpha-Beta Pruning)】！透過剪除無效與失敗分支，超級電腦（如深藍、AlphaGo）才能在千億種狀態中精準找到唯一最優解！"
+          }
+        }
       },
       {
         id: "2026-tree-cipher",
@@ -1001,8 +579,55 @@
         ctPillar: "演算法",
         titleTheme: "螢火蟲森林的二元決策樹",
         originalBebras: "2026 國際挑戰賽樣題 - Binary Guide",
-        description: "在昏暗的古老森林中，領航螢火蟲利用『是與否』分岔指引路徑。從三年級的單純二選一，一路遞進至六年級的二元搜尋剪枝決策！",
-        estTime: "4~8 分鐘"
+        description: "在昏暗古老森林中，領航螢火蟲利用『是與否』分岔指引路徑。體驗從二選一直觀路徑遞進至二元搜尋演算法！",
+        estTime: "5~8 分鐘",
+        standaloneFiles: null,
+        gradeVariants: {
+          "3": {
+            gradeName: "三年級 (初階啟蒙)",
+            difficulty: "初階",
+            interactiveType: "single-choice",
+            options: ["走向左路 (L)", "走向右路 (R)"],
+            correctIndex: 0,
+            storyDetails: "【三年級任務】小螢火蟲迷路了！石碑提示：『前往有紅色野花盛開的左邊小徑(L)』。請點選正確前進方向！",
+            hint: "導師提示：依照碑文唯一指示走向左邊(L)！",
+            debrief: "這是【二元分支 (Binary Branch)】的最基本起步，電腦程式在面對二選一條件時只會執行對應路線。"
+          },
+          "4": {
+            gradeName: "四年級 (循序判斷)",
+            difficulty: "基礎",
+            interactiveType: "single-choice",
+            options: ["先選左(L) ➔ 再選右(R)", "先選右(R) ➔ 再選右(R)", "連續兩次選左(L)"],
+            correctIndex: 0,
+            storyDetails: "【四年級任務】暴風雨即將來臨，請依循發光指示：第一步走『左側石階(L)』，第二步轉向『右側樹洞避難所(R)』。",
+            hint: "導師提示：按照前後順序依序點選 L ➔ R。",
+            debrief: "本題體現【順序性分支 (Sequential Decision Branching)】。"
+          },
+          "5": {
+            gradeName: "五年級 (條件反推)",
+            difficulty: "進階",
+            interactiveType: "single-choice",
+            options: ["路徑依序為：右(R) ➔ 左(L) ➔ 右(R)", "全部選左(L)", "全部選右(R)"],
+            correctIndex: 0,
+            storyDetails: "【五年級任務】探險地圖標註：密碼節點為 3 步深度的樹穴：『避開奇數岩石(R) ➔ 穿越小溪(L) ➔ 進入高處山洞(R)』。",
+            hint: "導師提示：依序確認三次分支代號 R ➔ L ➔ R。",
+            debrief: "這對應了【二元樹遍歷 (Tree Traversal)】，樹的深度越深，容納的資料量呈指數成長！"
+          },
+          "6": {
+            gradeName: "六年級 (二元搜尋剪枝)",
+            difficulty: "挑戰",
+            interactiveType: "single-choice",
+            options: [
+              "每次比較直接排除一半不可能的區域（對數級 O(log N) 搜尋）",
+              "從第一棵樹開始一棵一棵挨家挨戶檢查（線性窮舉）",
+              "隨機在地圖上任意挑選一棵樹碰運氣"
+            ],
+            correctIndex: 0,
+            storyDetails: "【六年級任務】森林中有編號 1 到 100 號排列整齊的小屋。若使用二元搜尋決策樹，其核心優勢是什麼？",
+            hint: "導師提示：想想看猜數字 1~100 遊戲，每次猜中間值能直接砍掉一半無效範圍！",
+            debrief: "這是資訊科學中最著名的【二元搜尋演算法 (Binary Search)】！"
+          }
+        }
       },
       {
         id: "2025-dam-pipeline",
@@ -1010,8 +635,55 @@
         ctPillar: "拆解",
         titleTheme: "海狸水壩排程拓撲術",
         originalBebras: "2025 國際挑戰賽 - Beaver Pipeline Flow",
-        description: "水庫閘門有嚴格的先後依賴關聯。從三年級的兩步順序，深化到六年級的拓撲排序與死結偵測！",
-        estTime: "5~8 分鐘"
+        description: "水庫閘門有嚴格的先後依賴關聯。從三年級的先後順序，深化到六年級的拓撲排序與死結偵測！",
+        estTime: "5~8 分鐘",
+        standaloneFiles: null,
+        gradeVariants: {
+          "3": {
+            gradeName: "三年級 (先後程序)",
+            difficulty: "初階",
+            interactiveType: "single-choice",
+            options: ["先移開大石 ➔ 再放小樹枝", "先放小樹枝 ➔ 再移大石"],
+            correctIndex: 0,
+            storyDetails: "【三年級任務】小海狸修補水壩！如果先放小樹枝會被大水沖走，必須先移開大石。請決定安全順序！",
+            hint: "導師提示：哪件事必須先做，後續動作才不會失敗？",
+            debrief: "這題是【程序執行順序 (Sequencing)】，日常與程式中步驟順序不可顛倒。"
+          },
+          "4": {
+            gradeName: "四年級 (相依排程)",
+            difficulty: "基礎",
+            interactiveType: "single-choice",
+            options: ["閘門 A ➔ 閘門 B ➔ 閘門 C", "閘門 C ➔ 閘門 B ➔ 閘門 A", "同時全開"],
+            correctIndex: 0,
+            storyDetails: "【四年級任務】必須先開閘門 A 釋放支壓，才能開閘門 B，最後才能開啟總閘門 C。",
+            hint: "導師提示：按 A ➔ B ➔ C 依賴關係依序開啟。",
+            debrief: "這屬於【依賴性任務排程】，將複雜流程拆解成安全的前提單元。"
+          },
+          "5": {
+            gradeName: "五年級 (拓撲排序)",
+            difficulty: "進階",
+            interactiveType: "single-choice",
+            options: ["閥門 2 (總源頭) ➔ 閥門 1 ➔ 閥門 4 ➔ 閥門 3", "任意順序皆可", "閥門 3 優先"],
+            correctIndex: 0,
+            storyDetails: "【五年級任務】四個閥門相依：閥門 2 是總源頭；開好 2 才能開 1；開好 1 才能開 4；最後才能開 3。",
+            hint: "導師提示：先找出沒有任何前置條件的源頭節點推進！",
+            debrief: "這是大學資訊系非常重要的【拓撲排序演算法 (Topological Sort)】。"
+          },
+          "6": {
+            gradeName: "六年級 (死結與循環判定)",
+            difficulty: "挑戰",
+            interactiveType: "single-choice",
+            options: [
+              "系統發生『循環相依 (Cycle)』，形成誰也無法先開的死結 (Deadlock)",
+              "只要水流速度夠快，循環相依就會自動解開",
+              "隨機同時打開所有閥門是最佳解法"
+            ],
+            correctIndex: 0,
+            storyDetails: "【六年級任務】若工程師設計：甲等乙開、乙等丙開、丙卻又等甲開。請問為什麼系統永遠無法啟動？",
+            hint: "導師提示：互相等待形成了死結！",
+            debrief: "本題核心是【死結 (Deadlock)】與【有向圖中的環 (Cycle)】判定。"
+          }
+        }
       },
       {
         id: "2024-pattern-necklace",
@@ -1019,25 +691,70 @@
         ctPillar: "模式識別",
         titleTheme: "皇家護符的循環圖騰",
         originalBebras: "2024 國際挑戰賽 - Pearl Patterns",
-        description: "辨識寶石圖騰的週期循環規律。從三年級的 ABC 循環，到六年級的餘數運算與字串匹配！",
-        estTime: "4~7 分鐘"
-      },
-      {
-        id: "2023-island-map",
-        year: 2023,
-        ctPillar: "抽象化",
-        titleTheme: "群島航線圖論抽象化",
-        originalBebras: "2023 國際挑戰賽 - Archipelago Ferry",
-        description: "學習過濾現實中的冗餘雜訊。從三年級的地圖抽象符號，深化至六年級的最小生成樹與路徑圖！",
-        estTime: "5~8 分鐘"
+        description: "辨識寶石圖騰的週期規律。從三年級的 ABC 循環，深化至六年級的餘數運算與字串匹配！",
+        estTime: "4~7 分鐘",
+        standaloneFiles: null,
+        gradeVariants: {
+          "3": {
+            gradeName: "三年級 (簡單循環)",
+            difficulty: "初階",
+            interactiveType: "single-choice",
+            options: ["⭐ 星晶", "💎 鑽石", "🟢 翡翠"],
+            correctIndex: 0,
+            storyDetails: "【三年級任務】觀察護符規律：【💎 鑽石】➔【🟢 翡翠】➔【⭐ 星晶】➔【💎 鑽石】➔【🟢 翡翠】➔【？】。",
+            hint: "導師提示：念出節奏：鑽石、翡翠、星晶... 再來是鑽石、翡翠，接下來是誰？",
+            debrief: "這就是【循環結構 (Loop)】與【模式識別 (Pattern)】。"
+          },
+          "4": {
+            gradeName: "四年級 (週期長度)",
+            difficulty: "基礎",
+            interactiveType: "single-choice",
+            options: ["每 4 顆為一個最小循環單元", "每 2 顆為一個單元", "完全沒有規律"],
+            correctIndex: 0,
+            storyDetails: "【四年級任務】項鍊排列為：紅、藍、紅、綠、紅、藍、紅、綠... 請分析最小重複週期單元由幾顆珠子組成？",
+            hint: "導師提示：從第一個紅數到下一次重複出現前！",
+            debrief: "本題訓練【最小循環週期】的判定。"
+          },
+          "5": {
+            gradeName: "五年級 (模除求項)",
+            difficulty: "進階",
+            interactiveType: "single-choice",
+            options: ["🟢 翡翠 (因為 26 ÷ 4 餘 2)", "💎 鑽石", "⭐ 星晶"],
+            correctIndex: 0,
+            storyDetails: "【五年級任務】神廟柱子以【💎 鑽石、🟢 翡翠、⭐ 星晶、🔮 紫水晶】4種寶石依序無限重複。第 26 顆寶石會是什麼？",
+            hint: "導師提示：利用模除運算：26 % 4 = 2！",
+            debrief: "這題結合了【模除運算 (Modulo Operation)】與演算法優化。"
+          },
+          "6": {
+            gradeName: "六年級 (對稱模式)",
+            difficulty: "挑戰",
+            interactiveType: "single-choice",
+            options: [
+              "回文結構 (Palindrome) 與前後括號對稱性檢查",
+              "單純隨機排列，無法用演算法驗證",
+              "只能用四則加減法計算"
+            ],
+            correctIndex: 0,
+            storyDetails: "【六年級任務】符號排列為：『A B C D C B A』。此類前後對稱模式在運算思維中對應何種結構？",
+            hint: "導師提示：想想看堆疊 (Stack) 先進後出的特性！",
+            debrief: "這是著名的【回文 (Palindrome)】與【堆疊平衡比對 (Stack Balance)】。"
+          }
+        }
       }
     ];
 
+    let questList = [...initialBebrasQuests];
     let selectedYear = "ALL";
     let selectedGrade = "ALL";
     let selectedCT = "ALL";
     let searchQuery = "";
+    let currentActiveQuest = null;
+    let currentModalGrade = "3";
+    let currentInteractiveChoice = null;
+    let fontSizeLevel = 1;
+  </script>
 
+  <script>
     function renderQuestCards() {
       const grid = document.getElementById("games-grid");
       const emptyState = document.getElementById("empty-state");
@@ -1045,15 +762,16 @@
 
       const filtered = questList.filter(q => {
         const matchesYear = (selectedYear === "ALL") || (q.year.toString() === selectedYear);
+        const matchesGrade = (selectedGrade === "ALL") || (q.gradeVariants && q.gradeVariants[selectedGrade]);
         const matchesCT = (selectedCT === "ALL") || (q.ctPillar === selectedCT);
         const matchesSearch = searchQuery === "" || 
                               q.titleTheme.toLowerCase().includes(searchQuery.toLowerCase()) || 
                               q.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                               q.originalBebras.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesYear && matchesCT && matchesSearch;
+        return matchesYear && matchesGrade && matchesCT && matchesSearch;
       });
 
-      countBadge.textContent = `共載入 ${filtered.length} 個螺旋題組單元 (涵蓋 3~6 年級)`;
+      countBadge.textContent = `共載入 ${filtered.length} 個螺旋題組單元 (全涵蓋 3~6 年級)`;
 
       if (filtered.length === 0) {
         grid.innerHTML = "";
@@ -1070,20 +788,21 @@
           "演算法": "bg-emerald-100 text-emerald-800 border-emerald-200"
         }[q.ctPillar] || "bg-slate-100 text-slate-800 border-slate-200";
 
-        const isLGame = (q.id === "2017-l-game");
+        const is2017 = (q.year === 2017);
+        const defaultGrade = (selectedGrade !== "ALL" && q.gradeVariants[selectedGrade]) ? selectedGrade : "3";
 
         return `
-          <article class="bg-white rounded-2xl border border-eye-border gentle-shadow hover:border-emerald-600 transition-all p-5 flex flex-col justify-between focus-within:ring-2 focus-within:ring-emerald-700" aria-labelledby="card-title-${q.id}">
+          <article class="bg-white rounded-2xl border-2 ${is2017 ? 'border-amber-400 ring-2 ring-amber-200/50' : 'border-eye-border'} gentle-shadow hover:border-emerald-600 transition-all p-5 flex flex-col justify-between" aria-labelledby="card-title-${q.id}">
             <div>
               <div class="flex items-center justify-between gap-2 mb-3">
-                <span class="px-2.5 py-1 text-xs font-black rounded-md bg-slate-100 text-slate-800 border border-slate-200">
-                  🗓️ ${q.year} 年度
+                <span class="px-2.5 py-1 text-xs font-black rounded-md ${is2017 ? 'bg-amber-500 text-slate-950' : 'bg-slate-100 text-slate-800 border border-slate-200'}">
+                  ${is2017 ? '⭐ 2017 特選' : `🗓️ ${q.year} 年度`}
                 </span>
                 <span class="px-2.5 py-1 text-xs font-bold rounded-md border ${ctBadgeColors}">
                   ${q.ctPillar}思維
                 </span>
                 <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                  🎯 3~6年級螺旋
+                  🎯 3~6年級全階適配
                 </span>
               </div>
 
@@ -1100,43 +819,59 @@
               </p>
 
               <!-- Grade Quick Pill Selector -->
-              <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3 space-y-1.5">
-                <div class="text-xs font-bold text-slate-700 flex items-center justify-between">
-                  <span class="flex items-center gap-1">
-                    <i class="ph-bold ph-folder text-amber-600"></i>
-                    <span>難度階梯 (${isLGame ? '2017/' : '線上螺旋'} 目錄)：</span>
-                  </span>
-                  ${isLGame ? '<span class="text-amber-700 font-black text-[11px]">✨ 經典大作</span>' : ''}
+              <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 mb-3 space-y-1">
+                <div class="text-xs font-bold text-slate-600 flex items-center justify-between">
+                  <span>難度階梯選擇：</span>
+                  ${is2017 ? '<span class="text-amber-700 font-bold">點選可開啟獨立關卡</span>' : '<span class="text-slate-400">點擊切換年級</span>'}
                 </div>
                 <div class="grid grid-cols-4 gap-1.5 pt-1">
                   ${["3", "4", "5", "6"].map(gr => {
-                    return `
-                      <button 
-                        type="button"
-                        onclick="launchLGameModal('${gr}')"
-                        class="px-2 py-1.5 text-xs font-black rounded-lg transition text-center border bg-white text-slate-800 border-slate-300 hover:bg-emerald-50 hover:border-emerald-600 shadow-sm"
-                        title="啟動 ${gr} 年級難度版本 (位於 2017/ 目錄)"
-                      >
-                        ${gr}年級
-                      </button>
-                    `;
+                    const isSelected = (selectedGrade === gr);
+                    if (is2017 && q.standaloneFiles && q.standaloneFiles[gr]) {
+                      const filePath = q.standaloneFiles[gr];
+                      return `
+                        <button 
+                          type="button"
+                          onclick="launchStandaloneGame('${filePath}', '2017 年 ${gr} 年級：${q.titleTheme}')"
+                          class="px-2 py-1.5 text-xs font-black rounded-lg transition text-center border bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-500 hover:text-slate-950 shadow-sm"
+                          title="開啟 2017 年 ${gr} 年級獨立遊戲"
+                        >
+                          ${gr}年級 🎮
+                        </button>
+                      `;
+                    } else {
+                      return `
+                        <button 
+                          type="button"
+                          onclick="launchGameModal('${q.id}', '${gr}')"
+                          class="px-2 py-1.5 text-xs font-black rounded-lg transition text-center border ${
+                            isSelected 
+                              ? 'bg-emerald-700 text-white border-emerald-800 shadow-sm' 
+                              : 'bg-white text-slate-700 border-slate-300 hover:bg-emerald-50 hover:border-emerald-600'
+                          }"
+                          title="切換至 ${gr} 年級難度"
+                        >
+                          ${gr}年級
+                        </button>
+                      `;
+                    }
                   }).join("")}
                 </div>
               </div>
 
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-              <span class="text-xs font-bold text-slate-500">
-                ⏱️ ${q.estTime}
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-500 flex items-center gap-1">
+                <i class="ph-bold ph-clock" aria-hidden="true"></i> ${q.estTime} ｜ 螺旋題組
               </span>
               <button 
                 type="button" 
-                onclick="launchLGameModal('3')"
+                onclick="launchGameModal('${q.id}', '${defaultGrade}')"
                 class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl transition text-base shadow focus:ring-2 focus:ring-emerald-800"
-                aria-label="開始體驗 ${q.titleTheme} 互動挑戰"
+                aria-label="開始體驗 ${q.titleTheme} 互動解密"
               >
-                <span>進入遊戲</span>
+                <span>進入螺旋解密</span>
                 <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
               </button>
             </div>
@@ -1147,10 +882,211 @@
   </script>
 
   <script>
+    /* Open Standalone Game Modal pointing to 2017/ folder files */
+    function launchStandaloneGame(filePath, titleText) {
+      const modal = document.getElementById("standalone-modal");
+      const iframe = document.getElementById("standalone-iframe");
+      const titleEl = document.getElementById("standalone-modal-title");
+      const newTabLink = document.getElementById("standalone-open-newtab");
+
+      // Set titles and encoded URI to support spaces and Chinese file paths on GitHub Pages
+      const safePath = encodeURI(filePath);
+      titleEl.textContent = titleText;
+      iframe.src = safePath;
+      newTabLink.href = safePath;
+
+      modal.classList.remove("hidden");
+      document.body.classList.add("modal-active");
+    }
+
+    function closeStandaloneModal() {
+      const modal = document.getElementById("standalone-modal");
+      const iframe = document.getElementById("standalone-iframe");
+      iframe.src = "";
+      modal.classList.add("hidden");
+      document.body.classList.remove("modal-active");
+    }
+
+    /* Open In-Page Spiral Modal */
+    function launchGameModal(questId, gradeTier = "3") {
+      const quest = questList.find(q => q.id === questId);
+      if (!quest) return;
+
+      currentActiveQuest = quest;
+      currentModalGrade = gradeTier;
+
+      const modal = document.getElementById("game-modal");
+      document.body.classList.add("modal-active");
+
+      document.getElementById("modal-game-badge").textContent = `${quest.year} 年 ｜ ${quest.ctPillar}核心`;
+      document.getElementById("modal-game-title").textContent = quest.titleTheme;
+
+      // Update standalone banner visibility for 2017
+      const launcherBanner = document.getElementById("modal-standalone-launcher");
+      const launcherBtn = document.getElementById("modal-open-standalone-btn");
+      if (quest.standaloneFiles && quest.standaloneFiles[currentModalGrade]) {
+        launcherBanner.classList.remove("hidden");
+        launcherBtn.onclick = () => {
+          launchStandaloneGame(quest.standaloneFiles[currentModalGrade], `${quest.year} 年 ${currentModalGrade} 年級：${quest.titleTheme}`);
+        };
+      } else {
+        launcherBanner.classList.add("hidden");
+      }
+
+      updateModalGradeTabs(currentModalGrade);
+      loadGradeVariant(currentModalGrade);
+
+      modal.classList.remove("hidden");
+      modal.querySelector("#modal-game-title").setAttribute("tabindex", "-1");
+      modal.querySelector("#modal-game-title").focus();
+    }
+
+    function closeGameModal() {
+      const modal = document.getElementById("game-modal");
+      modal.classList.add("hidden");
+      document.body.classList.remove("modal-active");
+      currentActiveQuest = null;
+    }
+  </script>
+
+  <script>
+    function switchModalGrade(gradeKey) {
+      if (!currentActiveQuest) return;
+      currentModalGrade = gradeKey;
+      updateModalGradeTabs(gradeKey);
+      loadGradeVariant(gradeKey);
+
+      // Update standalone launcher button if available
+      const launcherBanner = document.getElementById("modal-standalone-launcher");
+      const launcherBtn = document.getElementById("modal-open-standalone-btn");
+      if (currentActiveQuest.standaloneFiles && currentActiveQuest.standaloneFiles[gradeKey]) {
+        launcherBanner.classList.remove("hidden");
+        launcherBtn.onclick = () => {
+          launchStandaloneGame(currentActiveQuest.standaloneFiles[gradeKey], `${currentActiveQuest.year} 年 ${gradeKey} 年級：${currentActiveQuest.titleTheme}`);
+        };
+      } else {
+        launcherBanner.classList.add("hidden");
+      }
+    }
+
+    function updateModalGradeTabs(activeKey) {
+      ["3", "4", "5", "6"].forEach(gr => {
+        const tab = document.getElementById(`modal-tab-grade-${gr}`);
+        if (!tab) return;
+        if (gr === activeKey) {
+          tab.className = "modal-grade-tab px-3 py-1 rounded-lg text-xs sm:text-sm font-black transition bg-amber-400 text-slate-950 shadow";
+          tab.setAttribute("aria-selected", "true");
+        } else {
+          tab.className = "modal-grade-tab px-3 py-1 rounded-lg text-xs sm:text-sm font-black transition text-emerald-200 hover:text-white hover:bg-emerald-800/60";
+          tab.setAttribute("aria-selected", "false");
+        }
+      });
+    }
+
+    function loadGradeVariant(gradeKey) {
+      if (!currentActiveQuest) return;
+      const variant = currentActiveQuest.gradeVariants[gradeKey] || currentActiveQuest.gradeVariants["3"];
+      currentInteractiveChoice = null;
+
+      document.getElementById("modal-game-story").textContent = variant.storyDetails;
+
+      const feedbackBox = document.getElementById("modal-feedback-box");
+      const debriefBox = document.getElementById("modal-ct-debrief");
+      feedbackBox.className = "hidden p-4 rounded-xl border text-base font-semibold leading-relaxed";
+      feedbackBox.innerHTML = "";
+      debriefBox.classList.add("hidden");
+
+      renderInteractiveArea(variant);
+    }
+
+    function renderInteractiveArea(variant) {
+      const container = document.getElementById("modal-interactive-area");
+      container.innerHTML = `
+        <div class="space-y-3 text-left">
+          <p class="font-bold text-slate-800 text-base text-center">🎯 請仔細思考並點選最佳決策方案：</p>
+          <div class="space-y-2">
+            ${variant.options.map((opt, idx) => `
+              <button type="button" onclick="chooseOptionIndex(${idx})" class="choice-opt-btn w-full p-3.5 text-left bg-white hover:bg-emerald-50 border-2 border-slate-300 font-bold rounded-xl text-slate-800 transition flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-700 shrink-0">
+                  ${String.fromCharCode(65 + idx)}
+                </span>
+                <span>${opt}</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function chooseOptionIndex(idx) {
+      currentInteractiveChoice = idx;
+      document.querySelectorAll(".choice-opt-btn").forEach((b, i) => {
+        if (i === idx) {
+          b.classList.add("border-emerald-700", "bg-emerald-100");
+          b.querySelector("span").classList.add("bg-emerald-700", "text-white");
+        } else {
+          b.classList.remove("border-emerald-700", "bg-emerald-100");
+          b.querySelector("span").classList.remove("bg-emerald-700", "text-white");
+        }
+      });
+    }
+  </script>
+
+  <script>
+    function evaluateSolution() {
+      if (!currentActiveQuest) return;
+
+      const variant = currentActiveQuest.gradeVariants[currentModalGrade] || currentActiveQuest.gradeVariants["3"];
+      const debriefBox = document.getElementById("modal-ct-debrief");
+      const debriefText = document.getElementById("modal-debrief-text");
+
+      if (currentInteractiveChoice === null || currentInteractiveChoice === undefined) {
+        showFeedback("warning", "請先點選一個你認為最合適的解答方案！");
+        return;
+      }
+
+      const isCorrect = (currentInteractiveChoice === variant.correctIndex);
+
+      if (isCorrect) {
+        showFeedback("success", `🎉 太棒了！【${variant.gradeName}】決策完全正確！請查看下方的核心運算思維解密！`);
+        debriefText.textContent = variant.debrief;
+        debriefBox.classList.remove("hidden");
+      } else {
+        showFeedback("error", `🧭 唔... 似乎遇到了瓶頸！${variant.hint} 別灰心，試著調整決策再試一次！`);
+      }
+    }
+
+    function showFeedback(type, message) {
+      const feedbackBox = document.getElementById("modal-feedback-box");
+      feedbackBox.classList.remove("hidden", "bg-amber-50", "border-amber-300", "text-amber-900", "bg-red-50", "border-red-300", "text-red-900", "bg-emerald-100", "border-emerald-300", "text-emerald-950");
+
+      if (type === "warning") {
+        feedbackBox.classList.add("bg-amber-50", "border-amber-300", "text-amber-900");
+      } else if (type === "error") {
+        feedbackBox.classList.add("bg-red-50", "border-red-300", "text-red-900");
+      } else {
+        feedbackBox.classList.add("bg-emerald-100", "border-emerald-300", "text-emerald-950");
+      }
+      feedbackBox.innerHTML = message;
+    }
+
+    function showHintPrompt() {
+      if (!currentActiveQuest) return;
+      const variant = currentActiveQuest.gradeVariants[currentModalGrade] || currentActiveQuest.gradeVariants["3"];
+      showFeedback("warning", `💡 ${variant.hint}`);
+    }
+
+    function resetCurrentPuzzle() {
+      if (!currentActiveQuest) return;
+      loadGradeVariant(currentModalGrade);
+    }
+  </script>
+
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
       renderQuestCards();
 
-      // Year timeline filters
+      // Timeline Year Buttons
       document.querySelectorAll(".year-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           document.querySelectorAll(".year-btn").forEach(b => {
@@ -1159,6 +1095,7 @@
           });
           btn.classList.remove("bg-slate-100", "text-slate-800");
           btn.classList.add("bg-emerald-800", "text-white");
+
           selectedYear = btn.getAttribute("data-year");
           renderQuestCards();
         });
@@ -1182,35 +1119,44 @@
         renderQuestCards();
       });
 
-      // Sound Toggle
-      document.getElementById("sound-toggle-btn").addEventListener("click", (e) => {
-        sfx.enabled = !sfx.enabled;
-        const icon = document.getElementById("sound-icon");
-        const text = document.getElementById("sound-text");
-        if (sfx.enabled) {
-          icon.className = "ph-bold ph-speaker-high text-lg text-emerald-800";
-          text.textContent = "音效開";
-          e.currentTarget.setAttribute("aria-pressed", "true");
-          sfx.click();
-        } else {
-          icon.className = "ph-bold ph-speaker-slash text-lg text-slate-400";
-          text.textContent = "靜音";
-          e.currentTarget.setAttribute("aria-pressed", "false");
-        }
-      });
+      // Modal action buttons
+      document.getElementById("close-modal-btn").addEventListener("click", closeGameModal);
+      document.getElementById("modal-submit-btn").addEventListener("click", evaluateSolution);
+      document.getElementById("modal-hint-btn").addEventListener("click", showHintPrompt);
+      document.getElementById("modal-reset-btn").addEventListener("click", resetCurrentPuzzle);
 
-      // Vision Care Font Resizer
-      document.getElementById("font-increase").addEventListener("click", () => { document.documentElement.style.fontSize = "20px"; });
-      document.getElementById("font-normal").addEventListener("click", () => { document.documentElement.style.fontSize = "18px"; });
-      document.getElementById("font-decrease").addEventListener("click", () => { document.documentElement.style.fontSize = "16px"; });
-
-      // Keyboard Esc to close modal
+      // Keyboard Esc to close modals
       window.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-          closeLGameModal();
+          closeGameModal();
+          closeStandaloneModal();
+          closeCreatorModal();
         }
       });
+
+      // Font Resizer for vision care
+      document.getElementById("font-increase").addEventListener("click", () => setFontSize(2));
+      document.getElementById("font-normal").addEventListener("click", () => setFontSize(1));
+      document.getElementById("font-decrease").addEventListener("click", () => setFontSize(0));
+
+      // Creator Modal toggles
+      document.getElementById("open-creator-modal-btn").addEventListener("click", openCreatorModal);
+      document.getElementById("close-creator-btn").addEventListener("click", closeCreatorModal);
+      document.getElementById("cancel-creator-btn").addEventListener("click", closeCreatorModal);
+      document.getElementById("creator-form").addEventListener("submit", handleCreateQuest);
     });
+
+    function setFontSize(level) {
+      fontSizeLevel = level;
+      const htmlEl = document.documentElement;
+      if (level === 2) {
+        htmlEl.style.fontSize = "20px";
+      } else if (level === 0) {
+        htmlEl.style.fontSize = "16px";
+      } else {
+        htmlEl.style.fontSize = "18px";
+      }
+    }
 
     function resetFilters() {
       selectedYear = "ALL";
@@ -1231,6 +1177,83 @@
       });
 
       renderQuestCards();
+    }
+
+    function openCreatorModal() {
+      document.getElementById("creator-modal").classList.remove("hidden");
+      document.body.classList.add("modal-active");
+    }
+
+    function closeCreatorModal() {
+      document.getElementById("creator-modal").classList.add("hidden");
+      document.body.classList.remove("modal-active");
+    }
+
+    function handleCreateQuest(e) {
+      e.preventDefault();
+      const year = parseInt(document.getElementById("create-year").value, 10);
+      const title = document.getElementById("create-title").value.trim();
+      const ctPillar = document.getElementById("create-ct").value;
+      const story = document.getElementById("create-story").value.trim();
+
+      const newQuest = {
+        id: `custom-${Date.now()}`,
+        year: year,
+        ctPillar: ctPillar,
+        titleTheme: title,
+        originalBebras: `${year} Bebras 轉化螺旋題組`,
+        description: story.substring(0, 75) + (story.length > 75 ? "..." : ""),
+        estTime: "5~8 分鐘",
+        standaloneFiles: null,
+        gradeVariants: {
+          "3": {
+            gradeName: "三年級 (初階啟蒙)",
+            difficulty: "初階",
+            interactiveType: "single-choice",
+            options: ["選擇直觀圖像解法", "隨意猜測"],
+            correctIndex: 0,
+            storyDetails: `【三年級啟蒙任務】${story}`,
+            hint: "導師提示：請觀察最顯著的圖像特徵。",
+            debrief: `三年級重點在於藉由操作體驗【${ctPillar}】的初階概念。`
+          },
+          "4": {
+            gradeName: "四年級 (循序進階)",
+            difficulty: "基礎",
+            interactiveType: "single-choice",
+            options: ["按照規律順序推進", "任意顛倒順序"],
+            correctIndex: 0,
+            storyDetails: `【四年級進階任務】${story}`,
+            hint: "導師提示：注意前後步驟次序。",
+            debrief: "四年級強調在具象與邏輯之間建立穩固的流程認知。"
+          },
+          "5": {
+            gradeName: "五年級 (邏輯推理)",
+            difficulty: "進階",
+            interactiveType: "single-choice",
+            options: ["建立多條件判定決策", "忽略約束限制"],
+            correctIndex: 0,
+            storyDetails: `【五年級深化任務】${story}`,
+            hint: "導師提示：檢查所有約束條件是否全部滿足。",
+            debrief: `五年級訓練在面對複合變數時，運用【${ctPillar}】歸納出通用解法。`
+          },
+          "6": {
+            gradeName: "六年級 (演算法綜合)",
+            difficulty: "挑戰",
+            interactiveType: "single-choice",
+            options: ["運用最佳化演算法推導出唯一解", "窮舉法無效率嘗試"],
+            correctIndex: 0,
+            storyDetails: `【六年級挑戰任務】${story}`,
+            hint: "導師提示：思考演算法的效率與剪枝邊界。",
+            debrief: "六年級著重於將問題高度抽象化，銜接電腦科學演算法！"
+          }
+        }
+      };
+
+      questList.unshift(newQuest);
+      closeCreatorModal();
+      document.getElementById("creator-form").reset();
+      renderQuestCards();
+      launchGameModal(newQuest.id, "3");
     }
   </script>
 </body>
