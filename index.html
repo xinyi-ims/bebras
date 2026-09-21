@@ -114,11 +114,6 @@
           </button>
         </div>
 
-        <button onclick="launchStandaloneGame('01_2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" type="button" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-amber-800">
-          <i class="ph-bold ph-game-controller text-xl" aria-hidden="true"></i>
-          <span>特選：2017 L遊戲</span>
-        </button>
-
         <button id="open-creator-modal-btn" type="button" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-emerald-800">
           <i class="ph-bold ph-plus-circle text-xl" aria-hidden="true"></i>
           <span class="hidden sm:inline">轉化新教材</span>
@@ -136,39 +131,68 @@
       <div class="relative z-10 max-w-4xl space-y-4">
         <div class="inline-flex items-center gap-2 text-amber-300 text-sm font-semibold bg-emerald-950/80 px-3 py-1 rounded-full border border-amber-600/50">
           <i class="ph-fill ph-star" aria-hidden="true"></i>
-          <span>焦點收錄：2017 年 3~6 年級《L 遊戲：水壩晶石保衛戰》全階螺旋整合</span>
+          <span>焦點收錄：2017 年 3~6 年級《L 遊戲》與《排列花瓶》全階螺旋整合</span>
         </div>
         <h2 id="hero-title" class="text-2xl sm:text-3xl font-extrabold text-white tracking-wide leading-snug">
           解鎖邏輯超能力！Bebras 國際運算思維挑戰賽教材庫
         </h2>
         <p class="text-emerald-100 text-base sm:text-lg leading-relaxed">
-          不背語法、不用死記！將國際運算思維難題化為沉浸式故事謎題。引導學童在決策中掌握「問題拆解、模式識別、抽象化、遊戲樹與剪枝演算法」。
+          不背語法、不用死記！將國際運算思維難題化為沉浸式故事謎題。引導學童在決策中掌握「問題拆解、模式識別、抽象化、排序與剪枝演算法」。
         </p>
         
-        <!-- Quick Launch Bar -->
-        <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 mt-2 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <span class="text-3xl">🦫</span>
-            <div>
-              <h3 class="font-bold text-amber-300 text-base">2017 創始經典：海狸村的 L 遊戲爭霸戰</h3>
-              <p class="text-xs text-slate-200">檔名已全數優化為無空格版本，支援根目錄與 <code>2017/</code> 資料夾自動探測！</p>
+        <!-- Quick Launch Bar: 2017 Dual Classics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+          <!-- 2017 排列花瓶 -->
+          <div class="bg-white/10 backdrop-blur-md rounded-xl p-3.5 border border-white/20 flex flex-col justify-between gap-2.5">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">🏺</span>
+              <div>
+                <h3 class="font-bold text-amber-300 text-sm sm:text-base">2017 經典：海狸波波的排列花瓶</h3>
+                <p class="text-[11px] text-slate-200">縱向排列透視檢測，從最胖到最瘦的排序法則！</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button onclick="launchStandaloneGame('02_2017_排列花瓶_3年級.html', '2017 年 3 年級：海狸波波的魔法櫥窗 (排列花瓶)')" class="px-2 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-lg text-xs transition shadow text-center">
+                3年級 🎮
+              </button>
+              <button onclick="launchStandaloneGame('02_2017_排列花瓶_4年級.html', '2017 年 4 年級：晶透神殿排列花瓶')" class="px-2 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-lg text-xs transition shadow text-center">
+                4年級 🎮
+              </button>
+              <button onclick="launchStandaloneGame('02_2017_排列花瓶_5年級.html', '2017 年 5 年級：神殿水晶瓶透視封印')" class="px-2 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-lg text-xs transition shadow text-center">
+                5年級 🎮
+              </button>
+              <button onclick="launchStandaloneGame('02_2017+排列花瓶_6年級.html', '2017 年 6 年級：透光花瓶之謎 (排序演算法)')" class="px-2 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-lg text-xs transition shadow text-center">
+                6年級 🎮
+              </button>
             </div>
           </div>
-          <div class="flex flex-wrap gap-2">
-            <button onclick="launchStandaloneGame('01_2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
-              3年級 初階版 🎮
-            </button>
-            <button onclick="launchStandaloneGame('01_2017_L遊戲_4年級.html', '2017 年 4 年級：符文水壩對決')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
-              4年級 進階版 🎮
-            </button>
-            <button onclick="launchStandaloneGame('01_2017_L遊戲_5年級.html', '2017 年 5 年級：防洪石板深搜')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
-              5年級 深化版 🎮
-            </button>
-            <button onclick="launchStandaloneGame('01_2017_L遊戲_6年級.html', '2017 年 6 年級：九重封印與剪枝')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
-              6年級 挑戰版 🎮
-            </button>
+
+          <!-- 2017 L遊戲 -->
+          <div class="bg-white/10 backdrop-blur-md rounded-xl p-3.5 border border-white/20 flex flex-col justify-between gap-2.5">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">🦫</span>
+              <div>
+                <h3 class="font-bold text-amber-300 text-sm sm:text-base">2017 經典：海狸村的 L 遊戲爭霸戰</h3>
+                <p class="text-[11px] text-slate-200">博弈對奕、狀態空間與 Minimax 剪枝搜尋！</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button onclick="launchStandaloneGame('01_2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" class="px-2 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow text-center">
+                3年級 🎮
+              </button>
+              <button onclick="launchStandaloneGame('01_2017_L遊戲_4年級.html', '2017 年 4 年級：符文水壩對決')" class="px-2 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow text-center">
+                4年級 🎮
+              </button>
+              <button onclick="launchStandaloneGame('01_2017_L遊戲_5年級.html', '2017 年 5 年級：防洪石板深搜')" class="px-2 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow text-center">
+                5年級 🎮
+              </button>
+              <button onclick="launchStandaloneGame('01_2017_L遊戲_6年級.html', '2017 年 6 年級：九重封印與剪枝')" class="px-2 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow text-center">
+                6年級 🎮
+              </button>
+            </div>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -184,7 +208,7 @@
           <input 
             type="text" 
             id="search-input" 
-            placeholder="搜尋題目名稱、如『L遊戲』、『二元樹』、『海狸水壩』、『剪枝』..." 
+            placeholder="搜尋題目名稱、如『排列花瓶』、『L遊戲』、『排序』、『二元樹』..." 
             class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-300 rounded-xl text-slate-900 text-base focus:bg-white focus:border-emerald-700 transition"
           />
         </div>
@@ -205,10 +229,10 @@
             <label for="ct-select" class="text-sm font-bold text-slate-700 block sm:inline mr-2">運算思維核心：</label>
             <select id="ct-select" class="py-2.5 px-4 bg-slate-50 border-2 border-slate-300 rounded-xl text-slate-900 text-base focus:border-emerald-700">
               <option value="ALL">全部思維向度 (All Pillars)</option>
-              <option value="演算法">演算法 (Algorithms / 遊戲樹與剪枝)</option>
+              <option value="演算法">演算法 (Algorithms / 排序、遊戲樹、剪枝)</option>
+              <option value="抽象化">抽象化 (Abstraction / 輪廓提煉)</option>
+              <option value="模式識別">模式識別 (Pattern Recognition)</option>
               <option value="拆解">拆解思考 (Decomposition)</option>
-              <option value="模式識別">模式識別 (Pattern)</option>
-              <option value="抽象化">抽象化 (Abstraction)</option>
             </select>
           </div>
         </div>
@@ -232,7 +256,7 @@
             全部年度
           </button>
           <button type="button" data-year="2017" class="year-btn px-4 py-2 rounded-xl text-base font-bold bg-amber-100 text-amber-900 border-2 border-amber-500 shrink-0">
-            ⭐ 2017 (經典 L 遊戲)
+            ⭐ 2017 (花瓶與 L 遊戲)
           </button>
           <button type="button" data-year="2026" class="year-btn px-4 py-2 rounded-xl text-base font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 shrink-0 border border-slate-300">
             2026
@@ -278,14 +302,14 @@
       <!-- Modal Top Bar -->
       <div class="px-4 py-3 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2 min-w-0">
-          <span class="px-2 py-0.5 rounded text-xs font-black bg-amber-500 text-slate-950 shrink-0">獨立關卡</span>
+          <span class="px-2 py-0.5 rounded text-xs font-black bg-amber-500 text-slate-950 shrink-0">獨立全螢幕</span>
           <h3 id="standalone-modal-title" class="text-base sm:text-lg font-bold truncate">遊戲載入中</h3>
           <span id="standalone-path-badge" class="hidden sm:inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 truncate max-w-[280px]">
             偵測路徑中...
           </span>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="showPathSwitcherMenu()" type="button" class="px-2.5 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg flex items-center gap-1 border border-slate-600 transition" title="切換根目錄或2017資料夾路徑">
+          <button onclick="showPathSwitcherMenu()" type="button" class="px-2.5 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg flex items-center gap-1 border border-slate-600 transition" title="切換根目錄、子目錄或URL編碼路徑">
             <i class="ph-bold ph-swap"></i>
             <span>換路徑修復 404</span>
           </button>
@@ -303,7 +327,7 @@
       <div class="flex-grow w-full bg-slate-100 relative">
         <iframe id="standalone-iframe" src="" class="w-full h-full border-0" title="Bebras 遊戲互動視窗"></iframe>
         
-        <!-- 404 Rescue Helper Overlay (Hidden until user or system triggers fallback) -->
+        <!-- 404 Rescue Helper Overlay -->
         <div id="path-fallback-panel" class="hidden absolute inset-0 bg-slate-900/95 text-white p-6 overflow-y-auto flex flex-col items-center justify-center text-center z-10 space-y-4">
           <div class="w-16 h-16 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-3xl">
             <i class="ph-bold ph-warning-circle"></i>
@@ -311,7 +335,7 @@
           <div class="max-w-md space-y-2">
             <h4 class="text-xl font-bold text-amber-300">GitHub Pages 檔案路徑指引</h4>
             <p class="text-sm text-slate-300">
-              若瀏覽器顯示「File not found (404)」，代表您的 GitHub 儲存庫資料夾配置與當前網址略有不同。請點選下方對應的存放位置即可立即載入：
+              若瀏覽器顯示「File not found (404)」，代表您的 GitHub 儲存庫資料夾配置或命名稍有不同。請點選下方對應的檔案位置即可立即載入：
             </p>
           </div>
 
@@ -320,7 +344,7 @@
           </div>
 
           <p class="text-xs text-slate-400 mt-4 max-w-lg">
-            💡 <strong>GitHub Pages 提示：</strong>如果剛上傳到 GitHub，有時伺服器需要 1~2 分鐘建立部署快取，請稍後重新整理。
+            💡 <strong>提示：</strong>若檔案剛上傳，GitHub Pages 偶爾需 1~2 分鐘建立快取。
           </p>
           <button onclick="hidePathSwitcherMenu()" type="button" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-600 transition">
             返回遊戲視窗
@@ -385,7 +409,7 @@
         <div id="modal-standalone-launcher" class="p-4 bg-amber-50 rounded-xl border-2 border-amber-300 flex items-center justify-between gap-3">
           <div class="text-sm text-amber-900 font-bold">
             <span class="block">🎮 想體驗本年級專屬的「完整版沉浸對戰」嗎？</span>
-            <span class="text-xs text-amber-700 font-normal">包含完整棋盤、語音與動態遊戲樹，具備防 404 智慧載入！</span>
+            <span class="text-xs text-amber-700 font-normal">包含完整棋盤或透視觀測窗，具備防 404 智慧載入！</span>
           </div>
           <button id="modal-open-standalone-btn" type="button" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-lg text-xs transition shrink-0 shadow">
             開啟完整遊戲 ➔
@@ -449,7 +473,7 @@
         <div>
           <label for="create-year" class="block font-bold text-slate-800 mb-1">對應年度：</label>
           <select id="create-year" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
-            <option value="2017">2017 (經典 L 遊戲)</option>
+            <option value="2017">2017 (經典花瓶與 L 遊戲)</option>
             <option value="2026">2026</option>
             <option value="2025">2025</option>
             <option value="2024">2024</option>
@@ -466,9 +490,9 @@
           <label for="create-ct" class="block font-bold text-slate-800 mb-1">運算思維核心維度：</label>
           <select id="create-ct" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl">
             <option value="演算法">演算法設計 (Algorithm Design)</option>
-            <option value="拆解">拆解思考 (Decomposition)</option>
-            <option value="模式識別">模式識別 (Pattern Recognition)</option>
             <option value="抽象化">抽象化 (Abstraction)</option>
+            <option value="模式識別">模式識別 (Pattern Recognition)</option>
+            <option value="拆解">拆解思考 (Decomposition)</option>
           </select>
         </div>
 
@@ -496,7 +520,7 @@
       <div>
         <p class="font-bold text-slate-900 text-base">國際運算思維挑戰賽教材互動遊戲化平台 (Bebras Game Portal)</p>
         <p class="text-sm text-slate-500 mt-1">
-          GitHub Pages 部署版 ｜ 支援根目錄與 <code>2017/</code> 資料夾自動探測 ｜ 遵循 W3C WCAG 2.0 AA 標準
+          GitHub Pages 部署版 ｜ 支援根目錄、<code>2017/</code> 與各種檔名格式自動探測 ｜ 遵循 W3C WCAG 2.0 AA 標準
         </p>
         <!-- 開發者資料標註 -->
         <p class="text-sm font-semibold text-emerald-900 mt-2 flex flex-wrap items-center justify-center md:justify-start gap-2">
@@ -517,8 +541,83 @@
   </footer>
 
   <script>
-    /* Bebras Curated Database with 2017 L-Game Spiral Integration */
+    /* Bebras Curated Database with 2017 Vases & L-Game Spiral Integration */
     const initialBebrasQuests = [
+      {
+        id: "2017-vases-sorting",
+        year: 2017,
+        ctPillar: "演算法",
+        titleTheme: "海狸波波的排列花瓶：透光神殿之謎",
+        originalBebras: "2017 台灣 Bebras 國際運算思維挑戰賽 - 排列花瓶",
+        description: "神殿長形展示台上由後到前擺放 5 個不同胖瘦的花瓶。觀眾站在正前方一眼望去，每個花瓶都要露出特色，不能被前面完全遮住！體驗排序演算法與幾何抽象化！",
+        estTime: "5~10 分鐘",
+        standaloneFiles: {
+          "3": "02_2017_排列花瓶_3年級.html",
+          "4": "02_2017_排列花瓶_4年級.html",
+          "5": "02_2017_排列花瓶_5年級.html",
+          "6": "02_2017+排列花瓶_6年級.html"
+        },
+        gradeVariants: {
+          "3": {
+            gradeName: "三年級 (初階：海狸波波的魔法櫥窗)",
+            difficulty: "初階",
+            interactiveType: "single-choice",
+            options: [
+              "最苗條最瘦小的 A 瓶應該站在【最前面】（離觀眾最近）",
+              "隨便站在最後面，被擋住也沒關係",
+              "把最胖的 E 瓶放在最前面當大盾牌",
+              "所有花瓶通通擠在正中間"
+            ],
+            correctIndex: 0,
+            storyDetails: "【三年級任務】合唱團排隊拍照時，最瘦小的小朋友如果站在高大同學身後就會被完全遮住。想讓大家都露臉，最瘦小的 A 瓶應該站在哪裡？",
+            hint: "導師提示：最嬌小的隊友站在隊伍最前排，才不會被任何人擋住喔！",
+            debrief: "本題體現【排序演算法 (Sorting)】的起步與直觀空間概念。由後到前排列時，前面必須比後面瘦小！"
+          },
+          "4": {
+            gradeName: "四年級 (進階：晶透神殿排列花瓶)",
+            difficulty: "基礎",
+            interactiveType: "single-choice",
+            options: [
+              "唯一解：E ➔ D ➔ C ➔ B ➔ A（由後到前，最胖排到最瘦）",
+              "A ➔ B ➔ C ➔ D ➔ E（由後到前，最瘦排到最胖）",
+              "D ➔ B ➔ C ➔ A ➔ E",
+              "E ➔ C ➔ D ➔ A ➔ B"
+            ],
+            correctIndex: 0,
+            storyDetails: "【四年級任務】5 個花瓶胖瘦依序為 A < B < C < D < E。請推導出『由後到前（從深處到眼前）』唯一能讓所有花瓶同時露臉的順序！",
+            hint: "導師提示：最後方放最巨大的 E，最前方放最瘦小的 A，中間依序由大排到小！",
+            debrief: "這是資訊科學中最基礎的【單調遞增/遞減排序 (Monotonic Sorting)】。在視線遮蔽模型中，唯有降序排列才能維持每個元素的輪廓曝光！"
+          },
+          "5": {
+            gradeName: "五年級 (深化：神殿水晶瓶透視封印)",
+            difficulty: "進階",
+            interactiveType: "single-choice",
+            options: [
+              "抽象化（Abstraction）：只提取花瓶的『外輪廓寬度』，忽略顏色花紋等無關細節",
+              "窮舉隨機法：每次都隨便放放看，碰運氣通關",
+              "語法背誦：直接背下答案，不理解光線幾何原理"
+            ],
+            correctIndex: 0,
+            storyDetails: "【五年級任務】在解鎖透視封印時，電腦運算思維的核心能力是如何幫助我們瞬間化繁為簡的？",
+            hint: "導師提示：想想看我們解題時有沒有在乎花瓶是什麼顏色？還是只在乎胖瘦寬度？",
+            debrief: "這就是【抽象化 (Abstraction)】！將問題中不相關的資訊（如顏色、花紋）過濾，只萃取幾何寬度邊界進行排程比較！"
+          },
+          "6": {
+            gradeName: "六年級 (挑戰：透光花瓶之謎與排序演算法)",
+            difficulty: "挑戰",
+            interactiveType: "single-choice",
+            options: [
+              "若有 N 個花瓶，比較排序演算法的最優時間複雜度為 O(N log N)",
+              "無論多少個花瓶，電腦都可以用 O(1) 一瞬間隨機猜出解答",
+              "排序花瓶需要消耗指數級 O(2^N) 的運算量"
+            ],
+            correctIndex: 0,
+            storyDetails: "【六年級任務】若神殿展示台擴增為 1,000 個高矮胖瘦各異的水晶瓶，電腦科學家會運用哪種演算法理論來最高效地完成全可見排序？",
+            hint: "導師提示：想想看合併排序 (Merge Sort) 或快速排序 (Quick Sort) 的效率級別！",
+            debrief: "本題深入至【比較排序理論 (Comparison Sort)】。透過分治法（Divide and Conquer），如 Merge Sort 可以在 O(N log N) 時間內完美完成大型資料庫的幾何排序！"
+          }
+        }
+      },
       {
         id: "2017-l-game",
         year: 2017,
@@ -846,19 +945,19 @@
               <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 mb-3 space-y-1">
                 <div class="text-xs font-bold text-slate-600 flex items-center justify-between">
                   <span>難度階梯選擇：</span>
-                  ${is2017 ? '<span class="text-amber-700 font-bold">點選開啟獨立關卡</span>' : '<span class="text-slate-400">點擊切換年級</span>'}
+                  ${(q.standaloneFiles) ? '<span class="text-amber-700 font-bold">點選開啟獨立關卡</span>' : '<span class="text-slate-400">點擊切換年級</span>'}
                 </div>
                 <div class="grid grid-cols-4 gap-1.5 pt-1">
                   ${["3", "4", "5", "6"].map(gr => {
                     const isSelected = (selectedGrade === gr);
-                    if (is2017 && q.standaloneFiles && q.standaloneFiles[gr]) {
+                    if (q.standaloneFiles && q.standaloneFiles[gr]) {
                       const filePath = q.standaloneFiles[gr];
                       return `
                         <button 
                           type="button"
-                          onclick="launchStandaloneGame('${filePath}', '2017 年 ${gr} 年級：${q.titleTheme}')"
+                          onclick="launchStandaloneGame('${filePath}', '${q.year} 年 ${gr} 年級：${q.titleTheme}')"
                           class="px-2 py-1.5 text-xs font-black rounded-lg transition text-center border bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-500 hover:text-slate-950 shadow-sm"
-                          title="開啟 2017 年 ${gr} 年級獨立遊戲"
+                          title="開啟 ${q.year} 年 ${gr} 年級獨立遊戲"
                         >
                           ${gr}年級 🎮
                         </button>
@@ -909,21 +1008,23 @@
     // Build list of all potential path variations for a given filename
     function getCandidatePaths(rawFileName) {
       const clean = rawFileName.replace(/^\.\//, '').replace(/^2017\//, '');
-      const spaceClean = clean.replace(/_/g, ' '); // 相容若原本有空格的檔名
-      const underscoreClean = clean.replace(/\s+/g, '_'); // 無空格底線版本
-      const encodedClean = encodeURI(underscoreClean);
+      const underscoreClean = clean.replace(/\+/g, '_').replace(/\s+/g, '_');
+      const plusClean = clean.replace(/_/g, '+');
+      const spaceClean = clean.replace(/_/g, ' ').replace(/\+/g, ' ');
 
       return [
-        { label: "1. 根目錄標準 (無空格推薦)", path: underscoreClean },
-        { label: "2. 2017/ 子目錄 (無空格推薦)", path: `2017/${underscoreClean}` },
-        { label: "3. 根目錄 URL 編碼", path: `./${encodedClean}` },
-        { label: "4. 2017/ URL 編碼", path: `./2017/${encodedClean}` },
-        { label: "5. 原空格版本 (相容舊檔)", path: spaceClean },
-        { label: "6. 2017/ 空格版本 (相容舊檔)", path: `2017/${spaceClean}` }
+        { label: "1. 根目錄 (推薦標準檔名)", path: clean },
+        { label: "2. 2017/ 子目錄 (資料夾收納)", path: `2017/${clean}` },
+        { label: "3. 根目錄底線版 (無空格)", path: underscoreClean },
+        { label: "4. 2017/ 底線版 (無空格)", path: `2017/${underscoreClean}` },
+        { label: "5. 根目錄加號版 (+符號)", path: plusClean },
+        { label: "6. 2017/ 加號版 (+符號)", path: `2017/${plusClean}` },
+        { label: "7. 根目錄原始空格版", path: spaceClean },
+        { label: "8. 2017/ 原始空格版", path: `2017/${spaceClean}` }
       ];
     }
 
-    // Auto-probe candidate paths using HEAD/GET request
+    // Auto-probe candidate paths using HEAD request
     async function resolveWorkingGamePath(rawFileName) {
       const candidates = getCandidatePaths(rawFileName);
 
@@ -938,9 +1039,8 @@
         }
       }
 
-      // Default fallback: Try directly with clean underscore file in root
-      const clean = rawFileName.replace(/^\.\//, '').replace(/^2017\//, '').replace(/\s+/g, '_');
-      return clean;
+      // Default fallback
+      return rawFileName;
     }
 
     // Launch standalone game modal
@@ -990,7 +1090,7 @@
     function showPathSwitcherMenu() {
       const fallbackPanel = document.getElementById("path-fallback-panel");
       const container = document.getElementById("candidate-buttons");
-      const candidates = getCandidatePaths(currentActiveStandaloneRaw || "01_2017_L遊戲_3年級.html");
+      const candidates = getCandidatePaths(currentActiveStandaloneRaw || "02_2017_排列花瓶_3年級.html");
 
       container.innerHTML = candidates.map(c => `
         <button onclick="loadIframePath('${c.path.replace(/'/g, "\\'")}')" class="p-3 bg-slate-800 hover:bg-emerald-700 text-left border border-slate-600 hover:border-emerald-400 rounded-xl transition text-xs flex flex-col justify-between">
