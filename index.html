@@ -117,7 +117,7 @@
         </div>
 
         <!-- Open Featured 2017 L-Game in Modal -->
-        <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" type="button" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-amber-800">
+        <button onclick="launchStandaloneGame('01 2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" type="button" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-amber-800">
           <i class="ph-bold ph-game-controller text-xl" aria-hidden="true"></i>
           <span>特選：2017 L遊戲</span>
         </button>
@@ -154,20 +154,20 @@
             <span class="text-3xl">🦫</span>
             <div>
               <h3 class="font-bold text-amber-300 text-base">2017 創始經典：海狸村的 L 遊戲爭霸戰</h3>
-              <p class="text-xs text-slate-200">收錄於 <code>2017/</code> 資料夾，點選按鈕立即啟動對應關卡！</p>
+              <p class="text-xs text-slate-200">支援根目錄與 <code>2017/</code> 資料夾自動探測，點選按鈕立即啟動！</p>
             </div>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+            <button onclick="launchStandaloneGame('01 2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
               3年級 初階版
             </button>
-            <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_4年級.html', '2017 年 4 年級：符文水壩對決')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+            <button onclick="launchStandaloneGame('01 2017_L遊戲_4年級.html', '2017 年 4 年級：符文水壩對決')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
               4年級 進階版
             </button>
-            <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_5年級.html', '2017 年 5 年級：防洪石板深搜')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+            <button onclick="launchStandaloneGame('01 2017_L遊戲_5年級.html', '2017 年 5 年級：防洪石板深搜')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
               5年級 深化版
             </button>
-            <button onclick="launchStandaloneGame('2017/01 2017_L遊戲_6年級.html', '2017 年 6 年級：九重封印與剪枝')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+            <button onclick="launchStandaloneGame('01 2017_L遊戲_6年級.html', '2017 年 6 年級：九重封印與剪枝')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
               6年級 挑戰版
             </button>
           </div>
@@ -280,12 +280,19 @@
     <div class="bg-white w-full max-w-5xl h-[92vh] rounded-2xl shadow-2xl border-2 border-amber-500 flex flex-col overflow-hidden">
       
       <!-- Modal Top Bar -->
-      <div class="px-4 py-3 bg-slate-900 text-white flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 rounded text-xs font-black bg-amber-500 text-slate-950">獨立關卡</span>
+      <div class="px-4 py-3 bg-slate-900 text-white flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="px-2 py-0.5 rounded text-xs font-black bg-amber-500 text-slate-950 shrink-0">獨立關卡</span>
           <h3 id="standalone-modal-title" class="text-base sm:text-lg font-bold truncate">遊戲載入中</h3>
+          <span id="standalone-path-badge" class="hidden sm:inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 truncate max-w-[200px]">
+            偵測路徑中...
+          </span>
         </div>
         <div class="flex items-center gap-2">
+          <button onclick="toggleStandalonePath()" type="button" class="px-2.5 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg flex items-center gap-1 border border-slate-600 transition" title="如果在當前目錄或2017子目錄找不到檔案，可點此手動切換">
+            <i class="ph-bold ph-swap"></i>
+            <span>切換目錄路徑</span>
+          </button>
           <a id="standalone-open-newtab" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center gap-1 border border-slate-600 transition">
             <i class="ph-bold ph-arrow-square-out"></i>
             <span>全螢幕新分頁</span>
@@ -503,12 +510,12 @@
         originalBebras: "2017 台灣 Bebras 國際運算思維挑戰賽 - L 遊戲",
         description: "琪琪與薇薇爭奪水壩控制權！在 4×4 的棋盤上依序擺放不可旋轉的 L 晶石。體驗如何從直觀擺放深化到遊戲樹狀態空間與剪枝演算法！",
         estTime: "5~12 分鐘",
-        // Standalone file paths pointing directly to 2017/ folder
+        // Standalone file names (Auto-resolved to root or 2017/ directory)
         standaloneFiles: {
-          "3": "2017/01 2017_L遊戲_3年級.html",
-          "4": "2017/01 2017_L遊戲_4年級.html",
-          "5": "2017/01 2017_L遊戲_5年級.html",
-          "6": "2017/01 2017_L遊戲_6年級.html"
+          "3": "01 2017_L遊戲_3年級.html",
+          "4": "01 2017_L遊戲_4年級.html",
+          "5": "01 2017_L遊戲_5年級.html",
+          "6": "01 2017_L遊戲_6年級.html"
         },
         gradeVariants: {
           "3": {
@@ -752,6 +759,7 @@
     let currentModalGrade = "3";
     let currentInteractiveChoice = null;
     let fontSizeLevel = 1;
+    let currentActiveStandalonePath = "";
   </script>
 
   <script>
@@ -882,21 +890,81 @@
   </script>
 
   <script>
-    /* Open Standalone Game Modal pointing to 2017/ folder files */
-    function launchStandaloneGame(filePath, titleText) {
+    // Intelligent path resolver that tests root directory vs 2017/ subfolder automatically
+    async function resolveWorkingGamePath(rawPath) {
+      const cleanFileName = rawPath.replace(/^\.\//, '').replace(/^2017\//, '');
+      const candidates = [
+        cleanFileName,            // Current / root directory (Canvas preview & flat repo)
+        `2017/${cleanFileName}`,  // Subfolder '2017/' (GitHub Pages subfolder)
+        `./${cleanFileName}`,
+        `./2017/${cleanFileName}`
+      ];
+
+      for (const p of candidates) {
+        try {
+          const resp = await fetch(encodeURI(p), { method: 'HEAD' });
+          if (resp.ok) {
+            return p;
+          }
+        } catch (e) {
+          // If fetch fails (e.g. file:// protocol restriction), continue probing
+        }
+      }
+
+      // Default fallback: root file name is the primary workspace standard
+      return cleanFileName;
+    }
+
+    /* Open Standalone Game Modal pointing to auto-resolved path */
+    async function launchStandaloneGame(filePath, titleText) {
       const modal = document.getElementById("standalone-modal");
       const iframe = document.getElementById("standalone-iframe");
       const titleEl = document.getElementById("standalone-modal-title");
       const newTabLink = document.getElementById("standalone-open-newtab");
+      const pathBadge = document.getElementById("standalone-path-badge");
 
-      // Set titles and encoded URI to support spaces and Chinese file paths on GitHub Pages
-      const safePath = encodeURI(filePath);
       titleEl.textContent = titleText;
+      modal.classList.remove("hidden");
+      document.body.classList.add("modal-active");
+
+      if (pathBadge) pathBadge.textContent = "偵測路徑中...";
+
+      // Auto resolve whether file is in current directory or 2017/ subfolder
+      const resolved = await resolveWorkingGamePath(filePath);
+      currentActiveStandalonePath = resolved;
+
+      const safePath = encodeURI(resolved);
       iframe.src = safePath;
       newTabLink.href = safePath;
 
-      modal.classList.remove("hidden");
-      document.body.classList.add("modal-active");
+      if (pathBadge) {
+        pathBadge.textContent = `路徑: ${resolved}`;
+      }
+    }
+
+    /* Manual toggle button in case user deployment requires folder swap */
+    function toggleStandalonePath() {
+      if (!currentActiveStandalonePath) return;
+
+      const iframe = document.getElementById("standalone-iframe");
+      const newTabLink = document.getElementById("standalone-open-newtab");
+      const pathBadge = document.getElementById("standalone-path-badge");
+
+      const cleanFileName = currentActiveStandalonePath.replace(/^\.\//, '').replace(/^2017\//, '');
+
+      if (currentActiveStandalonePath.startsWith('2017/')) {
+        currentActiveStandalonePath = cleanFileName;
+      } else {
+        currentActiveStandalonePath = `2017/${cleanFileName}`;
+      }
+
+      const safePath = encodeURI(currentActiveStandalonePath);
+      iframe.src = safePath;
+      newTabLink.href = safePath;
+
+      if (pathBadge) {
+        pathBadge.textContent = `路徑: ${currentActiveStandalonePath}`;
+      }
     }
 
     function closeStandaloneModal() {
