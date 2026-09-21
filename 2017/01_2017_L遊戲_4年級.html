@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>海狸王國的符文水壩：L 晶石大對決 - 國際運算思維挑戰賽</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts for Friendly Reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #f0fdf4;
+      color: #1e293b;
+      touch-action: manipulation;
+    }
+    .font-fun {
+      font-family: 'Mochiy Pop One', 'Noto Sans TC', cursive, sans-serif;
+    }
+    /* Focus styling for WCAG keyboard accessibility */
+    *:focus-visible {
+      outline: 3px solid #f59e0b !important;
+      outline-offset: 2px !important;
+    }
+    /* Grid cell animations */
+    .cell-transition {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .pop-anim {
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    /* High contrast board shadow */
+    .dam-board {
+      box-shadow: 0 12px 28px -4px rgba(6, 78, 59, 0.25), 0 8px 10px -6px rgba(6, 78, 59, 0.15);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-amber-200">
+  <!-- Accessibility Skip Link -->
+  <a href="#main-game-area" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:p-3 focus:bg-amber-500 focus:text-white focus:rounded-lg focus:font-bold">
+    跳至主要遊戲操作區
+  </a>
+
+  <!-- Header -->
+  <header class="bg-emerald-800 text-white shadow-md border-b-4 border-emerald-950 sticky top-0 z-30">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl" aria-hidden="true">🦫</span>
+        <div>
+          <h1 class="text-lg md:text-2xl font-black tracking-wide font-fun flex items-center gap-2">
+            海狸王國的符文水壩
+            <span class="text-xs bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full font-bold">Bebras 運算思維</span>
+          </h1>
+          <p class="text-xs text-emerald-200">國小四年級探索版 • L遊戲遊戲樹與搜尋策略</p>
+        </div>
+      </div>
+      
+      <!-- Utility controls -->
+      <div class="flex items-center gap-2">
+        <button id="sound-toggle-btn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-xs font-bold border border-emerald-500 transition shadow" aria-pressed="true" aria-label="切換音效開關">
+          <span id="sound-icon" aria-hidden="true">🔊</span>
+          <span id="sound-text">音效開</span>
+        </button>
+        <button id="rule-modal-btn" class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-black shadow transition">
+          <span aria-hidden="true">📜</span> 規則說明
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main id="main-game-area" class="flex-grow max-w-5xl w-full mx-auto px-4 py-5 flex flex-col gap-6">
+    
+    <!-- Stage Selector Tabs -->
+    <nav class="flex rounded-2xl bg-emerald-100/80 p-1.5 border border-emerald-200 shadow-inner" aria-label="任務進度選單">
+      <button id="tab-stage-1" class="stage-tab flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-black transition flex items-center justify-center gap-1.5 bg-emerald-700 text-white shadow" aria-current="page">
+        <span class="bg-emerald-900/60 w-5 h-5 rounded-full flex items-center justify-center text-xs">1</span>
+        <span>關卡一：薇薇的反擊路線</span>
+      </button>
+      <button id="tab-stage-2" class="stage-tab flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-black transition flex items-center justify-center gap-1.5 text-emerald-900 hover:bg-emerald-200/60">
+        <span class="bg-emerald-300 w-5 h-5 rounded-full flex items-center justify-center text-xs text-emerald-950">2</span>
+        <span>關卡二：琪琪的致勝落子</span>
+      </button>
+      <button id="tab-stage-3" class="stage-tab flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-black transition flex items-center justify-center gap-1.5 text-emerald-900 hover:bg-emerald-200/60">
+        <span class="bg-emerald-300 w-5 h-5 rounded-full flex items-center justify-center text-xs text-emerald-950">3</span>
+        <span>關卡三：九宮陣大決策</span>
+      </button>
+    </nav>
+
+    <!-- Two Column Interactive Arena -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Left Column: Storyboard, Dialogues, and Tools (5 cols) -->
+      <section class="lg:col-span-5 flex flex-col gap-4">
+        <!-- Elder Beaver Dialogue Card -->
+        <div class="bg-white border-2 border-emerald-300 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+          <div class="flex items-start gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 border-2 border-amber-300 flex-shrink-0 flex items-center justify-center text-3xl shadow-inner" id="npc-avatar" aria-hidden="true">
+              🦫
+            </div>
+            <div class="flex-grow">
+              <div class="flex items-center justify-between">
+                <h2 id="npc-name" class="font-black text-emerald-900 text-sm">長老河狸波波</h2>
+                <span id="stage-badge" class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">探索中</span>
+              </div>
+              <p id="npc-speech" class="text-sm text-slate-700 mt-1 leading-relaxed" aria-live="polite">
+                琪琪已經將第一顆「黃金 L 晶石」放在 4×4 水壩核心的正中央了！現在輪到暗影海狸薇薇下棋，請找出所有薇薇能擺放的合法位置！
+              </p>
+            </div>
+          </div>
+          <!-- Hint Button -->
+          <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <button id="get-hint-btn" class="text-xs font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+              💡 <span>長老指點一下</span>
+            </button>
+            <span id="hint-text" class="text-xs text-slate-500 font-medium italic">點擊按鈕獲取思維提示</span>
+          </div>
+        </div>
+
+        <!-- Piece Information Display -->
+        <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-sm">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500 mb-3">雙方晶石形狀（不可旋轉、不可翻轉）</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Kiki's Shape -->
+            <div class="p-2.5 rounded-xl bg-amber-50 border-2 border-amber-300 flex flex-col items-center">
+              <span class="text-xs font-black text-amber-900 mb-1.5 flex items-center gap-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> 琪琪的黃金晶石
+              </span>
+              <!-- Shape Preview Grid -->
+              <div class="grid grid-cols-2 gap-1 p-1 bg-white rounded border border-amber-200" aria-label="琪琪晶石形狀：上方兩格、下方左側一格" role="img">
+                <div class="w-6 h-6 rounded bg-amber-400 border border-amber-500 shadow-sm flex items-center justify-center text-[10px] font-bold text-amber-950">1</div>
+                <div class="w-6 h-6 rounded bg-amber-400 border border-amber-500 shadow-sm flex items-center justify-center text-[10px] font-bold text-amber-950">2</div>
+                <div class="w-6 h-6 rounded bg-amber-400 border border-amber-500 shadow-sm flex items-center justify-center text-[10px] font-bold text-amber-950">3</div>
+                <div class="w-6 h-6 rounded bg-slate-100 border border-dashed border-slate-300"></div>
+              </div>
+            </div>
+
+            <!-- Weiwei's Shape -->
+            <div class="p-2.5 rounded-xl bg-purple-50 border-2 border-purple-300 flex flex-col items-center">
+              <span class="text-xs font-black text-purple-900 mb-1.5 flex items-center gap-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span> 薇薇的暗影晶石
+              </span>
+              <!-- Shape Preview Grid -->
+              <div class="grid grid-cols-2 gap-1 p-1 bg-white rounded border border-purple-200" aria-label="薇薇晶石形狀：上方右側一格、下方兩格" role="img">
+                <div class="w-6 h-6 rounded bg-slate-100 border border-dashed border-slate-300"></div>
+                <div class="w-6 h-6 rounded bg-purple-600 border border-purple-800 shadow-sm flex items-center justify-center text-[10px] font-bold text-white">1</div>
+                <div class="w-6 h-6 rounded bg-purple-600 border border-purple-800 shadow-sm flex items-center justify-center text-[10px] font-bold text-white">2</div>
+                <div class="w-6 h-6 rounded bg-purple-600 border border-purple-800 shadow-sm flex items-center justify-center text-[10px] font-bold text-white">3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage Progress & Branch Tracker -->
+        <div id="dynamic-tracker-card" class="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-2">
+          <!-- Populated by JavaScript according to current stage -->
+        </div>
+      </section>
+
+      <!-- Right Column: 4x4 Grid Board & Dynamic Controls (7 cols) -->
+      <section class="lg:col-span-7 flex flex-col items-center gap-4">
+        
+        <!-- Board Container -->
+        <div class="w-full max-w-md bg-emerald-900 p-4 sm:p-5 rounded-3xl dam-board border-4 border-emerald-950 flex flex-col items-center">
+          
+          <!-- Board Top Bar (Coordinates & Indicator) -->
+          <div class="w-full flex items-center justify-between text-emerald-200 text-xs font-bold mb-3 px-1">
+            <div class="flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>4×4 水壩核心符文盤</span>
+            </div>
+            <span id="turn-indicator" class="bg-emerald-800 px-2.5 py-1 rounded-full border border-emerald-600 text-amber-300">
+              輪到：尋找薇薇可放位置
+            </span>
+          </div>
+
+          <!-- Column coordinates (A, B, C, D) -->
+          <div class="grid grid-cols-4 w-full text-center text-xs font-mono font-bold text-emerald-300 mb-1" aria-hidden="true">
+            <div>1</div><div>2</div><div>3</div><div>4</div>
+          </div>
+
+          <!-- 4x4 Interactive Board -->
+          <div id="game-board" 
+               class="grid grid-cols-4 gap-2 sm:gap-2.5 w-full aspect-square bg-emerald-950 p-2 sm:p-3 rounded-2xl border-2 border-emerald-700" 
+               role="grid" 
+               aria-label="4乘4格水壩棋盤">
+            <!-- 16 Cells will be rendered here dynamically -->
+          </div>
+
+          <!-- Row coordinates description for Screen Readers -->
+          <div class="sr-only" aria-live="polite" id="sr-announcer">
+            遊戲載入完成。目前為關卡一。
+          </div>
+        </div>
+
+        <!-- Action Control Buttons under Board -->
+        <div id="board-action-controls" class="w-full max-w-md flex items-center justify-between gap-3">
+          <button id="reset-stage-btn" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+            <span>🔄</span> 重新挑戰本關
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <button id="toggle-guide-btn" class="px-3.5 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold transition border border-emerald-300">
+              👁️ <span>顯示輔助框</span>
+            </button>
+            <button id="next-stage-btn" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-black transition shadow flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+              <span>下一關卡</span> ➔
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- Educational Debriefing Banner -->
+    <section id="debrief-banner" class="hidden bg-gradient-to-r from-amber-50 via-emerald-50 to-teal-50 border-2 border-amber-300 rounded-2xl p-5 shadow-md">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-4xl" aria-hidden="true">🏆</span>
+          <div>
+            <h3 class="text-lg font-black text-emerald-950 font-fun">太棒了！你解開了所有水壩符文！</h3>
+            <p class="text-xs text-slate-600">你展現了頂尖的演算法預判思維，快來領取你的運算思維工程師勳章！</p>
+          </div>
+        </div>
+        <button id="open-debrief-modal-btn" class="w-full md:w-auto px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 font-black text-sm shadow-md transition transform hover:scale-105">
+          🎓 查看「運算思維核心大解密」
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Dialog Modal Container (WCAG Accessible) -->
+  <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    
+    <!-- Rule Dialog Modal -->
+    <div id="rule-dialog" class="hidden bg-white w-full max-w-lg rounded-3xl shadow-2xl border-4 border-emerald-700 overflow-hidden flex flex-col max-h-[90vh]" role="dialog" aria-modal="true" aria-labelledby="rule-modal-title">
+      <div class="bg-emerald-800 px-6 py-4 text-white flex items-center justify-between">
+        <h2 id="rule-modal-title" class="font-fun text-lg font-black flex items-center gap-2">
+          <span>📜</span> 水壩符文對決：遊戲規則
+        </h2>
+        <button class="modal-close-btn text-white hover:text-amber-300 text-2xl font-bold p-1 leading-none" aria-label="關閉對話框">&times;</button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-4 text-sm text-slate-700 leading-relaxed">
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
+          <h3 class="font-bold text-amber-900 mb-1">🎯 遊戲目標</h3>
+          <p>海狸琪琪與薇薇輪流將手中的 L 型木片放進 4×4 格子盤中。讓對方在輪到時「無處可放」的人就是最後贏家！</p>
+        </div>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>方向絕對固定</strong>：木片完全不可以旋轉、不可以翻轉！</li>
+          <li><strong>不能重疊、不能超出</strong>：木片必須完整放在 4×4 範圍內，且不能覆蓋已經放好的木片。</li>
+          <li><strong>落子後不可移動</strong>：放上去的木片就成為水壩的一部分。</li>
+          <li><strong>無路可走即失敗</strong>：輪到你時，只要盤面上找不出任何一個可以塞下你木片的完整空格，對手獲勝！</li>
+        </ul>
+      </div>
+      <div class="p-4 bg-slate-50 border-t border-slate-100 text-right">
+        <button class="modal-close-btn px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm shadow">
+          我明白了，開始冒險！
+        </button>
+      </div>
+    </div>
+
+    <!-- Debrief Dialog Modal -->
+    <div id="debrief-dialog" class="hidden bg-white w-full max-w-2xl rounded-3xl shadow-2xl border-4 border-amber-400 overflow-hidden flex flex-col max-h-[90vh]" role="dialog" aria-modal="true" aria-labelledby="debrief-modal-title">
+      <div class="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-4 text-amber-950 flex items-center justify-between">
+        <h2 id="debrief-modal-title" class="font-fun text-xl font-black flex items-center gap-2">
+          <span>🎖️</span> 運算思維解密：特級水壩工程師勳章
+        </h2>
+        <button class="modal-close-btn text-amber-950 hover:text-white text-2xl font-bold p-1 leading-none" aria-label="關閉對話框">&times;</button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-5 text-sm leading-relaxed">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="p-3.5 bg-blue-50 border border-blue-200 rounded-2xl">
+            <h4 class="font-black text-blue-900 text-sm mb-1 flex items-center gap-1.5">
+              <span>🌐</span> 狀態空間 (State Space)
+            </h4>
+            <p class="text-xs text-slate-600">
+              在遊戲進行中，棋盤「所有可能排出的樣子」的總和。如同第一關，我們找出中央開局後薇薇僅有的 3 種盤面狀態！
+            </p>
+          </div>
+
+          <div class="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl">
+            <h4 class="font-black text-emerald-900 text-sm mb-1 flex items-center gap-1.5">
+              <span>🌳</span> 遊戲樹 (Game Tree)
+            </h4>
+            <p class="text-xs text-slate-600">
+              把你走一步、對手走一步的所有選擇，畫成一棵長出許多分岔樹枝的大樹。由根節點（開局）一路展開到葉節點（遊戲結束勝負）。
+            </p>
+          </div>
+
+          <div class="p-3.5 bg-purple-50 border border-purple-200 rounded-2xl">
+            <h4 class="font-black text-purple-900 text-sm mb-1 flex items-center gap-1.5">
+              <span>🔍</span> 搜尋與剪枝 (Search & Pruning)
+            </h4>
+            <p class="text-xs text-slate-600">
+              在第三關中，我們要驗證某個開局是否「必勝」。只要找到任何一條薇薇會獲勝的路徑，我們就能立刻停止搜尋該開局（剪枝淘汰），這比漫無目的窮舉快上百倍！
+            </p>
+          </div>
+
+          <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-2xl">
+            <h4 class="font-black text-amber-900 text-sm mb-1 flex items-center gap-1.5">
+              <span>⚡</span> 深度優先 (DFS)
+            </h4>
+            <p class="text-xs text-slate-600">
+              順著一條分支一直往下探到底，一旦發現失敗就退回上一層（回溯），這就是電腦科學中極為重要的「深度優先搜尋」！
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-emerald-950 text-emerald-100 rounded-2xl text-xs flex items-center gap-3">
+          <span class="text-3xl">🦫✨</span>
+          <div>
+            <p class="font-bold text-amber-300">波波長老的評語：</p>
+            <p>「四年級的小工程師，你已經懂得像電腦程式設計師一樣，『看穿對手的三步棋』並利用空間對稱性做出最優決策！恭喜通關！」</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-slate-50 border-t border-slate-100 text-right">
+        <button class="modal-close-btn px-6 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-amber-950 font-black text-sm shadow">
+          領取勳章並關閉
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* Audio Synthesizer without external dependencies */
+    let audioCtx = null;
+    let isSoundEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.15, volume = 0.1) {
+      if (!isSoundEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // Safe fail
+      }
+    }
+
+    function playSound(type) {
+      if (!isSoundEnabled) return;
+      switch(type) {
+        case 'click':
+          playTone(480, 'sine', 0.08, 0.08);
+          break;
+        case 'place':
+          playTone(320, 'triangle', 0.18, 0.15);
+          setTimeout(() => playTone(440, 'triangle', 0.12, 0.12), 60);
+          break;
+        case 'success':
+          playTone(523.25, 'sine', 0.1, 0.1); // C5
+          setTimeout(() => playTone(659.25, 'sine', 0.1, 0.1), 100); // E5
+          setTimeout(() => playTone(783.99, 'sine', 0.25, 0.15), 200); // G5
+          break;
+        case 'error':
+          playTone(220, 'sawtooth', 0.2, 0.1);
+          setTimeout(() => playTone(180, 'sawtooth', 0.25, 0.1), 100);
+          break;
+        case 'win':
+          [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+            setTimeout(() => playTone(f, 'triangle', 0.3, 0.15), i * 140);
+          });
+          break;
+      }
+    }
+
+    // 4x4 Grid definition
+    // Kiki shape (Yellow):
+    // [1, 1]
+    // [1, 0]
+    // Coordinates offset from top-left anchor:
+    const KIKI_SHAPE = [[0, 0], [0, 1], [1, 0]];
+
+    // Weiwei shape (Purple):
+    // [0, 1]
+    // [1, 1]
+    // Coordinates offset from top-left anchor:
+    const WEIWEI_SHAPE = [[0, 1], [1, 0], [1, 1]];
+
+    // All valid top-left anchors for 4x4 grid (anchor r: 0..2, c: 0..2) -> 9 possible anchors
+    const ANCHORS_3X3 = [
+      {r: 0, c: 0, name: "左上 (0,0)"},
+      {r: 0, c: 1, name: "中上 (0,1)"},
+      {r: 0, c: 2, name: "右上 (0,2)"},
+      {r: 1, c: 0, name: "左中 (1,0)"},
+      {r: 1, c: 1, name: "正中 (1,1)"},
+      {r: 1, c: 2, name: "右中 (1,2)"},
+      {r: 2, c: 0, name: "左下 (2,0)"},
+      {r: 2, c: 1, name: "中下 (2,1)"},
+      {r: 2, c: 2, name: "右下 (2,2)"}
+    ];
+
+    // Current Game State
+    let currentStage = 1;
+    let boardState = Array(4).fill(null).map(() => Array(4).fill(null)); 
+    // values: null, 'kiki-1', 'kiki-2', 'weiwei-1'
+    let hoveredAnchor = null;
+    let showGuides = true;
+
+    // Stage 1 State:
+    // When Kiki is at center (1,1): Kiki occupies (1,1), (1,2), (2,1)
+    // The valid Weiwei counter moves are anchors: (1,2), (2,1), (2,2)
+    const STAGE1_TARGETS = [
+      { anchor: { r: 1, c: 2 }, cells: [[1,3], [2,2], [2,3]], id: "W_BRANCH_1", label: "右中腹位置" },
+      { anchor: { r: 2, c: 1 }, cells: [[2,2], [3,1], [3,2]], id: "W_BRANCH_2", label: "中下方位置" },
+      { anchor: { r: 2, c: 2 }, cells: [[2,3], [3,2], [3,3]], id: "W_BRANCH_3", label: "右下方位置" }
+    ];
+    let stage1FoundBranches = new Set();
+
+    // Stage 2 State:
+    // User tests Weiwei branch 1, 2, or 3, and must place Kiki at (0,0) -> cells (0,0), (0,1), (1,0)
+    let stage2ActiveBranchIdx = 0;
+    let stage2KikiPlaced = false;
+
+    // Stage 3 State:
+    let stage3SelectedOpening = null;
+    let stage3Evaluated = false;
+
+    function isWithinBounds(r, c) {
+      return r >= 0 && r < 4 && c >= 0 && c < 4;
+    }
+
+    function canPlaceShape(board, shapeOffsets, anchorR, anchorC) {
+      for (const [dr, dc] of shapeOffsets) {
+        const nr = anchorR + dr;
+        const nc = anchorC + dc;
+        if (!isWithinBounds(nr, nc)) return false;
+        if (board[nr][nc] !== null) return false;
+      }
+      return true;
+    }
+
+    function placeShape(board, shapeOffsets, anchorR, anchorC, tag) {
+      shapeOffsets.forEach(([dr, dc]) => {
+        board[anchorR + dr][anchorC + dc] = tag;
+      });
+    }
+
+    function getValidAnchors(board, shapeOffsets) {
+      const valid = [];
+      for (let r = 0; r <= 2; r++) {
+        for (let c = 0; c <= 2; c++) {
+          if (canPlaceShape(board, shapeOffsets, r, c)) {
+            valid.push({ r, c });
+          }
+        }
+      }
+      return valid;
+    }
+
+    function announceToScreenReader(message) {
+      const el = document.getElementById('sr-announcer');
+      if (el) {
+        el.textContent = message;
+      }
+    }
+
+    const boardEl = document.getElementById('game-board');
+
+    function renderBoard() {
+      boardEl.innerHTML = '';
+      
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          const val = boardState[r][c];
+          const cellBtn = document.createElement('button');
+          cellBtn.id = `cell-${r}-${c}`;
+          cellBtn.dataset.row = r;
+          cellBtn.dataset.col = c;
+          cellBtn.className = `cell-transition relative rounded-xl border flex flex-col items-center justify-center font-bold text-xs sm:text-sm select-none aspect-square`;
+          
+          let cellLabel = `第 ${r + 1} 列，第 ${c + 1} 行。`;
+
+          if (val === 'kiki-1' || val === 'kiki-2') {
+            cellBtn.className += ' bg-amber-400 border-amber-600 text-amber-950 shadow-md pop-anim';
+            cellBtn.innerHTML = `
+              <span class="text-base sm:text-lg" aria-hidden="true">🦫</span>
+              <span class="text-[10px] font-black opacity-90">${val === 'kiki-1' ? '琪琪 1' : '琪琪 2'}</span>
+            `;
+            cellLabel += `已被琪琪佔領 (${val === 'kiki-1' ? '第一塊' : '第二塊'})。`;
+          } else if (val === 'weiwei-1') {
+            cellBtn.className += ' bg-purple-700 border-purple-900 text-white shadow-md pop-anim';
+            cellBtn.innerHTML = `
+              <span class="text-base sm:text-lg" aria-hidden="true">🐾</span>
+              <span class="text-[10px] font-black opacity-90">薇薇</span>
+            `;
+            cellLabel += '已被薇薇佔領。';
+          } else {
+            // Empty cell
+            cellBtn.className += ' bg-emerald-900/60 border-emerald-800 text-emerald-300 hover:bg-emerald-800/80 hover:border-emerald-600';
+            cellBtn.innerHTML = `<span class="opacity-30 text-xs font-mono">${r + 1},${c + 1}</span>`;
+            cellLabel += '目前為空。';
+          }
+
+          // Stage 1 & 2 guide highlights
+          if (showGuides) {
+            applyStageGuides(cellBtn, r, c);
+          }
+
+          cellBtn.setAttribute('aria-label', cellLabel);
+          
+          // Interactions
+          cellBtn.addEventListener('mouseenter', () => handleCellHover(r, c));
+          cellBtn.addEventListener('mouseleave', () => handleCellLeave(r, c));
+          cellBtn.addEventListener('click', () => handleCellClick(r, c));
+
+          boardEl.appendChild(cellBtn);
+        }
+      }
+    }
+
+    function applyStageGuides(cellBtn, r, c) {
+      if (currentStage === 1) {
+        // Highlight found vs undiscovered branches for Weiwei
+        for (let i = 0; i < STAGE1_TARGETS.length; i++) {
+          const target = STAGE1_TARGETS[i];
+          const isInTarget = target.cells.some(([tr, tc]) => tr === r && tc === c);
+          if (isInTarget) {
+            if (stage1FoundBranches.has(target.id)) {
+              cellBtn.classList.add('ring-2', 'ring-purple-400');
+            } else {
+              cellBtn.classList.add('border-dashed', 'border-purple-300/60');
+            }
+          }
+        }
+      } else if (currentStage === 2) {
+        // Highlight target winning position for Kiki at (0,0)
+        const isWinningKikiCell = [[0,0], [0,1], [1,0]].some(([kr, kc]) => kr === r && kc === c);
+        if (isWinningKikiCell && !stage2KikiPlaced) {
+          cellBtn.classList.add('ring-2', 'ring-amber-300', 'bg-amber-900/20');
+        }
+      }
+    }
+
+    function handleCellHover(r, c) {
+      if (currentStage === 1) {
+        previewWeiweiMove(r, c);
+      } else if (currentStage === 2 && !stage2KikiPlaced) {
+        previewKikiMove(r, c);
+      }
+    }
+
+    function handleCellLeave(r, c) {
+      clearHoverPreview();
+    }
+
+    function previewWeiweiMove(r, c) {
+      // Find if clicking (r,c) corresponds to any valid anchor for Weiwei
+      // Weiwei shape needs anchor where (r,c) is part of Weiwei's shape
+      // Let's test if (r, c) can be the top-left anchor or clicked cell
+      clearHoverPreview();
+      
+      // Test if (r,c) is a valid anchor
+      const isValidAnchor = canPlaceShape(boardState, WEIWEI_SHAPE, r, c);
+      if (isValidAnchor) {
+        WEIWEI_SHAPE.forEach(([dr, dc]) => {
+          const cell = document.getElementById(`cell-${r + dr}-${c + dc}`);
+          if (cell && boardState[r + dr][c + dc] === null) {
+            cell.classList.add('bg-purple-500/50', 'border-purple-300');
+          }
+        });
+      }
+    }
+
+    function previewKikiMove(r, c) {
+      clearHoverPreview();
+      const isValidAnchor = canPlaceShape(boardState, KIKI_SHAPE, r, c);
+      if (isValidAnchor) {
+        KIKI_SHAPE.forEach(([dr, dc]) => {
+          const cell = document.getElementById(`cell-${r + dr}-${c + dc}`);
+          if (cell && boardState[r + dr][c + dc] === null) {
+            cell.classList.add('bg-amber-400/50', 'border-amber-200');
+          }
+        });
+      }
+    }
+
+    function clearHoverPreview() {
+      const allCells = boardEl.querySelectorAll('button');
+      allCells.forEach(cell => {
+        cell.classList.remove('bg-purple-500/50', 'border-purple-300', 'bg-amber-400/50', 'border-amber-200');
+      });
+    }
+
+    function initStage1() {
+      currentStage = 1;
+      // Reset board with Kiki at center (1,1)
+      boardState = Array(4).fill(null).map(() => Array(4).fill(null));
+      placeShape(boardState, KIKI_SHAPE, 1, 1, 'kiki-1');
+      stage1FoundBranches.clear();
+
+      document.getElementById('stage-badge').textContent = '第 1 關 / 共 3 關';
+      document.getElementById('npc-name').textContent = '長老河狸波波';
+      document.getElementById('npc-speech').innerHTML = `
+        琪琪已經把第一塊黃金晶石放在棋盤<strong>正中央 (1,1)</strong>！<br>
+        薇薇正準備反擊！請在棋盤上點選，找出薇薇在這一回合<strong>所有能夠擺放的 3 種位置</strong>！
+      `;
+      document.getElementById('turn-indicator').textContent = '目標：找出薇薇的 3 條出路';
+      document.getElementById('next-stage-btn').disabled = true;
+
+      renderStage1Tracker();
+      renderBoard();
+      announceToScreenReader('進入第一關：請找出薇薇所有能夠擺放的 3 種位置。');
+    }
+
+    function renderStage1Tracker() {
+      const tracker = document.getElementById('dynamic-tracker-card');
+      const count = stage1FoundBranches.size;
+
+      tracker.innerHTML = `
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500">遊戲樹分支發現進度</h3>
+          <span class="text-xs font-black px-2 py-0.5 rounded-full ${count === 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-purple-800'}">
+            已找到 ${count} / 3 個分支
+          </span>
+        </div>
+        <div class="space-y-2 mt-1">
+          ${STAGE1_TARGETS.map(t => {
+            const found = stage1FoundBranches.has(t.id);
+            return `
+              <div class="flex items-center justify-between p-2 rounded-xl text-xs font-bold border ${found ? 'bg-purple-50 border-purple-300 text-purple-900' : 'bg-slate-50 border-slate-200 text-slate-400'}">
+                <span class="flex items-center gap-2">
+                  <span>${found ? '✅' : '⏳'}</span>
+                  <span>分支：${t.label} (起點 ${t.anchor.r},${t.anchor.c})</span>
+                </span>
+                <span class="text-[10px] font-mono">${found ? '已探索' : '未發現'}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        ${count === 3 ? `
+          <div class="mt-2 p-2.5 bg-emerald-50 border border-emerald-300 rounded-xl text-xs text-emerald-900 font-bold flex items-center gap-2">
+            <span>🎉</span>
+            <span>完美！你已列出薇薇所有的可能性！請點擊右下角「下一關卡」！</span>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function handleStage1Click(r, c) {
+      // Check if clicking this anchor or nearby cell matches any of STAGE1_TARGETS
+      let matchedTarget = null;
+
+      // 1. Try directly as anchor
+      matchedTarget = STAGE1_TARGETS.find(t => t.anchor.r === r && t.anchor.c === c);
+
+      // 2. If not anchor, check if it's one of the cells of an anchor
+      if (!matchedTarget) {
+        matchedTarget = STAGE1_TARGETS.find(t => 
+          t.cells.some(([tr, tc]) => tr === r && tc === c)
+        );
+      }
+
+      if (matchedTarget) {
+        if (!stage1FoundBranches.has(matchedTarget.id)) {
+          stage1FoundBranches.add(matchedTarget.id);
+          playSound('success');
+          
+          document.getElementById('npc-speech').innerHTML = `
+            太棒了！你找到了薇薇的 <strong>${matchedTarget.label}</strong>！<br>
+            這就是遊戲樹第二層長出的一條新樹枝！還有其他空位嗎？
+          `;
+          renderStage1Tracker();
+          renderBoard();
+          
+          if (stage1FoundBranches.size === 3) {
+            playSound('win');
+            document.getElementById('next-stage-btn').disabled = false;
+            document.getElementById('npc-speech').innerHTML = `
+              🎉 <strong>太厲害了！</strong> 你找齊了所有 3 種可能的下法！<br>
+              波波長老讚嘆：「這代表我們完全掌握了薇薇的下一步狀態空間！快進入下一關展開反擊！」
+            `;
+            announceToScreenReader('太厲害了！你找齊了所有 3 種薇薇可以擺放的位置。請進入下一關！');
+          }
+        } else {
+          playSound('click');
+          document.getElementById('npc-speech').textContent = `這個分支（${matchedTarget.label}）你已經發現過囉！換個位置找找看吧！`;
+        }
+      } else {
+        // Invalid or overlaps
+        playSound('error');
+        document.getElementById('npc-speech').innerHTML = `
+          哎呀！那裡放不下薇薇的暗影晶石喔！<br>
+          可能<strong>撞到了琪琪的黃金木片</strong>，或是<strong>超出 4×4 板子外面</strong>了！再仔細觀察哪裡有 L 型空隙！
+        `;
+      }
+    }
+
+    function initStage2() {
+      currentStage = 2;
+      stage2KikiPlaced = false;
+      stage2ActiveBranchIdx = 0;
+
+      document.getElementById('stage-badge').textContent = '第 2 關 / 共 3 關';
+      document.getElementById('npc-name').textContent = '長老河狸波波';
+      document.getElementById('turn-indicator').textContent = '目標：下關鍵一手，讓薇薇無路可走！';
+      document.getElementById('next-stage-btn').disabled = true;
+
+      loadStage2Branch(0);
+    }
+
+    function loadStage2Branch(branchIdx) {
+      stage2ActiveBranchIdx = branchIdx;
+      stage2KikiPlaced = false;
+      document.getElementById('next-stage-btn').disabled = true;
+
+      // Rebuild board: Kiki at (1,1) + Weiwei at STAGE1_TARGETS[branchIdx]
+      boardState = Array(4).fill(null).map(() => Array(4).fill(null));
+      placeShape(boardState, KIKI_SHAPE, 1, 1, 'kiki-1');
+      
+      const target = STAGE1_TARGETS[branchIdx];
+      placeShape(boardState, WEIWEI_SHAPE, target.anchor.r, target.anchor.c, 'weiwei-1');
+
+      renderStage2Tracker();
+      renderBoard();
+
+      document.getElementById('npc-speech').innerHTML = `
+        現在薇薇選擇了<strong>「${target.label}」</strong>。<br>
+        換琪琪下第二塊黃金晶石！請在棋盤上找一個絕妙位置放下去，讓薇薇在下一輪<strong>完全無路可走</strong>！
+      `;
+      announceToScreenReader(`關卡二：薇薇選擇了${target.label}。換琪琪落子。`);
+    }
+
+    function renderStage2Tracker() {
+      const tracker = document.getElementById('dynamic-tracker-card');
+      tracker.innerHTML = `
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500">切換薇薇的分支局面</h3>
+          <span class="text-xs font-bold text-amber-800">情境測試</span>
+        </div>
+        <div class="grid grid-cols-3 gap-1.5 mt-1">
+          ${STAGE1_TARGETS.map((t, idx) => `
+            <button onclick="loadStage2Branch(${idx})" class="p-2 rounded-xl text-xs font-bold border transition text-center ${stage2ActiveBranchIdx === idx ? 'bg-purple-700 text-white border-purple-900 shadow' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'}">
+              局面 ${idx + 1}
+              <div class="text-[10px] font-normal opacity-80">${t.label.slice(0, 3)}</div>
+            </button>
+          `).join('')}
+        </div>
+        
+        <div class="mt-2 p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs">
+          <div class="font-bold text-amber-900 mb-1 flex items-center justify-between">
+            <span>琪琪狀態：${stage2KikiPlaced ? '已落子 (必勝封殺!)' : '等待落子'}</span>
+            <span class="text-base">${stage2KikiPlaced ? '🏆' : '⏳'}</span>
+          </div>
+          <p class="text-slate-600 leading-relaxed">
+            ${stage2KikiPlaced 
+              ? '薇薇檢查了整張 4×4 棋盤，所有剩下的空位都塞不下她的暗影晶石！琪琪必勝！' 
+              : '提示：仔細看看棋盤的「左上角」，那裡是否剛好能容納琪琪的木片呢？'}
+          </p>
+        </div>
+      `;
+    }
+
+    function handleStage2Click(r, c) {
+      if (stage2KikiPlaced) {
+        playSound('click');
+        return;
+      }
+
+      // Check if clicked near (0,0) which is Kiki's winning anchor
+      // Kiki winning cells: (0,0), (0,1), (1,0)
+      const isTopLeftClick = (r <= 1 && c <= 1 && (r + c < 2));
+
+      if (isTopLeftClick && canPlaceShape(boardState, KIKI_SHAPE, 0, 0)) {
+        // Place Kiki at (0,0)
+        placeShape(boardState, KIKI_SHAPE, 0, 0, 'kiki-2');
+        stage2KikiPlaced = true;
+        playSound('win');
+
+        // Check if Weiwei has any moves left on the entire board
+        const weiweiMovesLeft = getValidAnchors(boardState, WEIWEI_SHAPE);
+
+        renderStage2Tracker();
+        renderBoard();
+
+        document.getElementById('npc-speech').innerHTML = `
+          🌟 <strong>轟隆！水壩核心金光大盛！</strong><br>
+          琪琪精準佔領<strong>左上角</strong>！薇薇手中可走的剩餘步數為：<strong>${weiweiMovesLeft.length} 步</strong>！薇薇徹底無處可走，琪琪獲得必勝！
+        `;
+        document.getElementById('next-stage-btn').disabled = false;
+        announceToScreenReader('琪琪佔領左上角！薇薇無路可走，琪琪獲勝！請點擊下一關！');
+      } else {
+        playSound('error');
+        document.getElementById('npc-speech').innerHTML = `
+          這個位置放不進去，或者無法徹底封死薇薇喔！<br>
+          試試看點擊<strong>最左上角的位置 (0,0)</strong> 看看！
+        `;
+      }
+    }
+
+    function initStage3() {
+      currentStage = 3;
+      stage3SelectedOpening = null;
+      stage3Evaluated = false;
+
+      // Clean board
+      boardState = Array(4).fill(null).map(() => Array(4).fill(null));
+
+      document.getElementById('stage-badge').textContent = '第 3 關 / 共 3 關 (終極考驗)';
+      document.getElementById('npc-name').textContent = '暗影海狸薇薇';
+      document.getElementById('turn-indicator').textContent = '九宮陣：找出唯一的 100% 必勝起手式';
+      document.getElementById('next-stage-btn').disabled = true;
+
+      document.getElementById('npc-speech').innerHTML = `
+        薇薇雙手插腰不服氣地說：「剛剛是因為你先佔到正中間！<br>
+        在 4×4 水壩上，第一步一共只有 <strong>9 個位置</strong>可以放。難道其他位置就不能必勝嗎？你猜共有幾個必勝開局？」
+      `;
+
+      renderStage3Tracker();
+      renderBoard();
+      announceToScreenReader('進入第三關：九宮陣大決策。請測試 9 個開局中，有幾個能保證 100% 必勝。');
+    }
+
+    function renderStage3Tracker() {
+      const tracker = document.getElementById('dynamic-tracker-card');
+      tracker.innerHTML = `
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500">測試 9 個開局點 (深度優先搜尋)</h3>
+          <span class="text-xs font-bold text-emerald-800">點擊開局進行模擬</span>
+        </div>
+        
+        <!-- 3x3 Selector for Kiki's 9 Opening Positions -->
+        <div class="grid grid-cols-3 gap-1.5 my-2">
+          ${ANCHORS_3X3.map((a, idx) => {
+            const isCenter = a.r === 1 && a.c === 1;
+            const isSelected = stage3SelectedOpening && stage3SelectedOpening.r === a.r && stage3SelectedOpening.c === a.c;
+            return `
+              <button onclick="testOpening(${a.r}, ${a.c})" class="p-2 rounded-xl text-xs font-bold border transition flex flex-col items-center justify-center ${isSelected ? 'bg-amber-400 text-amber-950 border-amber-600 shadow' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'}">
+                <span>${a.name.slice(0, 2)}</span>
+                <span class="text-[9px] font-mono opacity-60">(${a.r},${a.c})</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Question Prompt for Fourth Grader -->
+        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2">
+          <p class="text-xs font-bold text-emerald-950">
+            ❓ 核心問題：在全部 9 個開局中，共有幾個位置能保證琪琪「100% 絕對必勝」？
+          </p>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button onclick="submitAnswer(1)" class="py-1.5 px-2 bg-white hover:bg-amber-400 hover:text-amber-950 text-emerald-900 border border-emerald-300 rounded-lg text-xs font-black transition shadow-sm">
+              只有 1 個
+            </button>
+            <button onclick="submitAnswer(3)" class="py-1.5 px-2 bg-white hover:bg-amber-400 hover:text-amber-950 text-emerald-900 border border-emerald-300 rounded-lg text-xs font-black transition shadow-sm">
+              3 個
+            </button>
+            <button onclick="submitAnswer(5)" class="py-1.5 px-2 bg-white hover:bg-amber-400 hover:text-amber-950 text-emerald-900 border border-emerald-300 rounded-lg text-xs font-black transition shadow-sm">
+              5 個
+            </button>
+            <button onclick="submitAnswer(9)" class="py-1.5 px-2 bg-white hover:bg-amber-400 hover:text-amber-950 text-emerald-900 border border-emerald-300 rounded-lg text-xs font-black transition shadow-sm">
+              全部 9 個
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function testOpening(anchorR, anchorC) {
+      stage3SelectedOpening = { r: anchorR, c: anchorC };
+      boardState = Array(4).fill(null).map(() => Array(4).fill(null));
+      placeShape(boardState, KIKI_SHAPE, anchorR, anchorC, 'kiki-1');
+      playSound('place');
+
+      const isCenter = anchorR === 1 && anchorC === 1;
+
+      if (isCenter) {
+        document.getElementById('npc-name').textContent = '長老河狸波波';
+        document.getElementById('npc-speech').innerHTML = `
+          🎯 <strong>你選擇了「正中央 (1,1)」開局！</strong><br>
+          搜尋演算法顯示：不管薇薇接下來怎麼走，琪琪都能在左上角致勝！這是一個<strong>100% 必勝節點</strong>！
+        `;
+      } else {
+        // Show counter move by Weiwei to demonstrate pruning
+        document.getElementById('npc-name').textContent = '暗影海狸薇薇';
+        // Compute any valid Weiwei move
+        const validWeiweiMoves = getValidAnchors(boardState, WEIWEI_SHAPE);
+        if (validWeiweiMoves.length > 0) {
+          // Place one counter move
+          const counter = validWeiweiMoves[0];
+          placeShape(boardState, WEIWEI_SHAPE, counter.r, counter.c, 'weiwei-1');
+        }
+        document.getElementById('npc-speech').innerHTML = `
+          ⚠️ <strong>你選擇了 (${anchorR}, ${anchorC}) 開局！</strong><br>
+          薇薇找到了反制路徑！棋盤被分割後，薇薇有機會反敗為勝！<br>
+          <span class="text-xs text-amber-700 font-bold">💡 運算思維提示：只要找到任何一條會失敗的分支，該開局就可以「剪枝淘汰」！</span>
+        `;
+      }
+
+      renderStage3Tracker();
+      renderBoard();
+    }
+
+    function submitAnswer(chosenCount) {
+      if (chosenCount === 1) {
+        playSound('win');
+        document.getElementById('npc-name').textContent = '長老河狸波波';
+        document.getElementById('npc-speech').innerHTML = `
+          🎊 <strong>答對了！太厲害了！</strong><br>
+          全部 9 個開局中，<strong>只有正中央 (1,1) 這 1 個位置</strong>能保證琪琪 100% 必勝！其他 8 個位置都有被薇薇逆轉擊敗的可能！
+        `;
+        document.getElementById('debrief-banner').classList.remove('hidden');
+        document.getElementById('debrief-banner').scrollIntoView({ behavior: 'smooth' });
+        announceToScreenReader('答對了！只有 1 個正中央位置能保證必勝。恭喜獲得勳章！');
+      } else {
+        playSound('error');
+        document.getElementById('npc-name').textContent = '長老河狸波波';
+        document.getElementById('npc-speech').innerHTML = `
+          🤔 <strong>再想想看喔！</strong><br>
+          如果琪琪把木片放在最邊緣或角落，薇薇是不是能趁機佔領開闊的中間區域呢？<br>
+          試著在上方 3×3 格子中點選其他開局看看，只要找到<strong>一條會輸的路徑</strong>，就不能算必勝喔！
+        `;
+      }
+    }
+
+    function handleCellClick(r, c) {
+      if (currentStage === 1) {
+        handleStage1Click(r, c);
+      } else if (currentStage === 2) {
+        handleStage2Click(r, c);
+      } else if (currentStage === 3) {
+        testOpening(r, c);
+      }
+    }
+
+    // Tab Navigation Handling
+    const tab1 = document.getElementById('tab-stage-1');
+    const tab2 = document.getElementById('tab-stage-2');
+    const tab3 = document.getElementById('tab-stage-3');
+
+    function updateTabs(activeStage) {
+      [tab1, tab2, tab3].forEach((t, i) => {
+        const stageNum = i + 1;
+        if (stageNum === activeStage) {
+          t.className = 'stage-tab flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-black transition flex items-center justify-center gap-1.5 bg-emerald-700 text-white shadow';
+          t.setAttribute('aria-current', 'page');
+        } else {
+          t.className = 'stage-tab flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-black transition flex items-center justify-center gap-1.5 text-emerald-900 hover:bg-emerald-200/60';
+          t.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    tab1.addEventListener('click', () => { playSound('click'); updateTabs(1); initStage1(); });
+    tab2.addEventListener('click', () => { playSound('click'); updateTabs(2); initStage2(); });
+    tab3.addEventListener('click', () => { playSound('click'); updateTabs(3); initStage3(); });
+
+    document.getElementById('next-stage-btn').addEventListener('click', () => {
+      playSound('click');
+      if (currentStage === 1) {
+        updateTabs(2);
+        initStage2();
+      } else if (currentStage === 2) {
+        updateTabs(3);
+        initStage3();
+      }
+    });
+
+    document.getElementById('reset-stage-btn').addEventListener('click', () => {
+      playSound('click');
+      if (currentStage === 1) initStage1();
+      else if (currentStage === 2) initStage2();
+      else if (currentStage === 3) initStage3();
+    });
+
+    document.getElementById('toggle-guide-btn').addEventListener('click', () => {
+      playSound('click');
+      showGuides = !showGuides;
+      document.getElementById('toggle-guide-btn').innerHTML = showGuides ? '👁️ <span>隱藏輔助框</span>' : '👁️ <span>顯示輔助框</span>';
+      renderBoard();
+    });
+
+    // Hint Button Logic
+    document.getElementById('get-hint-btn').addEventListener('click', () => {
+      playSound('click');
+      const hintSpan = document.getElementById('hint-text');
+      if (currentStage === 1) {
+        hintSpan.textContent = '提示：薇薇的木片形狀右上方凸出一格，請往右半部和下半部的連續空位尋找！';
+      } else if (currentStage === 2) {
+        hintSpan.textContent = '提示：點選 (0,0) 左上角！那裡既放得下黃金晶石，又剛好打斷所有薇薇的可能！';
+      } else if (currentStage === 3) {
+        hintSpan.textContent = '提示：這就是「對稱與中心優勢」！九個位置中只有 1 個能支配全盤！';
+      }
+    });
+
+    // Audio Mute Toggle
+    document.getElementById('sound-toggle-btn').addEventListener('click', (e) => {
+      isSoundEnabled = !isSoundEnabled;
+      const btn = e.currentTarget;
+      btn.setAttribute('aria-pressed', isSoundEnabled ? 'true' : 'false');
+      document.getElementById('sound-icon').textContent = isSoundEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-text').textContent = isSoundEnabled ? '音效開' : '音效關';
+      if (isSoundEnabled) playSound('click');
+    });
+
+    const backdrop = document.getElementById('modal-backdrop');
+    const ruleDialog = document.getElementById('rule-dialog');
+    const debriefDialog = document.getElementById('debrief-dialog');
+    const allCloseBtns = document.querySelectorAll('.modal-close-btn');
+
+    function openModal(dialog) {
+      backdrop.classList.remove('hidden');
+      ruleDialog.classList.add('hidden');
+      debriefDialog.classList.add('hidden');
+      dialog.classList.remove('hidden');
+      // Trap focus
+      const focusable = dialog.querySelector('button');
+      if (focusable) focusable.focus();
+    }
+
+    function closeModal() {
+      backdrop.classList.add('hidden');
+      ruleDialog.classList.add('hidden');
+      debriefDialog.classList.add('hidden');
+    }
+
+    document.getElementById('rule-modal-btn').addEventListener('click', () => {
+      playSound('click');
+      openModal(ruleDialog);
+    });
+
+    document.getElementById('open-debrief-modal-btn').addEventListener('click', () => {
+      playSound('win');
+      openModal(debriefDialog);
+    });
+
+    allCloseBtns.forEach(btn => btn.addEventListener('click', () => {
+      playSound('click');
+      closeModal();
+    }));
+
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeModal();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !backdrop.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initStage1();
+    });
+  </script>
+</body>
+</html>

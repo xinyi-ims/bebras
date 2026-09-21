@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌲 海狸村的 L 積木爭霸戰：誰是森林築壩王？（運算思維遊戲）</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* WCAG 2.0 無障礙高對比聚焦輪廓 */
+    :focus-visible {
+      outline: 4px solid #2563eb !important;
+      outline-offset: 3px !important;
+    }
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      aspect-ratio: 1 / 1;
+    }
+    /* 積木質感與立體陰影 */
+    .wood-cell {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .wood-cell:hover:not(:disabled) {
+      transform: scale(0.96);
+    }
+    /* 弱視專用大字體模式 */
+    body.large-text {
+      font-size: 1.15rem;
+    }
+    body.large-text h1 { font-size: 2.2rem; }
+    body.large-text h2 { font-size: 1.6rem; }
+    body.large-text p, body.large-text button { font-size: 1.25rem; }
+    
+    /* 點陣底紋區分色盲學童 */
+    .pattern-kiki {
+      background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.2) 0, rgba(255,255,255,0.2) 8px, transparent 8px, transparent 16px);
+    }
+    .pattern-vivi {
+      background-image: repeating-linear-gradient(-45deg, rgba(255,255,255,0.2) 0, rgba(255,255,255,0.2) 8px, transparent 8px, transparent 16px);
+    }
+  </style>
+</head>
+<body class="bg-amber-50/60 text-stone-900 font-sans min-h-screen flex flex-col antialiased selection:bg-amber-200">
+  <!-- 螢幕報讀專用跳至主內容鍵盤錨點 (WCAG Bypass Blocks) -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-amber-700 focus:text-white focus:rounded-lg focus:shadow-xl font-bold">
+    跳至主要遊戲內容
+  </a>
+
+  <!-- 頂端輔助工具列 (無障礙偏好設定) -->
+  <header role="banner" class="bg-amber-900 text-amber-50 px-4 py-2 border-b-4 border-amber-950 shadow-md">
+    <div class="max-w-5xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl" aria-hidden="true">🌲</span>
+        <span class="font-extrabold tracking-wide text-lg sm:text-xl">Bebras 國際運算思維挑戰賽：國小三年級教材</span>
+      </div>
+      <!-- 輔助無障礙控制項 -->
+      <div class="flex items-center space-x-2" role="toolbar" aria-label="無障礙輔助設定">
+        <button id="btn-font-toggle" class="px-3 py-1 bg-amber-800 hover:bg-amber-700 text-amber-100 rounded-md font-bold text-sm border border-amber-600 transition" aria-pressed="false">
+          切換大字體
+        </button>
+        <button id="btn-sound-toggle" class="px-3 py-1 bg-amber-800 hover:bg-amber-700 text-amber-100 rounded-md font-bold text-sm border border-amber-600 transition" aria-pressed="true">
+          🔊 音效：開
+        </button>
+        <button id="btn-help-modal" class="px-3 py-1 bg-emerald-800 hover:bg-emerald-700 text-emerald-100 rounded-md font-bold text-sm border border-emerald-600 transition">
+          ❓ 規則說明
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6" role="main">
+    
+    <!-- 標題區 -->
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 font-bold text-sm border border-emerald-300 mb-2">
+        <span>🍁 森林築壩王爭霸賽</span>
+        <span class="text-emerald-700">|</span>
+        <span>適合 8~9 歲學童探索</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold text-amber-950 tracking-tight">
+        海狸村的 L 積木爭霸戰
+      </h1>
+      <p class="text-stone-700 mt-2 max-w-2xl mx-auto text-base sm:text-lg">
+        河狸長老放下了 4×4 浮動河道底板。輪流擺放不能旋轉的神奇 L 木片，最後放不下的人就輸囉！
+      </p>
+    </div>
+
+    <!-- 模式選擇器 (WCAG Tabs) -->
+    <div class="flex justify-center mb-6" role="tablist" aria-label="遊戲階段與模式選擇">
+      <div class="bg-amber-200/80 p-1.5 rounded-2xl flex flex-wrap gap-1 shadow-inner border border-amber-300">
+        <button id="tab-stage1" role="tab" aria-selected="true" aria-controls="panel-game" class="mode-tab px-4 py-2 rounded-xl font-bold text-sm sm:text-base bg-amber-900 text-white shadow-sm transition">
+          關卡一：薇薇的下一步
+        </button>
+        <button id="tab-stage2" role="tab" aria-selected="false" aria-controls="panel-game" class="mode-tab px-4 py-2 rounded-xl font-bold text-sm sm:text-base text-amber-950 hover:bg-amber-300/60 transition">
+          關卡二：琪琪必勝封鎖
+        </button>
+        <button id="tab-stage3" role="tab" aria-selected="false" aria-controls="panel-game" class="mode-tab px-4 py-2 rounded-xl font-bold text-sm sm:text-base text-amber-950 hover:bg-amber-300/60 transition">
+          關卡三：正中央秘密
+        </button>
+        <button id="tab-free" role="tab" aria-selected="false" aria-controls="panel-game" class="mode-tab px-4 py-2 rounded-xl font-bold text-sm sm:text-base text-amber-950 hover:bg-amber-300/60 transition">
+          🎮 雙人/人機對戰
+        </button>
+      </div>
+    </div>
+
+    <div id="panel-game" role="tabpanel" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- 左側：角色積木展示與故事劇情指引 (佔 5 欄) -->
+      <section class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-md border-2 border-amber-200 flex flex-col gap-4" aria-labelledby="story-heading">
+        <div class="flex items-center justify-between border-b pb-3 border-stone-200">
+          <h2 id="story-heading" class="text-xl font-extrabold text-amber-950 flex items-center gap-2">
+            <span>📜</span> <span id="stage-title">關卡一：神探眼力大考驗</span>
+          </h2>
+          <span id="badge-turn" class="px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-emerald-900 border border-emerald-300">
+            薇薇的回合
+          </span>
+        </div>
+
+        <!-- 角色木片形狀對比 (無障礙文字 + 圖示雙重呈現) -->
+        <div class="grid grid-cols-2 gap-3 bg-stone-50 p-3 rounded-xl border border-stone-200">
+          <!-- 琪琪的木片 -->
+          <div class="p-2.5 rounded-lg border-2 border-red-200 bg-red-50 flex flex-col items-center">
+            <span class="font-bold text-red-900 text-sm mb-1">🌸 琪琪（左勾木片）</span>
+            <div class="grid grid-cols-2 gap-1 w-16 h-16 bg-white p-1 rounded border border-red-300" aria-label="琪琪的木片形狀：佔據左上、右上與左下">
+              <div class="bg-red-600 pattern-kiki rounded-sm flex items-center justify-center text-white text-[10px] font-bold">木</div>
+              <div class="bg-red-600 pattern-kiki rounded-sm flex items-center justify-center text-white text-[10px] font-bold">木</div>
+              <div class="bg-red-600 pattern-kiki rounded-sm flex items-center justify-center text-white text-[10px] font-bold">木</div>
+              <div class="bg-stone-100 rounded-sm border border-dashed border-stone-300"></div>
+            </div>
+            <span class="text-xs text-red-700 mt-1 font-medium">方向固定不能轉</span>
+          </div>
+
+          <!-- 薇薇的木片 -->
+          <div class="p-2.5 rounded-lg border-2 border-emerald-200 bg-emerald-50 flex flex-col items-center">
+            <span class="font-bold text-emerald-900 text-sm mb-1">🌿 薇薇（右勾木片）</span>
+            <div class="grid grid-cols-2 gap-1 w-16 h-16 bg-white p-1 rounded border border-emerald-300" aria-label="薇薇的木片形狀：佔據右上、左下與右下">
+              <div class="bg-stone-100 rounded-sm border border-dashed border-stone-300"></div>
+              <div class="bg-emerald-700 pattern-vivi rounded-sm flex items-center justify-center text-white text-[10px] font-bold">木</div>
+              <div class="bg-emerald-700 pattern-vivi rounded-sm flex items-center justify-center text-white text-[10px] font-bold">木</div>
+              <div class="bg-emerald-700 pattern-vivi rounded-sm flex items-center justify-center text-white text-[10px] font-bold">木</div>
+            </div>
+            <span class="text-xs text-emerald-800 mt-1 font-medium">方向固定不能轉</span>
+          </div>
+        </div>
+
+        <!-- 長老話語 / 任務說明 -->
+        <div class="bg-amber-50 p-4 rounded-xl border-l-4 border-amber-700">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xl" aria-hidden="true">🦫</span>
+            <strong class="text-amber-950 font-bold">河狸長老說：</strong>
+          </div>
+          <p id="narrator-text" class="text-stone-800 text-sm sm:text-base leading-relaxed">
+            琪琪第一步搶先佔領了正中央！請幫薇薇找找看，這塊 4×4 的河道上，總共只剩下哪 3 個地方可以放進她的右勾木片？點擊棋盤上的格子試試看吧！
+          </p>
+        </div>
+
+        <!-- 提示與重置按鈕 -->
+        <div class="flex flex-wrap gap-2 pt-1">
+          <button id="btn-give-hint" class="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 py-2.5 px-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-1.5">
+            <span>💡</span> <span>長老思考提示</span>
+          </button>
+          <button id="btn-reset-stage" class="bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 py-2.5 px-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-1">
+            <span>🔄</span> <span>重設本關</span>
+          </button>
+        </div>
+
+        <!-- 闖關進度計數 -->
+        <div id="stage-progress-box" class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between">
+          <span class="text-sm font-bold text-emerald-900" id="progress-label">已找到合法位置：</span>
+          <div class="flex items-center gap-1.5" id="found-slots-indicator" aria-label="進度：0之3">
+            <span class="w-7 h-7 rounded-full bg-stone-200 text-stone-600 font-bold text-xs flex items-center justify-center">1</span>
+            <span class="w-7 h-7 rounded-full bg-stone-200 text-stone-600 font-bold text-xs flex items-center justify-center">2</span>
+            <span class="w-7 h-7 rounded-full bg-stone-200 text-stone-600 font-bold text-xs flex items-center justify-center">3</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 右側：4x4 互動浮動河道棋盤 (佔 7 欄) -->
+      <section class="lg:col-span-7 bg-white p-5 rounded-2xl shadow-md border-2 border-amber-200 flex flex-col items-center" aria-labelledby="board-heading">
+        <div class="w-full flex items-center justify-between mb-3">
+          <h2 id="board-heading" class="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <span>🌊</span> 4×4 浮動河道底板
+          </h2>
+          <span class="text-xs text-stone-500 font-medium hidden sm:inline">可使用方向鍵移動，按 Enter 放置</span>
+        </div>
+
+        <!-- 棋盤容器 -->
+        <div class="relative w-full max-w-[380px] sm:max-w-[420px] bg-sky-100 p-3 sm:p-4 rounded-3xl border-4 border-sky-300 shadow-inner">
+          <!-- 座標標籤欄 -->
+          <div class="grid grid-cols-4 text-center font-black text-sky-900 text-xs mb-1 select-none" aria-hidden="true">
+            <span>第1欄</span><span>第2欄</span><span>第3欄</span><span>第4欄</span>
+          </div>
+
+          <!-- 4x4 格子區域 (WCAG Grid) -->
+          <div id="board" class="board-grid gap-2 bg-sky-200/60 p-2 rounded-2xl border-2 border-sky-300" role="grid" aria-label="4乘4河道棋盤">
+            <!-- 由 JavaScript 動態生成 16 格 -->
+          </div>
+        </div>
+
+        <!-- 鍵盤操作提示條 (WCAG 友善導航指示) -->
+        <div class="mt-4 p-2 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-600 text-center w-full max-w-[420px]">
+          ⌨️ <strong>鍵盤小幫手</strong>：按 <kbd class="px-1.5 py-0.5 bg-stone-200 rounded border border-stone-300 font-mono">Tab</kbd> 聚焦棋盤，按 <kbd class="px-1.5 py-0.5 bg-stone-200 rounded border border-stone-300 font-mono">↑ ↓ ← →</kbd> 移動格子，按 <kbd class="px-1.5 py-0.5 bg-stone-200 rounded border border-stone-300 font-mono">Enter</kbd> 嘗試擺放木片。
+        </div>
+
+        <!-- 動態即時朗讀區域 (Screen Reader Live Region) -->
+        <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+      </section>
+
+    </div>
+
+    <!-- 運算思維概念解密區 (通關後或手動展開) -->
+    <section id="ct-debrief-card" class="mt-8 bg-gradient-to-r from-amber-900 to-stone-900 text-amber-50 p-6 rounded-3xl shadow-xl border-4 border-amber-700">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-3xl" aria-hidden="true">🏆</span>
+        <h2 class="text-xl sm:text-2xl font-black tracking-wide text-amber-200">
+          河狸長老的運算思維藏寶箱（概念解密）
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-stone-200">
+        <div class="bg-black/30 p-4 rounded-xl border border-amber-500/30">
+          <h3 class="font-bold text-amber-300 text-base mb-1 flex items-center gap-2">
+            <span>🌳</span> 1. 什麼是「遊戲樹 (Game Tree)」？
+          </h3>
+          <p class="text-sm leading-relaxed">
+            就像大樹開枝散葉一樣：樹根是「遊戲開始」，每一根分叉是「琪琪下這一步，薇薇可能走的所有路線」。只要一步步預測對手的反應，就能像看見未來一樣找出必勝法！
+          </p>
+        </div>
+        <div class="bg-black/30 p-4 rounded-xl border border-amber-500/30">
+          <h3 class="font-bold text-amber-300 text-base mb-1 flex items-center gap-2">
+            <span>✂️</span> 2. 什麼是「聰明搜尋與剪枝」？
+          </h3>
+          <p class="text-sm leading-relaxed">
+            棋盤上總共有很多種擺法，如果要每一種都算完會太慢。聰明的電腦只要發現某個走法「可能會讓自己輸掉」，就立刻放棄那根樹枝，回頭測試別的路線，這就叫<strong>深度搜尋與剪枝</strong>！
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 規則解說彈出視窗 (Modal Dialog) -->
+  <div id="modal-rules" class="fixed inset-0 bg-stone-900/70 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="rules-modal-title">
+    <div class="bg-white max-w-lg w-full rounded-3xl p-6 shadow-2xl border-4 border-amber-300 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3 mb-4">
+        <h3 id="rules-modal-title" class="text-xl font-black text-amber-950 flex items-center gap-2">
+          <span>📜</span> 爭霸賽三大規則
+        </h3>
+        <button id="btn-close-modal" class="text-stone-500 hover:text-stone-800 text-2xl font-black p-1 rounded-lg" aria-label="關閉規則視窗">
+          ✕
+        </button>
+      </div>
+      <div class="space-y-3 text-stone-700 text-sm leading-relaxed">
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex gap-3 items-start">
+          <span class="text-xl">1️⃣</span>
+          <div>
+            <strong class="text-amber-950 block font-bold">方向固定，不能旋轉：</strong>
+            木片施了森林魔法，必須保持原本的方向，不能轉圈圈也不能翻面！
+          </div>
+        </div>
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex gap-3 items-start">
+          <span class="text-xl">2️⃣</span>
+          <div>
+            <strong class="text-amber-950 block font-bold">不能重疊、不能超出邊界：</strong>
+            每一塊木片佔據 3 個格子，不可以壓在別人的木片上，也不能凸出 4×4 格子外面。
+          </div>
+        </div>
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex gap-3 items-start">
+          <span class="text-xl">3️⃣</span>
+          <div>
+            <strong class="text-amber-950 block font-bold">放不下的人就輸了：</strong>
+            輪到你時，如果棋盤上已經完全沒有足夠的 3 格空間放下你的木片，比賽就由對方獲勝！
+          </div>
+        </div>
+      </div>
+      <button id="btn-confirm-modal" class="mt-5 w-full py-3 bg-amber-800 hover:bg-amber-900 text-white font-black rounded-xl transition shadow">
+        我明白了，開始冒險！
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* Web Audio API 音效合成器 (無任何外部依賴，支援完全靜音) */
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playClick() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      }
+      playSuccess() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + i * 0.08);
+          gain.gain.setValueAtTime(0.2, now + i * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.08);
+          osc.stop(now + i * 0.08 + 0.2);
+        });
+      }
+      playError() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(80, this.ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.15);
+      }
+    }
+    const sfx = new SoundFX();
+
+    // 棋盤為 4x4 (0~3 列, 0~3 欄)
+    // 琪琪 (Kiki) 左勾木片: 2x2 方框中的 [(0,0), (0,1), (1,0)]
+    const KIKI_SHAPE = [
+      { r: 0, c: 0 },
+      { r: 0, c: 1 },
+      { r: 1, c: 0 }
+    ];
+    // 薇薇 (Vivi) 右勾木片: 2x2 方框中的 [(0,1), (1,0), (1,1)]
+    const VIVI_SHAPE = [
+      { r: 0, c: 1 },
+      { r: 1, c: 0 },
+      { r: 1, c: 1 }
+    ];
+
+    // 全域遊戲狀態
+    const state = {
+      mode: 'stage1', // 'stage1', 'stage2', 'stage3', 'free'
+      board: Array(16).fill(null), // null, 'kiki', 'vivi'
+      focusedIndex: 0,
+      // 關卡一狀態: 找出薇薇 3 個合法放置位置
+      stage1Found: [], // 儲存已找到的 top-left 錨點座標 (例如 "1,2", "2,1", "2,2")
+      // 關卡二狀態
+      stage2ViviChoice: 0, // 0: 右上, 1: 下中, 2: 右下
+      // 自由對戰狀態
+      currentTurn: 'kiki',
+      isFreePlayVsAI: true,
+      gameOver: false
+    };
+
+    function toIndex(r, c) { return r * 4 + c; }
+    function toCoord(index) { return { r: Math.floor(index / 4), c: index % 4 }; }
+
+    // 檢查某一形狀是否能完整放進以 (topR, topC) 為左上角的 2x2 空間中
+    function canPlaceShape(board, shape, topR, topC) {
+      if (topR < 0 || topR + 1 >= 4 || topC < 0 || topC + 1 >= 4) return false;
+      for (let offset of shape) {
+        const targetR = topR + offset.r;
+        const targetC = topC + offset.c;
+        const idx = toIndex(targetR, targetC);
+        if (board[idx] !== null) return false;
+      }
+      return true;
+    }
+
+    // 找出所有可能的擺放位置 (傳回所有合法的 topR, topC)
+    function getValidPlacements(board, shape) {
+      const placements = [];
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+          if (canPlaceShape(board, shape, r, c)) {
+            placements.push({ r, c, key: `${r},${c}` });
+          }
+        }
+      }
+      return placements;
+    }
+
+    // 放置木片到棋盤
+    function placeShape(board, shape, topR, topC, playerTag) {
+      for (let offset of shape) {
+        const idx = toIndex(topR + offset.r, topC + offset.c);
+        board[idx] = playerTag;
+      }
+    }
+
+    const boardEl = document.getElementById('board');
+    const announcer = document.getElementById('sr-announcer');
+
+    function announce(text) {
+      if (announcer) announcer.textContent = text;
+    }
+
+    function initDOMBoard() {
+      boardEl.innerHTML = '';
+      for (let i = 0; i < 16; i++) {
+        const { r, c } = toCoord(i);
+        const cell = document.createElement('button');
+        cell.id = `cell-${i}`;
+        cell.setAttribute('role', 'gridcell');
+        cell.setAttribute('aria-rowindex', r + 1);
+        cell.setAttribute('aria-colindex', c + 1);
+        cell.tabIndex = (i === 0) ? 0 : -1;
+        cell.className = 'wood-cell relative w-full h-full aspect-square rounded-xl flex items-center justify-center font-black text-sm sm:text-base border-2 shadow-sm';
+        
+        // 點擊事件
+        cell.addEventListener('click', () => handleCellClick(i));
+        // 鍵盤無障礙導航 (方向鍵)
+        cell.addEventListener('keydown', (e) => handleCellKeyDown(e, i));
+
+        boardEl.appendChild(cell);
+      }
+    }
+
+    function updateDOMBoard() {
+      for (let i = 0; i < 16; i++) {
+        const cell = document.getElementById(`cell-${i}`);
+        const { r, c } = toCoord(i);
+        const val = state.board[i];
+
+        // 清除舊樣式
+        cell.className = 'wood-cell relative w-full h-full aspect-square rounded-xl flex items-center justify-center font-black text-sm sm:text-base border-2 shadow-sm ';
+        
+        if (val === 'kiki') {
+          cell.className += 'bg-red-600 pattern-kiki text-white border-red-700 shadow-md';
+          cell.innerHTML = '<span aria-hidden="true">🌸</span><span class="sr-only">琪琪木片</span>';
+          cell.setAttribute('aria-label', `第${r+1}列 第${c+1}格：琪琪的木片`);
+        } else if (val === 'vivi') {
+          cell.className += 'bg-emerald-700 pattern-vivi text-white border-emerald-800 shadow-md';
+          cell.innerHTML = '<span aria-hidden="true">🌿</span><span class="sr-only">薇薇木片</span>';
+          cell.setAttribute('aria-label', `第${r+1}列 第${c+1}格：薇薇的木片`);
+        } else if (val === 'preview') {
+          cell.className += 'bg-amber-200/90 text-amber-900 border-dashed border-amber-600 animate-pulse';
+          cell.innerHTML = '✨';
+          cell.setAttribute('aria-label', `第${r+1}列 第${c+1}格：可擺放位置`);
+        } else {
+          // 空白木格
+          cell.className += 'bg-white/90 text-stone-400 border-sky-200 hover:bg-sky-50 hover:border-sky-400';
+          cell.innerHTML = `<span class="text-xs text-stone-300 select-none">${r+1},${c+1}</span>`;
+          cell.setAttribute('aria-label', `第${r+1}列 第${c+1}格：空`);
+        }
+      }
+    }
+
+    function handleCellKeyDown(e, index) {
+      let target = index;
+      const { r, c } = toCoord(index);
+      switch (e.key) {
+        case 'ArrowUp':
+          if (r > 0) target = toIndex(r - 1, c);
+          e.preventDefault();
+          break;
+        case 'ArrowDown':
+          if (r < 3) target = toIndex(r + 1, c);
+          e.preventDefault();
+          break;
+        case 'ArrowLeft':
+          if (c > 0) target = toIndex(r, c - 1);
+          e.preventDefault();
+          break;
+        case 'ArrowRight':
+          if (c < 3) target = toIndex(r, c + 1);
+          e.preventDefault();
+          break;
+        case 'Enter':
+        case ' ':
+          handleCellClick(index);
+          e.preventDefault();
+          return;
+        default:
+          return;
+      }
+      if (target !== index) {
+        const oldCell = document.getElementById(`cell-${index}`);
+        const newCell = document.getElementById(`cell-${target}`);
+        if (oldCell) oldCell.tabIndex = -1;
+        if (newCell) {
+          newCell.tabIndex = 0;
+          newCell.focus();
+          state.focusedIndex = target;
+          const { r: nr, c: nc } = toCoord(target);
+          announce(`移動到 第${nr + 1}列 第${nc + 1}格`);
+        }
+      }
+    }
+
+    // 關卡一：重設並放入琪琪的中央積木
+    function loadStage1() {
+      state.mode = 'stage1';
+      state.board = Array(16).fill(null);
+      state.stage1Found = [];
+
+      // 琪琪在正中央: 2x2 錨點為 (1, 1) -> 佔 (1,1), (1,2), (2,1)
+      placeShape(state.board, KIKI_SHAPE, 1, 1, 'kiki');
+
+      document.getElementById('stage-title').textContent = '關卡一：神探眼力大考驗';
+      document.getElementById('badge-turn').textContent = '換薇薇放木片';
+      document.getElementById('badge-turn').className = 'px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-emerald-900 border border-emerald-300';
+      document.getElementById('narrator-text').textContent = 
+        '琪琪已經搶先將木片放在棋盤正中央！請幫薇薇找出剩下總共「哪 3 個地方」能放進她的右勾木片？點擊棋盤試放看看！';
+      document.getElementById('stage-progress-box').classList.remove('hidden');
+      updateStage1Indicators();
+      updateDOMBoard();
+      announce('進入關卡一：請找出薇薇手上的右勾木片可以擺放的三個合法位置。');
+    }
+
+    function updateStage1Indicators() {
+      const container = document.getElementById('found-slots-indicator');
+      container.innerHTML = '';
+      const totalExpected = 3;
+      for (let i = 0; i < totalExpected; i++) {
+        const badge = document.createElement('span');
+        const isFound = i < state.stage1Found.length;
+        badge.className = `w-7 h-7 rounded-full font-bold text-xs flex items-center justify-center transition ${
+          isFound ? 'bg-emerald-600 text-white shadow' : 'bg-stone-200 text-stone-600'
+        }`;
+        badge.textContent = isFound ? '✓' : (i + 1);
+        container.appendChild(badge);
+      }
+      container.setAttribute('aria-label', `進度：已找到 ${state.stage1Found.length} 個，共 3 個`);
+    }
+
+    // 關卡二：琪琪的封鎖大絕招
+    function loadStage2() {
+      state.mode = 'stage2';
+      document.getElementById('stage-title').textContent = '關卡二：琪琪的致勝封鎖';
+      document.getElementById('badge-turn').textContent = '換琪琪放木片';
+      document.getElementById('badge-turn').className = 'px-3 py-1 rounded-full text-xs font-black uppercase bg-red-100 text-red-900 border border-red-300';
+      document.getElementById('stage-progress-box').classList.add('hidden');
+
+      applyStage2ViviSetup(state.stage2ViviChoice);
+    }
+
+    function applyStage2ViviSetup(choiceIdx) {
+      state.board = Array(16).fill(null);
+      // 琪琪中央
+      placeShape(state.board, KIKI_SHAPE, 1, 1, 'kiki');
+
+      // 薇薇的三種合法走法：
+      // 0: (1, 2) 右方 / 1: (2, 1) 下方 / 2: (2, 2) 右下角
+      const viviChoices = [
+        { r: 1, c: 2, label: '右上側' },
+        { r: 2, c: 1, label: '下側' },
+        { r: 2, c: 2, label: '右下角落' }
+      ];
+      const choice = viviChoices[choiceIdx];
+      placeShape(state.board, VIVI_SHAPE, choice.r, choice.c, 'vivi');
+
+      document.getElementById('narrator-text').innerHTML = 
+        `假設薇薇將積木放在<strong>【${choice.label}】</strong>。<br>現在換琪琪！請把琪琪的左勾木片放在<strong>哪個角落</strong>，就能一口氣封死全場，讓薇薇下一輪無路可走？（提示：看左上角！）`;
+      
+      updateDOMBoard();
+      announce(`進入關卡二。薇薇放在${choice.label}。請替琪琪選擇能封死對手的位置。`);
+    }
+
+    // 關卡三：正中央的終極奧秘
+    function loadStage3() {
+      state.mode = 'stage3';
+      state.board = Array(16).fill(null);
+      document.getElementById('stage-title').textContent = '關卡三：為什麼是正中央？';
+      document.getElementById('badge-turn').textContent = '探索 9 種起手';
+      document.getElementById('badge-turn').className = 'px-3 py-1 rounded-full text-xs font-black uppercase bg-amber-200 text-amber-950 border border-amber-400';
+      document.getElementById('stage-progress-box').classList.add('hidden');
+      document.getElementById('narrator-text').innerHTML = 
+        '琪琪的第一手其實有 9 個不同的 2×2 位置可放。點擊棋盤上任意一個 2×2 的左上角，長老的水晶球會為你計算：「薇薇有沒有機會反擊獲勝？」';
+      updateDOMBoard();
+      announce('進入關卡三：請探索琪琪第一手如果放在其他地方，會發生什麼事。');
+    }
+
+    // 自由對戰模式
+    function loadFreeMode() {
+      state.mode = 'free';
+      state.board = Array(16).fill(null);
+      state.currentTurn = 'kiki';
+      state.gameOver = false;
+      document.getElementById('stage-title').textContent = '🎮 自由築壩對戰模式';
+      document.getElementById('badge-turn').textContent = '琪琪 (先攻)';
+      document.getElementById('badge-turn').className = 'px-3 py-1 rounded-full text-xs font-black uppercase bg-red-100 text-red-900 border border-red-300';
+      document.getElementById('stage-progress-box').classList.add('hidden');
+      document.getElementById('narrator-text').textContent = 
+        '這是自由對抗練習！由你控制琪琪（紅左勾），電腦對手控制薇薇（綠右勾）。誰先無處可放就算輸！';
+      updateDOMBoard();
+      announce('自由對戰模式開始。由你執紅先行。');
+    }
+
+    function handleCellClick(index) {
+      sfx.playClick();
+      const { r, c } = toCoord(index);
+
+      if (state.mode === 'stage1') {
+        // 薇薇嘗試在 (r, c) 作為左上角放置右勾木片
+        if (canPlaceShape(state.board, VIVI_SHAPE, r, c)) {
+          const key = `${r},${c}`;
+          if (!state.stage1Found.includes(key)) {
+            state.stage1Found.push(key);
+            placeShape(state.board, VIVI_SHAPE, r, c, 'vivi');
+            sfx.playSuccess();
+            updateStage1Indicators();
+            updateDOMBoard();
+
+            if (state.stage1Found.length === 3) {
+              sfx.playSuccess();
+              announce('太棒了！你找齊了薇薇所有 3 個合法位置！恭喜通過第一關！');
+              document.getElementById('narrator-text').innerHTML = 
+                '🎉 <strong>神探眼力大成功！</strong><br>薇薇確實只有這 3 種擺法！現在長老邀請你前往【關卡二】，看看琪琪如何一招制勝！';
+              setTimeout(() => {
+                if (confirmModalSwitch('第一關通關！是否直接前往「關卡二：琪琪必勝封鎖」？')) {
+                  document.getElementById('tab-stage2').click();
+                }
+              }, 400);
+            } else {
+              announce(`答對了！找到第 ${state.stage1Found.length} 個合法位置。請繼續找剩下的！`);
+              document.getElementById('narrator-text').innerHTML = 
+                `太厲害了！你成功找到了一個位置！目前進度：${state.stage1Found.length}/3。棋盤上還有空位嗎？繼續試試看！`;
+            }
+          } else {
+            announce('這個位置你已經找過囉！請找其他兩個位置。');
+          }
+        } else {
+          sfx.playError();
+          announce('哎呀，這裡會出界或撞到琪琪的木片，放不下喔！再試試其他地方。');
+          document.getElementById('narrator-text').textContent = 
+            '❌ 哎呀！薇薇的右勾木片如果放在這裡，會撞到琪琪或掉到河道外面喔！試試看找找完整的 2×2 空白空間！';
+        }
+      } 
+      else if (state.mode === 'stage2') {
+        // 琪琪需要放在 (0, 0)
+        if (r === 0 && c === 0) {
+          if (canPlaceShape(state.board, KIKI_SHAPE, 0, 0)) {
+            placeShape(state.board, KIKI_SHAPE, 0, 0, 'kiki');
+            sfx.playSuccess();
+            updateDOMBoard();
+            announce('一擊必殺！琪琪佔領了左上角！薇薇已經完全沒有任何合法位置可放了！琪琪獲勝！');
+            document.getElementById('narrator-text').innerHTML = 
+              '🌟 <strong>太精彩了！一擊封死！</strong><br>琪琪穩穩佔領左上角後，整個 4×4 盤面上再也沒有任何一個 2×2 空間放得下薇薇的木片！琪琪百分之百必勝！';
+          }
+        } else {
+          sfx.playError();
+          announce('不是這裡喔！請注意看左上角那片完整的四格空地！');
+          document.getElementById('narrator-text').textContent = 
+            '💡 提示：仔細看棋盤的「左上角」（第 1 列與第 2 列最左邊），那裡有足夠的空間可以讓琪琪直接封鎖全場喔！';
+        }
+      }
+      else if (state.mode === 'stage3') {
+        // 探索起手位置 (r, c)
+        if (r < 3 && c < 3) {
+          testInitialMove(r, c);
+        } else {
+          announce('請點擊前三列與前三欄內的格子，作為 2x2 木片的左上角。');
+        }
+      }
+      else if (state.mode === 'free') {
+        // 自由模式下棋
+        if (state.gameOver) return;
+        if (state.currentTurn === 'kiki') {
+          if (canPlaceShape(state.board, KIKI_SHAPE, r, c)) {
+            placeShape(state.board, KIKI_SHAPE, r, c, 'kiki');
+            sfx.playSuccess();
+            updateDOMBoard();
+
+            // 檢查薇薇是否還有合法步數
+            const viviMoves = getValidPlacements(state.board, VIVI_SHAPE);
+            if (viviMoves.length === 0) {
+              state.gameOver = true;
+              sfx.playSuccess();
+              announce('薇薇無處可放！琪琪（玩家）獲得了勝利！');
+              document.getElementById('narrator-text').innerHTML = '🏆 <strong>恭喜獲勝！</strong> 薇薇找不到空間放積木了，你是真正的森林築壩王！';
+              return;
+            }
+
+            // 換薇薇 (AI 回合)
+            state.currentTurn = 'vivi';
+            document.getElementById('badge-turn').textContent = '薇薇思考中...';
+            document.getElementById('badge-turn').className = 'px-3 py-1 rounded-full text-xs font-black uppercase bg-emerald-100 text-emerald-900';
+            
+            setTimeout(aiMakeViviMove, 600);
+          } else {
+            sfx.playError();
+            announce('這個位置無法合法放置左勾木片！');
+          }
+        }
+      }
+    }
+
+    function aiMakeViviMove() {
+      if (state.mode !== 'free' || state.gameOver) return;
+      const valid = getValidPlacements(state.board, VIVI_SHAPE);
+      if (valid.length === 0) {
+        state.gameOver = true;
+        sfx.playSuccess();
+        document.getElementById('narrator-text').innerHTML = '🏆 <strong>琪琪獲勝！</strong> 薇薇無處可放木片！';
+        return;
+      }
+      // 電腦隨機或挑選第一步
+      const pick = valid[Math.floor(Math.random() * valid.length)];
+      placeShape(state.board, VIVI_SHAPE, pick.r, pick.c, 'vivi');
+      sfx.playClick();
+      updateDOMBoard();
+
+      // 檢查換琪琪是否還有路
+      const kikiMoves = getValidPlacements(state.board, KIKI_SHAPE);
+      if (kikiMoves.length === 0) {
+        state.gameOver = true;
+        sfx.playError();
+        announce('琪琪無處可放！薇薇獲勝了！');
+        document.getElementById('badge-turn').textContent = '遊戲結束';
+        document.getElementById('narrator-text').innerHTML = '😢 <strong>哎呀，你放不下了！</strong> 薇薇贏下了這局比賽。按「重設本關」再來挑戰一次！';
+      } else {
+        state.currentTurn = 'kiki';
+        document.getElementById('badge-turn').textContent = '換琪琪放木片';
+        document.getElementById('badge-turn').className = 'px-3 py-1 rounded-full text-xs font-black uppercase bg-red-100 text-red-900 border border-red-300';
+        announce('換你放木片！請找空位放進左勾木片。');
+      }
+    }
+
+    // 第三關：長老預測 9 種開局的遊戲樹演算法
+    function testInitialMove(startR, startC) {
+      const tempBoard = Array(16).fill(null);
+      placeShape(tempBoard, KIKI_SHAPE, startR, startC, 'kiki');
+      state.board = [...tempBoard];
+      updateDOMBoard();
+
+      if (startR === 1 && startC === 1) {
+        // 正中央！
+        sfx.playSuccess();
+        announce('太神奇了！正中央是唯一保證 100% 必勝的神奇起手！');
+        document.getElementById('narrator-text').innerHTML = 
+          '🎯 <strong>【正中央 (1,1)】：唯一保證必勝！</strong><br>不管薇薇如何應對（只有 3 種可能），琪琪下一步都能佔領左上角將她徹底封死！這就是資訊科學中的「必勝策略搜尋」！';
+      } else {
+        // 其他角落或邊緣
+        sfx.playError();
+        const viviCounterMoves = getValidPlacements(tempBoard, VIVI_SHAPE);
+        announce(`若琪琪放在這裡，薇薇有 ${viviCounterMoves.length} 種反擊走法，琪琪可能因此輸掉！`);
+        document.getElementById('narrator-text').innerHTML = 
+          `⚠️ <strong>【位置 (${startR+1}, ${startC+1})】：不是必勝解！</strong><br>因為放在這裡會在另一側留下大片連通的空地，薇薇總共有 <strong>${viviCounterMoves.length} 種反擊方法</strong>，甚至能反過來把琪琪卡死喔！試試點擊「正中央」看看！`;
+      }
+    }
+
+    // 自訂友善確認對話框 (不使用 window.alert/confirm)
+    function confirmModalSwitch(msg) {
+      return window.confirm ? window.confirm(msg) : true;
+    }
+
+    // 頁籤切換
+    const tabs = [
+      { id: 'tab-stage1', fn: loadStage1 },
+      { id: 'tab-stage2', fn: loadStage2 },
+      { id: 'tab-stage3', fn: loadStage3 },
+      { id: 'tab-free', fn: loadFreeMode }
+    ];
+
+    tabs.forEach(({ id, fn }) => {
+      const btn = document.getElementById(id);
+      btn.addEventListener('click', () => {
+        tabs.forEach(t => {
+          const el = document.getElementById(t.id);
+          el.setAttribute('aria-selected', 'false');
+          el.className = 'mode-tab px-4 py-2 rounded-xl font-bold text-sm sm:text-base text-amber-950 hover:bg-amber-300/60 transition';
+        });
+        btn.setAttribute('aria-selected', 'true');
+        btn.className = 'mode-tab px-4 py-2 rounded-xl font-bold text-sm sm:text-base bg-amber-900 text-white shadow-sm transition';
+        sfx.playClick();
+        fn();
+      });
+    });
+
+    // 提示按鈕
+    document.getElementById('btn-give-hint').addEventListener('click', () => {
+      sfx.playClick();
+      if (state.mode === 'stage1') {
+        document.getElementById('narrator-text').innerHTML = 
+          '💡 <strong>長老提示：</strong> 薇薇的木片形狀是【右上、左下、右下】（左上是空的）。請看看右下方那一塊 2×2 的四個格子，是不是剛好能放進去呢？';
+        announce('提示：請觀察棋盤右下方是否有完整的空間。');
+      } else if (state.mode === 'stage2') {
+        document.getElementById('narrator-text').innerHTML = 
+          '💡 <strong>長老提示：</strong> 琪琪只要佔領「左上角」（第 1 列第 1 格為頂點），薇薇就再也湊不出任何一組 3 格的空間囉！';
+        announce('提示：琪琪只要佔領左上角即可贏得比賽。');
+      } else if (state.mode === 'stage3') {
+        document.getElementById('narrator-text').innerHTML = 
+          '💡 <strong>長老提示：</strong> 試試看點擊棋盤正中間（第 2 列第 2 欄），那是這場爭霸賽唯一的黃金秘密喔！';
+      } else {
+        const moves = getValidPlacements(state.board, KIKI_SHAPE);
+        document.getElementById('narrator-text').innerHTML = 
+          `💡 目前琪琪還有 <strong>${moves.length} 個</strong> 可以放置木片的地方！`;
+      }
+    });
+
+    // 重設按鈕
+    document.getElementById('btn-reset-stage').addEventListener('click', () => {
+      sfx.playClick();
+      if (state.mode === 'stage1') loadStage1();
+      else if (state.mode === 'stage2') loadStage2();
+      else if (state.mode === 'stage3') loadStage3();
+      else loadFreeMode();
+    });
+
+    // 無障礙輔助列按鈕
+    const fontBtn = document.getElementById('btn-font-toggle');
+    fontBtn.addEventListener('click', () => {
+      document.body.classList.toggle('large-text');
+      const isLarge = document.body.classList.contains('large-text');
+      fontBtn.setAttribute('aria-pressed', isLarge ? 'true' : 'false');
+      fontBtn.textContent = isLarge ? '回復一般字體' : '切換大字體';
+      announce(isLarge ? '已切換為大字體模式' : '已切換為一般字體');
+    });
+
+    const soundBtn = document.getElementById('btn-sound-toggle');
+    soundBtn.addEventListener('click', () => {
+      sfx.enabled = !sfx.enabled;
+      soundBtn.setAttribute('aria-pressed', sfx.enabled ? 'true' : 'false');
+      soundBtn.textContent = sfx.enabled ? '🔊 音效：開' : '🔇 音效：關';
+      announce(sfx.enabled ? '音效已開啟' : '音效已關閉');
+    });
+
+    // 規則說明 Modal
+    const modalRules = document.getElementById('modal-rules');
+    const openModalBtn = document.getElementById('btn-help-modal');
+    const closeModalBtn = document.getElementById('btn-close-modal');
+    const confirmModalBtn = document.getElementById('btn-confirm-modal');
+
+    function toggleModal(show) {
+      if (show) {
+        modalRules.classList.remove('hidden');
+        closeModalBtn.focus();
+        announce('開啟爭霸賽規則說明視窗');
+      } else {
+        modalRules.classList.add('hidden');
+        openModalBtn.focus();
+        announce('關閉說明視窗');
+      }
+    }
+
+    openModalBtn.addEventListener('click', () => toggleModal(true));
+    closeModalBtn.addEventListener('click', () => toggleModal(false));
+    confirmModalBtn.addEventListener('click', () => toggleModal(false));
+
+    // 按 Esc 鍵關閉 Modal
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modalRules.classList.contains('hidden')) {
+        toggleModal(false);
+      }
+    });
+
+    // 初始化載入
+    window.onload = function() {
+      initDOMBoard();
+      loadStage1();
+    };
+  </script>
+</body>
+</html>

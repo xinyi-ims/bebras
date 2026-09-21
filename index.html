@@ -31,7 +31,7 @@
             }
           },
           fontSize: {
-            'base': ['1.125rem', { lineHeight: '1.75rem' }], /* 18px minimum base for sight care */
+            'base': ['1.125rem', { lineHeight: '1.75rem' }],
             'lg': ['1.25rem', { lineHeight: '1.875rem' }],
             'xl': ['1.5rem', { lineHeight: '2rem' }],
             '2xl': ['1.875rem', { lineHeight: '2.25rem' }],
@@ -42,13 +42,11 @@
     }
   </script>
   <style>
-    /* WCAG 2.0 Accessible Focus Indicators */
     :focus-visible {
       outline: 3px solid #166534 !important;
       outline-offset: 4px !important;
       border-radius: 6px;
     }
-    /* Soft Paper Tint to prevent visual fatigue */
     body {
       background-color: #fbfbf7;
       color: #1e293b;
@@ -78,15 +76,16 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-amber-100 selection:text-amber-900">
 
-  <!-- Skip Link for Keyboard Navigation (WCAG 2.0 Compliance) -->
+  <!-- Skip Link for Keyboard Navigation -->
   <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-emerald-800 focus:text-white focus:font-bold focus:rounded-xl focus:shadow-xl">
     跳至主要內容區塊 (Skip to main content)
   </a>
 
+  <!-- Header -->
   <header class="bg-white border-b border-eye-border sticky top-0 z-30 shadow-sm" role="banner">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
       
-      <!-- Brand & Mission Logo -->
+      <!-- Brand -->
       <div class="flex items-center space-x-3">
         <div class="w-12 h-12 bg-emerald-700 text-white rounded-xl flex items-center justify-center shadow-md" aria-hidden="true">
           <i class="ph-bold ph-compass text-2xl"></i>
@@ -101,9 +100,8 @@
         </div>
       </div>
 
-      <!-- Quick Accessibility & Action Controls -->
+      <!-- Quick Controls -->
       <div class="flex items-center gap-3">
-        <!-- Font Size Adjuster for Sight Care -->
         <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-300" role="group" aria-label="文字大小切換">
           <button id="font-decrease" type="button" class="p-2 rounded hover:bg-white text-slate-700 font-bold transition focus:ring-2 focus:ring-emerald-700" title="縮小字體" aria-label="縮小文字字體">
             <span class="text-sm font-semibold">A-</span>
@@ -116,13 +114,11 @@
           </button>
         </div>
 
-        <!-- Open Featured 2017 L-Game in Modal -->
-        <button onclick="launchStandaloneGame('01 2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" type="button" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-amber-800">
+        <button onclick="launchStandaloneGame('01_2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" type="button" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-amber-800">
           <i class="ph-bold ph-game-controller text-xl" aria-hidden="true"></i>
           <span>特選：2017 L遊戲</span>
         </button>
 
-        <!-- Create Quest / Add Future Year Button -->
         <button id="open-creator-modal-btn" type="button" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-4 rounded-xl shadow transition focus:ring-2 focus:ring-emerald-800">
           <i class="ph-bold ph-plus-circle text-xl" aria-hidden="true"></i>
           <span class="hidden sm:inline">轉化新教材</span>
@@ -132,9 +128,10 @@
     </div>
   </header>
 
+  <!-- Main Container -->
   <main id="main-content" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8" role="main">
     
-    <!-- Hero Banner with Sight Care Friendly Soft Contrast -->
+    <!-- Hero Banner -->
     <section class="bg-gradient-to-r from-emerald-900 via-slate-900 to-amber-950 text-white rounded-2xl p-6 sm:p-8 shadow-lg relative overflow-hidden" aria-labelledby="hero-title">
       <div class="relative z-10 max-w-4xl space-y-4">
         <div class="inline-flex items-center gap-2 text-amber-300 text-sm font-semibold bg-emerald-950/80 px-3 py-1 rounded-full border border-amber-600/50">
@@ -148,37 +145,37 @@
           不背語法、不用死記！將國際運算思維難題化為沉浸式故事謎題。引導學童在決策中掌握「問題拆解、模式識別、抽象化、遊戲樹與剪枝演算法」。
         </p>
         
-        <!-- 2017 L-Game Quick Launch Bar (Points accurately to 2017/ directory) -->
+        <!-- Quick Launch Bar -->
         <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 mt-2 flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="flex items-center gap-3">
             <span class="text-3xl">🦫</span>
             <div>
               <h3 class="font-bold text-amber-300 text-base">2017 創始經典：海狸村的 L 遊戲爭霸戰</h3>
-              <p class="text-xs text-slate-200">支援根目錄與 <code>2017/</code> 資料夾自動探測，點選按鈕立即啟動！</p>
+              <p class="text-xs text-slate-200">檔名已全數優化為無空格版本，支援根目錄與 <code>2017/</code> 資料夾自動探測！</p>
             </div>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button onclick="launchStandaloneGame('01 2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
-              3年級 初階版
+            <button onclick="launchStandaloneGame('01_2017_L遊戲_3年級.html', '2017 年 3 年級：海狸村的 L 積木爭霸戰')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+              3年級 初階版 🎮
             </button>
-            <button onclick="launchStandaloneGame('01 2017_L遊戲_4年級.html', '2017 年 4 年級：符文水壩對決')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
-              4年級 進階版
+            <button onclick="launchStandaloneGame('01_2017_L遊戲_4年級.html', '2017 年 4 年級：符文水壩對決')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+              4年級 進階版 🎮
             </button>
-            <button onclick="launchStandaloneGame('01 2017_L遊戲_5年級.html', '2017 年 5 年級：防洪石板深搜')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
-              5年級 深化版
+            <button onclick="launchStandaloneGame('01_2017_L遊戲_5年級.html', '2017 年 5 年級：防洪石板深搜')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+              5年級 深化版 🎮
             </button>
-            <button onclick="launchStandaloneGame('01 2017_L遊戲_6年級.html', '2017 年 6 年級：九重封印與剪枝')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
-              6年級 挑戰版
+            <button onclick="launchStandaloneGame('01_2017_L遊戲_6年級.html', '2017 年 6 年級：九重封印與剪枝')" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs transition shadow">
+              6年級 挑戰版 🎮
             </button>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- Filters Section -->
     <section class="bg-white rounded-2xl p-5 border border-eye-border gentle-shadow space-y-5" aria-label="題目篩選控制器">
       <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
         
-        <!-- Search bar -->
         <div class="relative flex-1">
           <label for="search-input" class="sr-only">搜尋遊戲名稱、概念或題目關鍵字</label>
           <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500" aria-hidden="true">
@@ -192,7 +189,6 @@
           />
         </div>
 
-        <!-- Grade Filter dropdown -->
         <div class="flex flex-wrap items-center gap-3">
           <div class="w-full sm:w-auto">
             <label for="grade-select" class="text-sm font-bold text-slate-700 block sm:inline mr-2">適應年級：</label>
@@ -205,7 +201,6 @@
             </select>
           </div>
 
-          <!-- CT Pillar Filter -->
           <div class="w-full sm:w-auto">
             <label for="ct-select" class="text-sm font-bold text-slate-700 block sm:inline mr-2">運算思維核心：</label>
             <select id="ct-select" class="py-2.5 px-4 bg-slate-50 border-2 border-slate-300 rounded-xl text-slate-900 text-base focus:border-emerald-700">
@@ -220,7 +215,7 @@
 
       </div>
 
-      <!-- Year Timeline Horizontal Selector (2017 to Future) -->
+      <!-- Year Timeline -->
       <div>
         <div class="flex items-center justify-between pb-2">
           <span class="text-sm font-bold text-slate-700 flex items-center gap-1.5">
@@ -256,9 +251,10 @@
 
     </section>
 
+    <!-- Cards Grid -->
     <section aria-label="挑戰遊戲清單">
       <div id="games-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Injected via JavaScript -->
+        <!-- Injected via JS -->
       </div>
 
       <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border-2 border-dashed border-slate-300 p-8">
@@ -284,14 +280,14 @@
         <div class="flex items-center gap-2 min-w-0">
           <span class="px-2 py-0.5 rounded text-xs font-black bg-amber-500 text-slate-950 shrink-0">獨立關卡</span>
           <h3 id="standalone-modal-title" class="text-base sm:text-lg font-bold truncate">遊戲載入中</h3>
-          <span id="standalone-path-badge" class="hidden sm:inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 truncate max-w-[200px]">
+          <span id="standalone-path-badge" class="hidden sm:inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 truncate max-w-[280px]">
             偵測路徑中...
           </span>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="toggleStandalonePath()" type="button" class="px-2.5 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg flex items-center gap-1 border border-slate-600 transition" title="如果在當前目錄或2017子目錄找不到檔案，可點此手動切換">
+          <button onclick="showPathSwitcherMenu()" type="button" class="px-2.5 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg flex items-center gap-1 border border-slate-600 transition" title="切換根目錄或2017資料夾路徑">
             <i class="ph-bold ph-swap"></i>
-            <span>切換目錄路徑</span>
+            <span>換路徑修復 404</span>
           </button>
           <a id="standalone-open-newtab" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center gap-1 border border-slate-600 transition">
             <i class="ph-bold ph-arrow-square-out"></i>
@@ -303,9 +299,34 @@
         </div>
       </div>
 
-      <!-- IFrame Container -->
+      <!-- IFrame & 404 Rescue Container -->
       <div class="flex-grow w-full bg-slate-100 relative">
         <iframe id="standalone-iframe" src="" class="w-full h-full border-0" title="Bebras 遊戲互動視窗"></iframe>
+        
+        <!-- 404 Rescue Helper Overlay (Hidden until user or system triggers fallback) -->
+        <div id="path-fallback-panel" class="hidden absolute inset-0 bg-slate-900/95 text-white p-6 overflow-y-auto flex flex-col items-center justify-center text-center z-10 space-y-4">
+          <div class="w-16 h-16 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-3xl">
+            <i class="ph-bold ph-warning-circle"></i>
+          </div>
+          <div class="max-w-md space-y-2">
+            <h4 class="text-xl font-bold text-amber-300">GitHub Pages 檔案路徑指引</h4>
+            <p class="text-sm text-slate-300">
+              若瀏覽器顯示「File not found (404)」，代表您的 GitHub 儲存庫資料夾配置與當前網址略有不同。請點選下方對應的存放位置即可立即載入：
+            </p>
+          </div>
+
+          <div id="candidate-buttons" class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg pt-2">
+            <!-- Dynamically populated candidate paths -->
+          </div>
+
+          <p class="text-xs text-slate-400 mt-4 max-w-lg">
+            💡 <strong>GitHub Pages 提示：</strong>如果剛上傳到 GitHub，有時伺服器需要 1~2 分鐘建立部署快取，請稍後重新整理。
+          </p>
+          <button onclick="hidePathSwitcherMenu()" type="button" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-600 transition">
+            返回遊戲視窗
+          </button>
+        </div>
+
       </div>
       
     </div>
@@ -348,10 +369,9 @@
         </div>
       </div>
 
-      <!-- Modal Body (Dynamic Game Area) -->
+      <!-- Modal Body -->
       <div class="p-6 overflow-y-auto custom-scroll space-y-6 flex-1 bg-eye-cream">
         
-        <!-- Story Background Section -->
         <div class="bg-white p-5 rounded-xl border border-slate-300 shadow-sm">
           <div class="flex items-center gap-2 text-emerald-800 font-bold text-base mb-2">
             <i class="ph-fill ph-book-open text-xl" aria-hidden="true"></i>
@@ -362,28 +382,24 @@
           </p>
         </div>
 
-        <!-- Launch Standalone Full Game Button Banner -->
         <div id="modal-standalone-launcher" class="p-4 bg-amber-50 rounded-xl border-2 border-amber-300 flex items-center justify-between gap-3">
           <div class="text-sm text-amber-900 font-bold">
             <span class="block">🎮 想體驗本年級專屬的「完整版沉浸對戰」嗎？</span>
-            <span class="text-xs text-amber-700 font-normal">包含完整棋盤、語音與動態遊戲樹，檔案收錄於 <code>2017/</code> 資料夾！</span>
+            <span class="text-xs text-amber-700 font-normal">包含完整棋盤、語音與動態遊戲樹，具備防 404 智慧載入！</span>
           </div>
           <button id="modal-open-standalone-btn" type="button" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-lg text-xs transition shrink-0 shadow">
             開啟完整遊戲 ➔
           </button>
         </div>
 
-        <!-- Interactive Playground Container -->
         <div id="modal-interactive-area" class="bg-slate-50 p-6 rounded-xl border-2 border-emerald-600/30 text-center space-y-4">
-          <!-- Interactive widgets will render here -->
+          <!-- Injected via script -->
         </div>
 
-        <!-- Socratic Feedback & Guidance Box -->
         <div id="modal-feedback-box" class="hidden p-4 rounded-xl border text-base font-semibold leading-relaxed" role="status" aria-live="polite">
-          <!-- Dynamic feedback injected here -->
+          <!-- Dynamic feedback -->
         </div>
 
-        <!-- CT Concept Debrief (Hidden until solved or toggled) -->
         <div id="modal-ct-debrief" class="hidden bg-emerald-50 border-2 border-emerald-300 p-5 rounded-xl space-y-3">
           <div class="flex items-center gap-2 text-emerald-900 font-black text-lg">
             <i class="ph-fill ph-lightbulb text-2xl text-emerald-700" aria-hidden="true"></i>
@@ -396,7 +412,7 @@
 
       </div>
 
-      <!-- Modal Footer Controls -->
+      <!-- Modal Footer -->
       <div class="px-6 py-4 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
         <button id="modal-hint-btn" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-emerald-900 bg-emerald-100 hover:bg-emerald-200 transition">
           <i class="ph-bold ph-chats-circle text-lg" aria-hidden="true"></i>
@@ -474,12 +490,13 @@
     </div>
   </div>
 
+  <!-- Footer -->
   <footer class="bg-white border-t border-eye-border mt-12 py-8 text-slate-700" role="contentinfo">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
       <div>
         <p class="font-bold text-slate-900 text-base">國際運算思維挑戰賽教材互動遊戲化平台 (Bebras Game Portal)</p>
         <p class="text-sm text-slate-500 mt-1">
-          GitHub Pages 部署版 ｜ 2017 經典獨立遊戲收錄於 <code>2017/</code> 目錄 ｜ 遵循 W3C WCAG 2.0 AA 標準
+          GitHub Pages 部署版 ｜ 支援根目錄與 <code>2017/</code> 資料夾自動探測 ｜ 遵循 W3C WCAG 2.0 AA 標準
         </p>
         <!-- 開發者資料標註 -->
         <p class="text-sm font-semibold text-emerald-900 mt-2 flex flex-wrap items-center justify-center md:justify-start gap-2">
@@ -510,12 +527,11 @@
         originalBebras: "2017 台灣 Bebras 國際運算思維挑戰賽 - L 遊戲",
         description: "琪琪與薇薇爭奪水壩控制權！在 4×4 的棋盤上依序擺放不可旋轉的 L 晶石。體驗如何從直觀擺放深化到遊戲樹狀態空間與剪枝演算法！",
         estTime: "5~12 分鐘",
-        // Standalone file names (Auto-resolved to root or 2017/ directory)
         standaloneFiles: {
-          "3": "01 2017_L遊戲_3年級.html",
-          "4": "01 2017_L遊戲_4年級.html",
-          "5": "01 2017_L遊戲_5年級.html",
-          "6": "01 2017_L遊戲_6年級.html"
+          "3": "01_2017_L遊戲_3年級.html",
+          "4": "01_2017_L遊戲_4年級.html",
+          "5": "01_2017_L遊戲_5年級.html",
+          "6": "01_2017_L遊戲_6年級.html"
         },
         gradeVariants: {
           "3": {
@@ -576,7 +592,7 @@
             correctIndex: 0,
             storyDetails: "【六年級任務】在 4×4 棋盤上，琪琪第一步共有 9 個合法的 2×2 起手窗口。若運用深度優先搜尋 (DFS) 與剪枝法評估，共有幾個起手點能保證琪琪 100% 必勝？",
             hint: "導師提示：只要某個起手點會讓薇薇找到反制逃脫的路徑，電腦就會立刻觸發『剪枝 (Pruning)』淘汰該分支！",
-            debrief: "這就是資訊科學中最核心的【遊戲樹剪枝 (Alpha-Beta Pruning)】！透過剪除無效與失敗分支，超級電腦（如深藍、AlphaGo）才能在千億種狀態中精準找到唯一最優解！"
+            debrief: "這就是資訊科學中最核心的【遊戲樹剪枝 (Alpha-Beta Pruning)】！透過剪除無效與失敗分支，超級電腦才能在千億種狀態中精準找到唯一最優解！"
           }
         }
       },
@@ -759,7 +775,7 @@
     let currentModalGrade = "3";
     let currentInteractiveChoice = null;
     let fontSizeLevel = 1;
-    let currentActiveStandalonePath = "";
+    let currentActiveStandaloneRaw = "";
   </script>
 
   <script>
@@ -830,7 +846,7 @@
               <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 mb-3 space-y-1">
                 <div class="text-xs font-bold text-slate-600 flex items-center justify-between">
                   <span>難度階梯選擇：</span>
-                  ${is2017 ? '<span class="text-amber-700 font-bold">點選可開啟獨立關卡</span>' : '<span class="text-slate-400">點擊切換年級</span>'}
+                  ${is2017 ? '<span class="text-amber-700 font-bold">點選開啟獨立關卡</span>' : '<span class="text-slate-400">點擊切換年級</span>'}
                 </div>
                 <div class="grid grid-cols-4 gap-1.5 pt-1">
                   ${["3", "4", "5", "6"].map(gr => {
@@ -890,81 +906,104 @@
   </script>
 
   <script>
-    // Intelligent path resolver that tests root directory vs 2017/ subfolder automatically
-    async function resolveWorkingGamePath(rawPath) {
-      const cleanFileName = rawPath.replace(/^\.\//, '').replace(/^2017\//, '');
-      const candidates = [
-        cleanFileName,            // Current / root directory (Canvas preview & flat repo)
-        `2017/${cleanFileName}`,  // Subfolder '2017/' (GitHub Pages subfolder)
-        `./${cleanFileName}`,
-        `./2017/${cleanFileName}`
-      ];
+    // Build list of all potential path variations for a given filename
+    function getCandidatePaths(rawFileName) {
+      const clean = rawFileName.replace(/^\.\//, '').replace(/^2017\//, '');
+      const spaceClean = clean.replace(/_/g, ' '); // 相容若原本有空格的檔名
+      const underscoreClean = clean.replace(/\s+/g, '_'); // 無空格底線版本
+      const encodedClean = encodeURI(underscoreClean);
 
-      for (const p of candidates) {
+      return [
+        { label: "1. 根目錄標準 (無空格推薦)", path: underscoreClean },
+        { label: "2. 2017/ 子目錄 (無空格推薦)", path: `2017/${underscoreClean}` },
+        { label: "3. 根目錄 URL 編碼", path: `./${encodedClean}` },
+        { label: "4. 2017/ URL 編碼", path: `./2017/${encodedClean}` },
+        { label: "5. 原空格版本 (相容舊檔)", path: spaceClean },
+        { label: "6. 2017/ 空格版本 (相容舊檔)", path: `2017/${spaceClean}` }
+      ];
+    }
+
+    // Auto-probe candidate paths using HEAD/GET request
+    async function resolveWorkingGamePath(rawFileName) {
+      const candidates = getCandidatePaths(rawFileName);
+
+      for (const item of candidates) {
         try {
-          const resp = await fetch(encodeURI(p), { method: 'HEAD' });
+          const resp = await fetch(encodeURI(item.path), { method: 'HEAD' });
           if (resp.ok) {
-            return p;
+            return item.path;
           }
         } catch (e) {
-          // If fetch fails (e.g. file:// protocol restriction), continue probing
+          // Continue probing next path
         }
       }
 
-      // Default fallback: root file name is the primary workspace standard
-      return cleanFileName;
+      // Default fallback: Try directly with clean underscore file in root
+      const clean = rawFileName.replace(/^\.\//, '').replace(/^2017\//, '').replace(/\s+/g, '_');
+      return clean;
     }
 
-    /* Open Standalone Game Modal pointing to auto-resolved path */
+    // Launch standalone game modal
     async function launchStandaloneGame(filePath, titleText) {
+      currentActiveStandaloneRaw = filePath;
       const modal = document.getElementById("standalone-modal");
       const iframe = document.getElementById("standalone-iframe");
       const titleEl = document.getElementById("standalone-modal-title");
       const newTabLink = document.getElementById("standalone-open-newtab");
       const pathBadge = document.getElementById("standalone-path-badge");
+      const fallbackPanel = document.getElementById("path-fallback-panel");
 
+      fallbackPanel.classList.add("hidden");
       titleEl.textContent = titleText;
       modal.classList.remove("hidden");
       document.body.classList.add("modal-active");
 
-      if (pathBadge) pathBadge.textContent = "偵測路徑中...";
+      if (pathBadge) pathBadge.textContent = "正在探測有效路徑...";
 
-      // Auto resolve whether file is in current directory or 2017/ subfolder
-      const resolved = await resolveWorkingGamePath(filePath);
-      currentActiveStandalonePath = resolved;
+      const bestPath = await resolveWorkingGamePath(filePath);
+      loadIframePath(bestPath);
 
-      const safePath = encodeURI(resolved);
-      iframe.src = safePath;
-      newTabLink.href = safePath;
-
-      if (pathBadge) {
-        pathBadge.textContent = `路徑: ${resolved}`;
-      }
+      // Listen for potential 404 in iframe load
+      iframe.onerror = () => {
+        showPathSwitcherMenu();
+      };
     }
 
-    /* Manual toggle button in case user deployment requires folder swap */
-    function toggleStandalonePath() {
-      if (!currentActiveStandalonePath) return;
-
+    function loadIframePath(resolvedPath) {
       const iframe = document.getElementById("standalone-iframe");
       const newTabLink = document.getElementById("standalone-open-newtab");
       const pathBadge = document.getElementById("standalone-path-badge");
+      const fallbackPanel = document.getElementById("path-fallback-panel");
 
-      const cleanFileName = currentActiveStandalonePath.replace(/^\.\//, '').replace(/^2017\//, '');
+      fallbackPanel.classList.add("hidden");
 
-      if (currentActiveStandalonePath.startsWith('2017/')) {
-        currentActiveStandalonePath = cleanFileName;
-      } else {
-        currentActiveStandalonePath = `2017/${cleanFileName}`;
-      }
-
-      const safePath = encodeURI(currentActiveStandalonePath);
-      iframe.src = safePath;
-      newTabLink.href = safePath;
+      const safeUrl = encodeURI(resolvedPath);
+      iframe.src = safeUrl;
+      newTabLink.href = safeUrl;
 
       if (pathBadge) {
-        pathBadge.textContent = `路徑: ${currentActiveStandalonePath}`;
+        pathBadge.textContent = `路徑: ${resolvedPath}`;
       }
+    }
+
+    // Show path switcher when 404 occurs
+    function showPathSwitcherMenu() {
+      const fallbackPanel = document.getElementById("path-fallback-panel");
+      const container = document.getElementById("candidate-buttons");
+      const candidates = getCandidatePaths(currentActiveStandaloneRaw || "01_2017_L遊戲_3年級.html");
+
+      container.innerHTML = candidates.map(c => `
+        <button onclick="loadIframePath('${c.path.replace(/'/g, "\\'")}')" class="p-3 bg-slate-800 hover:bg-emerald-700 text-left border border-slate-600 hover:border-emerald-400 rounded-xl transition text-xs flex flex-col justify-between">
+          <span class="font-bold text-amber-300">${c.label}</span>
+          <span class="font-mono text-[11px] text-slate-300 mt-1 truncate w-full">${c.path}</span>
+        </button>
+      `).join("");
+
+      fallbackPanel.classList.remove("hidden");
+    }
+
+    function hidePathSwitcherMenu() {
+      document.getElementById("path-fallback-panel").classList.add("hidden");
     }
 
     function closeStandaloneModal() {
@@ -975,7 +1014,7 @@
       document.body.classList.remove("modal-active");
     }
 
-    /* Open In-Page Spiral Modal */
+    // In-page Spiral Modal
     function launchGameModal(questId, gradeTier = "3") {
       const quest = questList.find(q => q.id === questId);
       if (!quest) return;
@@ -989,7 +1028,6 @@
       document.getElementById("modal-game-badge").textContent = `${quest.year} 年 ｜ ${quest.ctPillar}核心`;
       document.getElementById("modal-game-title").textContent = quest.titleTheme;
 
-      // Update standalone banner visibility for 2017
       const launcherBanner = document.getElementById("modal-standalone-launcher");
       const launcherBtn = document.getElementById("modal-open-standalone-btn");
       if (quest.standaloneFiles && quest.standaloneFiles[currentModalGrade]) {
@@ -1024,7 +1062,6 @@
       updateModalGradeTabs(gradeKey);
       loadGradeVariant(gradeKey);
 
-      // Update standalone launcher button if available
       const launcherBanner = document.getElementById("modal-standalone-launcher");
       const launcherBtn = document.getElementById("modal-open-standalone-btn");
       if (currentActiveQuest.standaloneFiles && currentActiveQuest.standaloneFiles[gradeKey]) {
@@ -1098,9 +1135,7 @@
         }
       });
     }
-  </script>
 
-  <script>
     function evaluateSolution() {
       if (!currentActiveQuest) return;
 
