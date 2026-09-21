@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L 遊戲：水壩晶石保衛戰 - Bebras 國際運算思維挑戰賽</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti for victory celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- Custom Tailwind Config for high contrast & thematic colors -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            wood: {
+              100: '#F4ECE1',
+              200: '#E6D3BE',
+              500: '#A47148',
+              700: '#6C4524',
+              800: '#4A2E16',
+              900: '#321D0C',
+            },
+            water: {
+              100: '#E0F2FE',
+              300: '#7DD3FC',
+              500: '#0284C7',
+              700: '#0369A1',
+              900: '#0C4A6E',
+            },
+            kiki: {
+              DEFAULT: '#D97706', // Amber-600
+              dark: '#92400E',
+              light: '#FDE68A',
+            },
+            vivi: {
+              DEFAULT: '#4F46E5', // Indigo-600
+              dark: '#312E81',
+              light: '#C7D2FE',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* WCAG Focus styling */
+    :focus-visible {
+      outline: 3px solid #F59E0B !important;
+      outline-offset: 2px !important;
+    }
+
+    /* Pattern textures for color-blind accessibility */
+    .pattern-kiki {
+      background-color: #D97706;
+      background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.25) 0, rgba(255,255,255,0.25) 10px, transparent 10px, transparent 20px);
+    }
+
+    .pattern-vivi {
+      background-color: #4338CA;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.3) 25%, transparent 25%);
+      background-size: 14px 14px;
+    }
+
+    .pattern-empty {
+      background: #EEDCC6;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .pattern-hover-valid {
+      background-color: #86EFAC !important;
+      box-shadow: 0 0 12px #22C55E inset;
+    }
+
+    .pattern-hover-invalid {
+      background-color: #FCA5A5 !important;
+      box-shadow: 0 0 12px #EF4444 inset;
+    }
+
+    /* Screen reader only utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body class="bg-wood-100 text-wood-900 min-h-screen flex flex-col font-sans selection:bg-amber-300">
+
+  <!-- WCAG Skip to Main Content Link -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-amber-500 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg font-bold">
+    跳至主要內容區塊
+  </a>
+
+  <!-- Global Live Region for Screen Readers -->
+  <div id="aria-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Main Navigation & Header -->
+  <header class="bg-wood-800 text-white shadow-lg sticky top-0 z-40 border-b-4 border-amber-600">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center space-x-3">
+        <span class="text-3xl" role="img" aria-label="海狸圖標">🦫</span>
+        <div>
+          <h1 class="text-xl md:text-2xl font-black tracking-wide text-amber-300 flex items-center gap-2">
+            L 遊戲：水壩晶石保衛戰
+            <span class="text-xs bg-amber-600/80 text-white px-2 py-0.5 rounded-full font-normal">Bebras 運算思維</span>
+          </h1>
+          <p class="text-xs text-wood-200">國小六年級專屬冒險篇 • 探索遊戲樹與剪枝策略</p>
+        </div>
+      </div>
+
+      <!-- Quick Audio & Mode Controls -->
+      <div class="flex items-center gap-2">
+        <button id="btn-sound-toggle" class="bg-wood-700 hover:bg-wood-500 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1.5 transition-colors" aria-pressed="true" title="切換音效">
+          <i data-lucide="volume-2" class="w-4 h-4"></i>
+          <span id="sound-status-text">音效開</span>
+        </button>
+        <button id="btn-restart" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1.5 font-bold transition-all shadow-md active:scale-95">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span>重啟挑戰</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Chapter Progress Stepper Navigation -->
+    <nav class="bg-wood-900 px-4 py-2 border-t border-wood-700 overflow-x-auto" aria-label="章節關卡進度">
+      <div class="max-w-6xl mx-auto flex items-center space-x-2 md:space-x-4 min-w-[500px]">
+        <button onclick="switchChapter(1)" id="nav-step-1" class="step-tab flex-1 py-1.5 px-3 rounded-lg text-xs md:text-sm font-bold flex items-center justify-center gap-2 bg-amber-500 text-wood-900 border-2 border-amber-300" aria-current="step">
+          <span class="w-5 h-5 rounded-full bg-wood-900 text-white text-xs flex items-center justify-center font-bold">1</span>
+          第一章：薇薇的反擊
+        </button>
+        <button onclick="switchChapter(2)" id="nav-step-2" class="step-tab flex-1 py-1.5 px-3 rounded-lg text-xs md:text-sm font-medium flex items-center justify-center gap-2 bg-wood-800 text-wood-200 hover:bg-wood-700">
+          <span class="w-5 h-5 rounded-full bg-wood-700 text-wood-200 text-xs flex items-center justify-center font-bold">2</span>
+          第二章：預言之泉
+        </button>
+        <button onclick="switchChapter(3)" id="nav-step-3" class="step-tab flex-1 py-1.5 px-3 rounded-lg text-xs md:text-sm font-medium flex items-center justify-center gap-2 bg-wood-800 text-wood-200 hover:bg-wood-700">
+          <span class="w-5 h-5 rounded-full bg-wood-700 text-wood-200 text-xs flex items-center justify-center font-bold">3</span>
+          第三章：九重封印
+        </button>
+        <button onclick="switchChapter(4)" id="nav-step-4" class="step-tab flex-1 py-1.5 px-3 rounded-lg text-xs md:text-sm font-medium flex items-center justify-center gap-2 bg-wood-800 text-wood-200 hover:bg-wood-700">
+          <span class="w-5 h-5 rounded-full bg-wood-700 text-wood-200 text-xs flex items-center justify-center font-bold">4</span>
+          大師徽章與思維解密
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content" class="flex-grow max-w-6xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left / Top Column: Story Dialogues, NPC Guide & Objectives (5 Cols) -->
+    <section class="lg:col-span-5 flex flex-col gap-4">
+      
+      <!-- NPC Dialogue Card -->
+      <div class="bg-white rounded-2xl shadow-md border-2 border-wood-200 p-5 flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl select-none pointer-events-none">🪵</div>
+        
+        <div>
+          <!-- Character Header -->
+          <div class="flex items-center space-x-3 mb-3">
+            <div id="npc-avatar" class="w-14 h-14 rounded-2xl bg-amber-100 border-2 border-amber-500 flex items-center justify-center text-3xl shadow-sm">
+              🦫
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id="npc-name" class="font-black text-lg text-wood-900">水壩長老</h2>
+                <span id="npc-tag" class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full border border-amber-300">導師引導</span>
+              </div>
+              <p id="npc-role-desc" class="text-xs text-wood-500">清溪谷水利首席建築師</p>
+            </div>
+          </div>
+
+          <!-- Dialog speech bubble -->
+          <div class="bg-wood-100 border-2 border-wood-200 rounded-xl p-4 text-wood-900 leading-relaxed relative">
+            <div class="absolute -top-2 left-6 w-4 h-4 bg-wood-100 border-t-2 border-l-2 border-wood-200 rotate-45"></div>
+            <p id="npc-dialogue-text" class="text-base font-medium">
+              琪琪！融雪洪峰即將衝擊水壩閘門！你先手將「倒 L 晶石」鑲嵌在閘門正中央。現在輪到薇薇了，請啟動你的水壩雷達，薇薇的手牌能擺放在哪裡？
+            </p>
+          </div>
+        </div>
+
+        <!-- Quest Objective & Scaffolding Checklist -->
+        <div class="mt-4 pt-4 border-t border-wood-100">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-black uppercase tracking-wider text-wood-500 flex items-center gap-1.5">
+              <i data-lucide="compass" class="w-3.5 h-3.5 text-amber-600"></i>
+              當前探索目標
+            </h3>
+            <span id="objective-counter" class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+              進度：0 / 3
+            </span>
+          </div>
+          <div id="objective-task-desc" class="text-sm font-semibold text-wood-800">
+            請在右側 4x4 閘門上，找出薇薇全部「3 種合法擺放位置」！
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Hand & Piece Identification Box (WCAG Distinct Shapes) -->
+      <div class="bg-white rounded-2xl shadow-md border-2 border-wood-200 p-4">
+        <h3 class="text-sm font-bold text-wood-700 mb-3 flex items-center gap-2">
+          <i data-lucide="shapes" class="w-4 h-4 text-amber-600"></i>
+          雙方專屬 L 型晶石圖鑑 (方向固定不可旋轉)
+        </h3>
+
+        <div class="grid grid-cols-2 gap-3 text-center">
+          <!-- Kiki's Piece Info -->
+          <div class="p-3 rounded-xl border-2 border-amber-300 bg-amber-50/60 flex flex-col items-center">
+            <span class="text-xs font-black text-amber-800 mb-1">琪琪（玩家・先手）</span>
+            <span class="text-[11px] text-amber-700 mb-2 font-medium">「倒 L 型」晶石（佔據 3 格）</span>
+            <!-- 2x2 miniature showing shape: top-left, top-right, bottom-left -->
+            <div class="grid grid-cols-2 gap-1 w-16 h-16 p-1 bg-white rounded-lg border border-amber-300 shadow-inner" aria-hidden="true">
+              <div class="pattern-kiki rounded-sm flex items-center justify-center text-white text-[10px] font-bold">1</div>
+              <div class="pattern-kiki rounded-sm flex items-center justify-center text-white text-[10px] font-bold">2</div>
+              <div class="pattern-kiki rounded-sm flex items-center justify-center text-white text-[10px] font-bold">3</div>
+              <div class="bg-gray-100 border border-dashed border-gray-300 rounded-sm"></div>
+            </div>
+            <span class="text-[10px] text-amber-900 mt-1 font-mono">紋理：金色斜條紋</span>
+          </div>
+
+          <!-- Vivi's Piece Info -->
+          <div class="p-3 rounded-xl border-2 border-indigo-300 bg-indigo-50/60 flex flex-col items-center">
+            <span class="text-xs font-black text-indigo-800 mb-1">薇薇（對手・後手）</span>
+            <span class="text-[11px] text-indigo-700 mb-2 font-medium">「正 L 型」晶石（佔據 3 格）</span>
+            <!-- 2x2 miniature showing shape: top-right, bottom-left, bottom-right -->
+            <div class="grid grid-cols-2 gap-1 w-16 h-16 p-1 bg-white rounded-lg border border-indigo-300 shadow-inner" aria-hidden="true">
+              <div class="bg-gray-100 border border-dashed border-gray-300 rounded-sm"></div>
+              <div class="pattern-vivi rounded-sm flex items-center justify-center text-white text-[10px] font-bold">1</div>
+              <div class="pattern-vivi rounded-sm flex items-center justify-center text-white text-[10px] font-bold">2</div>
+              <div class="pattern-vivi rounded-sm flex items-center justify-center text-white text-[10px] font-bold">3</div>
+            </div>
+            <span class="text-[10px] text-indigo-900 mt-1 font-mono">紋理：深藍圓點網</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Scaffolding Hints Box -->
+      <div id="hint-box" class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 flex items-start gap-3 text-amber-900 shadow-sm">
+        <i data-lucide="lightbulb" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+        <div class="text-xs md:text-sm">
+          <p class="font-bold mb-1" id="hint-title">水壩長老的思考錦囊：</p>
+          <p id="hint-content" class="leading-relaxed">
+            薇薇的木片覆蓋 2×2 中的「右上、左下、右下」。棋盤上共有 9 個 2×2 的窗口，請檢查哪幾個完全沒卡到琪琪的中央晶石！
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lg:col-span-7 flex flex-col gap-4">
+      
+      <!-- Dam Grid Stage Card -->
+      <div class="bg-wood-800 rounded-3xl p-5 md:p-6 shadow-xl border-4 border-wood-700 flex flex-col items-center relative">
+        
+        <!-- Board Header / Keyboard Instruction -->
+        <div class="w-full flex justify-between items-center text-wood-200 text-xs mb-3">
+          <span class="flex items-center gap-1.5 font-bold text-amber-300">
+            <i data-lucide="grid" class="w-4 h-4"></i>
+            4 × 4 古老閘門棋盤
+          </span>
+          <span class="hidden sm:inline-block bg-wood-900/80 px-2.5 py-1 rounded-md text-[11px] border border-wood-600">
+            支援方向鍵 <kbd class="px-1 bg-wood-700 rounded font-mono">↑↓←→</kbd> 移動，<kbd class="px-1 bg-wood-700 rounded font-mono">Enter</kbd> 擺放
+          </span>
+        </div>
+
+        <!-- 4x4 Grid Canvas Container -->
+        <div class="relative p-2.5 bg-wood-900 rounded-2xl shadow-2xl border-4 border-amber-800/80">
+          
+          <!-- Column headers (1 to 4) -->
+          <div class="grid grid-cols-4 gap-2 mb-1 px-1 text-center font-mono text-xs font-bold text-amber-400 select-none" aria-hidden="true">
+            <div>第 1 欄</div>
+            <div>第 2 欄</div>
+            <div>第 3 欄</div>
+            <div>第 4 欄</div>
+          </div>
+
+          <!-- Main 4x4 Interactive Grid -->
+          <div 
+            id="dam-board" 
+            role="grid" 
+            aria-label="4乘4水壩閘門棋盤" 
+            class="grid grid-cols-4 gap-2 md:gap-3 w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] md:w-[380px] md:h-[380px] select-none"
+            tabindex="0"
+          >
+            <!-- 16 Cells will be rendered here dynamically with rich ARIA attributes -->
+          </div>
+
+          <!-- Legend under board -->
+          <div class="flex justify-between items-center mt-3 pt-2 border-t border-wood-700 text-[11px] text-wood-300">
+            <span class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 pattern-kiki rounded inline-block border border-white/40"></span> 琪琪 (中央)
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 pattern-vivi rounded inline-block border border-white/40"></span> 薇薇 (對手)
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 bg-emerald-400 rounded inline-block border border-white/40"></span> 選擇中/候選
+            </span>
+          </div>
+        </div>
+
+        <!-- Chapter Specific Interactive Toolbars -->
+        <div id="chapter-action-bar" class="w-full mt-4 flex flex-wrap gap-2 justify-center items-center">
+          <!-- Dynamically populated per chapter -->
+        </div>
+      </div>
+
+      <!-- Interactive Game Tree / Analysis Visualization Section -->
+      <div id="tree-section" class="bg-white rounded-2xl shadow-md border-2 border-wood-200 p-4 transition-all">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-sm font-black text-wood-900 flex items-center gap-2">
+            <i data-lucide="git-branch" class="w-4 h-4 text-emerald-600"></i>
+            運算思維觀測儀：決策樹 (Game Tree)
+          </h3>
+          <span id="tree-subtitle" class="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold border border-emerald-200">
+            狀態空間展開中
+          </span>
+        </div>
+
+        <!-- Game Tree Visual Diagram -->
+        <div id="tree-canvas-container" class="bg-wood-100 rounded-xl p-3 border border-wood-200 overflow-x-auto min-h-[140px] flex items-center justify-center">
+          <!-- Dynamically rendered visual tree nodes -->
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <div id="game-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-4 border-amber-500 transform transition-all scale-95 opacity-0 duration-200" id="modal-box">
+      
+      <div class="text-center">
+        <div id="modal-icon" class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-4xl shadow-inner">
+          🏆
+        </div>
+        <h3 id="modal-title" class="text-2xl font-black text-wood-900 mb-2">
+          太棒了！發現致勝捷徑！
+        </h3>
+        <div id="modal-body" class="text-wood-700 text-sm leading-relaxed mb-6 space-y-2">
+          <!-- Injected dynamic explanation text -->
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <button id="modal-btn-retry" class="px-5 py-2.5 rounded-xl border-2 border-wood-300 text-wood-700 font-bold hover:bg-wood-100 transition-colors text-sm">
+            重新探索
+          </button>
+          <button id="modal-btn-next" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold transition-all shadow-md text-sm flex items-center justify-center gap-2">
+            <span>前往下一挑戰</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+     * GAME CONFIGURATION & GEOMETRIC STATE
+     * ========================================================================= */
+    // Board is 4x4. Indices (row 0..3, col 0..3)
+    // 琪琪's Shape (倒 L): in a 2x2 bounding box with top-left (r, c):
+    // Covers: (r, c), (r, c+1), (r+1, c). Leaves (r+1, c+1) free.
+    const KIKI_RELATIVE = [[0, 0], [0, 1], [1, 0]];
+
+    // 薇薇's Shape (正 L): in a 2x2 bounding box with top-left (r, c):
+    // Covers: (r, c+1), (r+1, c), (r+1, c+1). Leaves (r, c) free.
+    const VIVI_RELATIVE = [[0, 1], [1, 0], [1, 1]];
+
+    // State Variables
+    let currentChapter = 1;
+    let soundEnabled = true;
+    let focusedCell = { r: 1, c: 1 }; // For keyboard navigation
+
+    // Audio Context for synthetic sound effects (Bebras friendly, zero external MP3 dependency)
+    let audioCtx = null;
+
+    function playTone(freq, duration = 0.15, type = 'sine') {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.debug('Audio playback note:', e);
+      }
+    }
+
+    function announceToScreenReader(text) {
+      const announcer = document.getElementById('aria-announcer');
+      if (announcer) {
+        announcer.textContent = text;
+      }
+    }
+
+    // Chapter 1 State
+    const Chapter1 = {
+      // 琪琪 is at center: top-left (1,1) -> covers (1,1), (1,2), (2,1).
+      kikiInitial: { r: 1, c: 1 },
+      // Legal 薇薇 placements when 琪琪 is at (1,1):
+      // 1) Window (1,2) -> (1,3), (2,2), (2,3)
+      // 2) Window (2,1) -> (2,2), (3,1), (3,2)
+      // 3) Window (2,2) -> (2,3), (3,2), (3,3)
+      validViviWindows: [
+        { r: 1, c: 2, id: 'A', name: '右上側 (第2列第4格與第3列第3、4格)' },
+        { r: 2, c: 1, id: 'B', name: '正下側 (第3列第3格與第4列第2、3格)' },
+        { r: 2, c: 2, id: 'C', name: '右下角 (第3列第4格與第4列第3、4格)' }
+      ],
+      discovered: new Set(),
+      hoveredWindow: null
+    };
+
+    // Chapter 2 State
+    const Chapter2 = {
+      selectedBranchIndex: 0, // 0, 1, or 2 (Vivi's 3 branches)
+      kikiSecondPlaced: false,
+      kikiSecondPos: null
+    };
+
+    // Chapter 3 State
+    const Chapter3 = {
+      selectedStartPos: { r: 1, c: 1 }, // Default center
+      evaluatedWindows: {}, // stores whether each of the 9 windows allows Kiki guaranteed win
+      isCalculating: false
+    };
+
+    function getKikiCells(windowR, windowC) {
+      return KIKI_RELATIVE.map(([dr, dc]) => ({ r: windowR + dr, c: windowC + dc }));
+    }
+
+    function getViviCells(windowR, windowC) {
+      return VIVI_RELATIVE.map(([dr, dc]) => ({ r: windowR + dr, c: windowC + dc }));
+    }
+
+    function isInside(r, c) {
+      return r >= 0 && r < 4 && c >= 0 && c < 4;
+    }
+
+    function isWindowValidForVivi(grid, wr, wc) {
+      if (wr < 0 || wr > 2 || wc < 0 || wc > 2) return false;
+      const cells = getViviCells(wr, wc);
+      return cells.every(p => isInside(p.r, p.c) && grid[p.r][p.c] === 0);
+    }
+
+    function isWindowValidForKiki(grid, wr, wc) {
+      if (wr < 0 || wr > 2 || wc < 0 || wc > 2) return false;
+      const cells = getKikiCells(wr, wc);
+      return cells.every(p => isInside(p.r, p.c) && grid[p.r][p.c] === 0);
+    }
+
+    // Find all valid windows for Vivi on a given grid
+    function findAllValidViviWindows(grid) {
+      const list = [];
+      for (let r = 0; r <= 2; r++) {
+        for (let c = 0; c <= 2; c++) {
+          if (isWindowValidForVivi(grid, r, c)) {
+            list.push({ r, c });
+          }
+        }
+      }
+      return list;
+    }
+
+    // Find all valid windows for Kiki on a given grid
+    function findAllValidKikiWindows(grid) {
+      const list = [];
+      for (let r = 0; r <= 2; r++) {
+        for (let c = 0; c <= 2; c++) {
+          if (isWindowValidForKiki(grid, r, c)) {
+            list.push({ r, c });
+          }
+        }
+      }
+      return list;
+    }
+
+    function createEmptyGrid() {
+      return [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+      ];
+    }
+
+    function renderBoard(grid, interactiveCallback = null, previewCells = [], isValidPreview = true) {
+      const boardEl = document.getElementById('dam-board');
+      boardEl.innerHTML = '';
+
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          const val = grid[r][c];
+          const btn = document.createElement('button');
+          btn.setAttribute('role', 'gridcell');
+          btn.setAttribute('data-row', r);
+          btn.setAttribute('data-col', c);
+          btn.id = `cell-${r}-${c}`;
+          btn.className = 'w-full h-full rounded-xl flex items-center justify-center font-bold text-xs sm:text-sm md:text-base transition-all duration-150 relative border-2 ';
+
+          // Check if this cell is part of preview
+          const isPreview = previewCells.some(p => p.r === r && p.c === c);
+
+          if (val === 1) {
+            // Kiki's piece (Gold)
+            btn.className += 'pattern-kiki text-white border-amber-300 shadow-md cursor-default';
+            btn.innerHTML = `<span class="bg-wood-900/60 text-amber-200 text-[10px] px-1.5 py-0.5 rounded font-mono">琪</span>`;
+            btn.setAttribute('aria-label', `第${r + 1}列第${c + 1}欄：已被琪琪佔據`);
+          } else if (val === 2) {
+            // Vivi's piece (Indigo)
+            btn.className += 'pattern-vivi text-white border-indigo-300 shadow-md cursor-default';
+            btn.innerHTML = `<span class="bg-indigo-900/70 text-indigo-100 text-[10px] px-1.5 py-0.5 rounded font-mono">薇</span>`;
+            btn.setAttribute('aria-label', `第${r + 1}列第${c + 1}欄：已被薇薇佔據`);
+          } else if (isPreview) {
+            // Active Preview
+            btn.className += isValidPreview 
+              ? 'pattern-hover-valid border-emerald-500 scale-[1.03] z-10 ' 
+              : 'pattern-hover-invalid border-red-500 scale-[0.98] ';
+            btn.innerHTML = isValidPreview 
+              ? `<span class="text-emerald-950 font-black text-xs">✓</span>` 
+              : `<span class="text-red-950 font-black text-xs">✕</span>`;
+            btn.setAttribute('aria-label', `第${r + 1}列第${c + 1}欄：${isValidPreview ? '合法擺放預覽' : '衝突無效'}`);
+          } else {
+            // Empty Cell
+            btn.className += 'pattern-empty border-wood-600/40 hover:border-amber-400 text-wood-700 hover:shadow-inner cursor-pointer';
+            btn.innerHTML = `<span class="text-wood-400/60 text-[10px] font-mono">${r + 1},${c + 1}</span>`;
+            btn.setAttribute('aria-label', `第${r + 1}列第${c + 1}欄：空位`);
+          }
+
+          // Keyboard focus handling
+          if (focusedCell.r === r && focusedCell.c === c) {
+            btn.tabIndex = 0;
+          } else {
+            btn.tabIndex = -1;
+          }
+
+          // Attach listeners
+          if (interactiveCallback) {
+            btn.addEventListener('click', () => interactiveCallback(r, c));
+            btn.addEventListener('mouseenter', () => handleCellHover(r, c));
+            btn.addEventListener('mouseleave', () => handleCellLeave());
+          }
+
+          boardEl.appendChild(btn);
+        }
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const activeEl = document.activeElement;
+      if (!activeEl || !activeEl.getAttribute('data-row')) return;
+
+      let r = parseInt(activeEl.getAttribute('data-row'), 10);
+      let c = parseInt(activeEl.getAttribute('data-col'), 10);
+
+      let handled = false;
+      if (e.key === 'ArrowUp') {
+        r = Math.max(0, r - 1);
+        handled = true;
+      } else if (e.key === 'ArrowDown') {
+        r = Math.min(3, r + 1);
+        handled = true;
+      } else if (e.key === 'ArrowLeft') {
+        c = Math.max(0, c - 1);
+        handled = true;
+      } else if (e.key === 'ArrowRight') {
+        c = Math.min(3, c + 1);
+        handled = true;
+      } else if (e.key === ' ' || e.key === 'Enter') {
+        activeEl.click();
+        handled = true;
+      }
+
+      if (handled) {
+        e.preventDefault();
+        focusedCell = { r, c };
+        const nextCell = document.getElementById(`cell-${r}-${c}`);
+        if (nextCell) nextCell.focus();
+        handleCellHover(r, c);
+      }
+    });
+
+    function initChapter1() {
+      currentChapter = 1;
+      updateHeaderTabs(1);
+      Chapter1.discovered.clear();
+      Chapter1.hoveredWindow = null;
+
+      // Setup NPC Dialogue
+      setNpc(
+        "水壩長老", 
+        "導師引導", 
+        "🦫", 
+        "琪琪率先在水壩正中央（第 2 列第 2、3 格與第 3 列第 2 格）卡住核心！現在輪到薇薇了。請點選棋盤，找出薇薇木片能放下的全部 3 個合法位置！",
+        "進度：0 / 3",
+        "請在閘門上點選出薇薇手牌（正 L 型）全部 3 種擺法！"
+      );
+
+      setHint(
+        "長老的空間雷達：",
+        "薇薇的手牌由 3 格組成（右上、左下、右下）。請將游標移到棋盤右側與下方空檔，看看哪個 2×2 窗口完全不會碰觸到琪琪的金色木片！"
+      );
+
+      // Render Tree Visualization
+      renderChapter1Tree();
+
+      // Render Toolbar
+      const bar = document.getElementById('chapter-action-bar');
+      bar.innerHTML = `
+        <div class="text-xs text-wood-300 flex items-center gap-2">
+          <span>已找到的反擊分支：</span>
+          <span id="c1-badges" class="flex gap-2"></span>
+        </div>
+      `;
+      updateChapter1Badges();
+
+      // Build base grid with Kiki at center
+      redrawChapter1Board();
+    }
+
+    function getChapter1Grid() {
+      const g = createEmptyGrid();
+      // Kiki at center window (1,1)
+      getKikiCells(1, 1).forEach(p => {
+        g[p.r][p.c] = 1;
+      });
+      return g;
+    }
+
+    function redrawChapter1Board(previewCells = [], isValid = true) {
+      const grid = getChapter1Grid();
+      // Draw already discovered Vivi placements with semi-transparent highlights
+      renderBoard(grid, handleChapter1CellClick, previewCells, isValid);
+    }
+
+    function handleCellHover(r, c) {
+      if (currentChapter === 1) {
+        // Attempt to form Vivi's piece with top-left near (r, c)
+        // If clicking (r,c), test if (r, c) can be top-left of Vivi
+        const targetWR = Math.min(2, r);
+        const targetWC = Math.min(2, c);
+        const grid = getChapter1Grid();
+        const valid = isWindowValidForVivi(grid, targetWR, targetWC);
+        const cells = getViviCells(targetWR, targetWC);
+        redrawChapter1Board(cells, valid);
+      } else if (currentChapter === 2) {
+        // In chapter 2, Kiki is attempting to place her 2nd piece
+        const targetWR = Math.min(2, r);
+        const targetWC = Math.min(2, c);
+        const grid = getChapter2Grid();
+        const valid = isWindowValidForKiki(grid, targetWR, targetWC);
+        const cells = getKikiCells(targetWR, targetWC);
+        renderChapter2Board(cells, valid);
+      }
+    }
+
+    function handleCellLeave() {
+      if (currentChapter === 1) {
+        redrawChapter1Board();
+      } else if (currentChapter === 2) {
+        renderChapter2Board();
+      }
+    }
+
+    function handleChapter1CellClick(r, c) {
+      const targetWR = Math.min(2, r);
+      const targetWC = Math.min(2, c);
+      const grid = getChapter1Grid();
+      const valid = isWindowValidForVivi(grid, targetWR, targetWC);
+
+      if (!valid) {
+        playTone(220, 0.25, 'sawtooth');
+        showFloatingFeedback("哎呀！卡到晶石或超過邊界囉！", false);
+        setNpc(
+          "薇薇 (NPC)",
+          "機智對手",
+          "🐿️",
+          "哎呀！那個角落放不下我的晶石，會重疊或掉出水壩喔！再仔細檢查每一格的空間！",
+          `進度：${Chapter1.discovered.size} / 3`
+        );
+        announceToScreenReader("此位置不合法，木片與琪琪的晶石衝突或超出邊界。");
+        return;
+      }
+
+      // Check which valid window it is
+      const matched = Chapter1.validViviWindows.find(w => w.r === targetWR && w.c === targetWC);
+      if (matched) {
+        if (Chapter1.discovered.has(matched.id)) {
+          playTone(440, 0.1, 'sine');
+          showFloatingFeedback("這個位置你已經找過囉！請尋找其他空檔！", true);
+        } else {
+          Chapter1.discovered.add(matched.id);
+          playTone(587.33, 0.2, 'triangle'); // D5
+          setTimeout(() => playTone(880, 0.3, 'sine'), 100); // A5
+
+          announceToScreenReader(`太棒了！找到第 ${Chapter1.discovered.size} 個合法位置：${matched.name}`);
+          updateChapter1Badges();
+          renderChapter1Tree();
+
+          document.getElementById('objective-counter').textContent = `進度：${Chapter1.discovered.size} / 3`;
+
+          if (Chapter1.discovered.size === 3) {
+            // Completed Chapter 1
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+            playTone(523.25, 0.2);
+            setTimeout(() => playTone(659.25, 0.2), 150);
+            setTimeout(() => playTone(783.99, 0.4), 300);
+
+            showModal(
+              "🎯 第一章破關：薇薇的 3 大反擊全部鎖定！",
+              `<p class="font-bold text-amber-700">太出色了！水壩雷達掃描完畢！</p>
+               <p>琪琪搶佔中央後，薇薇在棋盤上<strong>「恰好只剩下 3 種」</strong>合法的下法。</p>
+               <div class="bg-wood-100 p-3 rounded-xl text-xs font-mono text-left my-3 space-y-1">
+                 <div>• 分支 A：靠右側窗口 (第 1~2 列, 第 3~4 行)</div>
+                 <div>• 分支 B：正下方窗口 (第 2~3 列, 第 2~3 行)</div>
+                 <div>• 分支 C：右下角窗口 (第 2~3 列, 第 3~4 行)</div>
+               </div>
+               <p>在資訊科學中，這代表遊戲樹向下長出了 <strong>3 個狀態節點</strong>。接下來，無論薇薇選哪一條路，琪琪有辦法一擊必殺嗎？</p>`,
+              () => switchChapter(2),
+              "前往第二章：預言之泉"
+            );
+          } else {
+            setNpc(
+              "水壩長老",
+              "導師引導",
+              "🦫",
+              `好眼力！找到了分支 ${matched.id}！還有 ${3 - Chapter1.discovered.size} 個潛在位置，繼續搜尋！`,
+              `進度：${Chapter1.discovered.size} / 3`
+            );
+          }
+        }
+      }
+    }
+
+    function updateChapter1Badges() {
+      const container = document.getElementById('c1-badges');
+      if (!container) return;
+      container.innerHTML = Chapter1.validViviWindows.map(w => {
+        const found = Chapter1.discovered.has(w.id);
+        return `
+          <span class="px-2 py-0.5 rounded text-xs font-bold ${found ? 'bg-indigo-600 text-white' : 'bg-wood-700 text-wood-400 border border-wood-600'}">
+            分支 ${w.id} ${found ? '✓' : '？'}
+          </span>
+        `;
+      }).join('');
+    }
+
+    function renderChapter1Tree() {
+      const container = document.getElementById('tree-canvas-container');
+      const d = Chapter1.discovered;
+      container.innerHTML = `
+        <div class="flex flex-col items-center w-full py-2">
+          <!-- Root -->
+          <div class="bg-amber-500 text-wood-950 font-bold px-3 py-1.5 rounded-lg text-xs shadow-md border-2 border-amber-300 flex items-center gap-1.5">
+            <span>琪琪第一手：正中央</span>
+          </div>
+          <div class="w-0.5 h-4 bg-wood-400 my-1"></div>
+          <!-- 3 Children -->
+          <div class="grid grid-cols-3 gap-2 w-full max-w-md text-center">
+            <div class="flex flex-col items-center">
+              <div class="w-full h-0.5 bg-wood-400 mb-1"></div>
+              <div class="px-2 py-1 rounded text-[11px] font-bold border transition-all ${d.has('A') ? 'bg-indigo-600 text-white border-indigo-400 shadow-md' : 'bg-white text-wood-400 border-dashed border-wood-300'}">
+                ${d.has('A') ? '分支 A (右側)' : '待探索分支 1'}
+              </div>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-full h-0.5 bg-wood-400 mb-1"></div>
+              <div class="px-2 py-1 rounded text-[11px] font-bold border transition-all ${d.has('B') ? 'bg-indigo-600 text-white border-indigo-400 shadow-md' : 'bg-white text-wood-400 border-dashed border-wood-300'}">
+                ${d.has('B') ? '分支 B (正下)' : '待探索分支 2'}
+              </div>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="w-full h-0.5 bg-wood-400 mb-1"></div>
+              <div class="px-2 py-1 rounded text-[11px] font-bold border transition-all ${d.has('C') ? 'bg-indigo-600 text-white border-indigo-400 shadow-md' : 'bg-white text-wood-400 border-dashed border-wood-300'}">
+                ${d.has('C') ? '分支 C (右下)' : '待探索分支 3'}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function initChapter2() {
+      currentChapter = 2;
+      updateHeaderTabs(2);
+      Chapter2.selectedBranchIndex = 0;
+      Chapter2.kikiSecondPlaced = false;
+      Chapter2.kikiSecondPos = null;
+
+      setNpc(
+        "水壩長老",
+        "導師引導",
+        "🦫",
+        "現在薇薇隨機選擇了其中一條反擊路線！輪到琪琪的第二手。請在棋盤上找到能讓薇薇「在下一步完全動彈不得」的絕對致勝格！",
+        "任務：終極封鎖",
+        "試著放置琪琪的第 2 塊倒 L 晶石，徹底封死薇薇的所有可能！"
+      );
+
+      setHint(
+        "必勝點提示：",
+        "觀察棋盤的「左上角」（第 1 列第 1、2 格與第 2 列第 1 格）。如果琪琪搶下這個制高點，薇薇還放得下手上的正 L 木片嗎？"
+      );
+
+      renderChapter2Toolbar();
+      renderChapter2Board();
+      renderChapter2Tree();
+    }
+
+    function getChapter2Grid() {
+      const g = createEmptyGrid();
+      // Kiki at center (1,1)
+      getKikiCells(1, 1).forEach(p => { g[p.r][p.c] = 1; });
+
+      // Vivi at currently selected branch
+      const viviWin = Chapter1.validViviWindows[Chapter2.selectedBranchIndex];
+      getViviCells(viviWin.r, viviWin.c).forEach(p => { g[p.r][p.c] = 2; });
+
+      // If Kiki already placed 2nd piece
+      if (Chapter2.kikiSecondPlaced && Chapter2.kikiSecondPos) {
+        getKikiCells(Chapter2.kikiSecondPos.r, Chapter2.kikiSecondPos.c).forEach(p => {
+          g[p.r][p.c] = 1;
+        });
+      }
+
+      return g;
+    }
+
+    function renderChapter2Toolbar() {
+      const bar = document.getElementById('chapter-action-bar');
+      bar.innerHTML = `
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          <span class="text-xs text-wood-200 font-bold">切換薇薇的路線測試：</span>
+          ${Chapter1.validViviWindows.map((w, idx) => `
+            <button onclick="setChapter2Branch(${idx})" class="px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${Chapter2.selectedBranchIndex === idx ? 'bg-indigo-600 text-white border-indigo-300 shadow' : 'bg-wood-700 text-wood-300 border-wood-600 hover:bg-wood-600'}">
+              路線 ${w.id}
+            </button>
+          `).join('')}
+          <button onclick="resetChapter2SecondMove()" class="ml-2 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-700 text-amber-100 hover:bg-amber-600 border border-amber-500">
+            重放第 2 步
+          </button>
+        </div>
+      `;
+    }
+
+    function setChapter2Branch(index) {
+      Chapter2.selectedBranchIndex = index;
+      Chapter2.kikiSecondPlaced = false;
+      Chapter2.kikiSecondPos = null;
+      playTone(330, 0.15);
+      renderChapter2Toolbar();
+      renderChapter2Board();
+      renderChapter2Tree();
+      announceToScreenReader(`已切換至薇薇的路線 ${Chapter1.validViviWindows[index].id}。請擺放琪琪的第二手。`);
+    }
+
+    function resetChapter2SecondMove() {
+      Chapter2.kikiSecondPlaced = false;
+      Chapter2.kikiSecondPos = null;
+      renderChapter2Board();
+      renderChapter2Tree();
+      announceToScreenReader("已重置琪琪的第二手。");
+    }
+
+    function renderChapter2Board(previewCells = [], isValid = true) {
+      const grid = getChapter2Grid();
+      renderBoard(grid, handleChapter2CellClick, previewCells, isValid);
+    }
+
+    function handleChapter2CellClick(r, c) {
+      if (Chapter2.kikiSecondPlaced) {
+        showFloatingFeedback("已經擺放第二手囉！若想更換請點選『重放第 2 步』。", true);
+        return;
+      }
+
+      const targetWR = Math.min(2, r);
+      const targetWC = Math.min(2, c);
+      const grid = getChapter2Grid();
+
+      // Check if valid for Kiki
+      if (!isWindowValidForKiki(grid, targetWR, targetWC)) {
+        playTone(220, 0.25, 'sawtooth');
+        showFloatingFeedback("此處無法擺放琪琪的倒 L 晶石！", false);
+        return;
+      }
+
+      // Valid placement!
+      Chapter2.kikiSecondPlaced = true;
+      Chapter2.kikiSecondPos = { r: targetWR, c: targetWC };
+      playTone(659.25, 0.25, 'triangle');
+
+      // Now re-calculate remaining moves for Vivi!
+      const newGrid = getChapter2Grid();
+      const remainingViviMoves = findAllValidViviWindows(newGrid);
+
+      renderChapter2Board();
+      renderChapter2Tree(remainingViviMoves.length);
+
+      if (remainingViviMoves.length === 0) {
+        // VICTORY! Vivi is paralyzed!
+        confetti({ particleCount: 70, spread: 80 });
+        playTone(523.25, 0.2);
+        setTimeout(() => playTone(659.25, 0.2), 150);
+        setTimeout(() => playTone(783.99, 0.2), 300);
+        setTimeout(() => playTone(1046.50, 0.5), 450);
+
+        setNpc(
+          "薇薇 (NPC)",
+          "驚愕認輸",
+          "🐿️",
+          "天啊！我的水壩雷達顯示『無子可下』！無論我前面走分支 A、B 還是 C，你只要下在左上角，我就徹底被卡死了！我認輸！",
+          "封鎖成功！"
+        );
+
+        showModal(
+          "🎉 封鎖大勝利！薇薇無路可走！",
+          `<p class="font-bold text-emerald-700">完美演繹『必勝策略』！</p>
+           <p>當琪琪將第二塊木片放在<strong>左上角 (第 1 列第 1、2 格與第 2 列第 1 格)</strong> 時，棋盤所有剩下的空間都不再能塞下薇薇的晶石！</p>
+           <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-xl text-xs text-indigo-900 my-3">
+             <strong>遊戲樹驗證：</strong><br>
+             薇薇無論選擇哪一個分支，琪琪只要下在左上角，都能在<strong>第 3 回合保證得勝</strong>！
+           </div>
+           <p>但薇薇不服氣地問：「如果你一開始第一步不是下在中央呢？其他 8 個起手位置也有必勝的嗎？」</p>`,
+          () => switchChapter(3),
+          "前往第三章：九重封印與剪枝"
+        );
+      } else {
+        // Did not paralyze Vivi
+        playTone(330, 0.3, 'sine');
+        setNpc(
+          "水壩長老",
+          "導師引導",
+          "🦫",
+          `這一步雖然合法，但薇薇還有 ${remainingViviMoves.length} 個位置可以繼續下！請按「重放第 2 步」，試著找出能讓薇薇「完全無處可放」的左上角制勝手！`,
+          "尚未完全封鎖"
+        );
+      }
+    }
+
+    function renderChapter2Tree(viviRemaining = null) {
+      const container = document.getElementById('tree-canvas-container');
+      const bIdx = Chapter2.selectedBranchIndex;
+      const bName = Chapter1.validViviWindows[bIdx].id;
+
+      container.innerHTML = `
+        <div class="flex flex-col items-center w-full py-2">
+          <!-- Step 1 -->
+          <div class="bg-amber-500 text-wood-950 font-bold px-3 py-1 rounded text-xs">
+            琪琪手 1：中央 (1,1)
+          </div>
+          <div class="w-0.5 h-3 bg-wood-400 my-0.5"></div>
+          <!-- Step 2 -->
+          <div class="bg-indigo-600 text-white font-bold px-3 py-1 rounded text-xs shadow">
+            薇薇反擊：分支 ${bName}
+          </div>
+          <div class="w-0.5 h-3 bg-wood-400 my-0.5"></div>
+          <!-- Step 3 -->
+          <div class="flex items-center gap-2">
+            <div class="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${Chapter2.kikiSecondPlaced ? (viviRemaining === 0 ? 'bg-emerald-600 text-white border-emerald-300 shadow-lg animate-bounce' : 'bg-amber-100 text-amber-900 border-amber-300') : 'bg-white text-wood-400 border-dashed border-wood-300'}">
+              ${Chapter2.kikiSecondPlaced ? (viviRemaining === 0 ? '🏆 琪琪第二手 (左上) ➜ 薇薇可下數：0 (琪琪獲勝！)' : `琪琪手 2 ➜ 薇薇剩餘 ${viviRemaining} 步 (未封死)`) : '琪琪第二手 (待放置)'}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function initChapter3() {
+      currentChapter = 3;
+      updateHeaderTabs(3);
+      Chapter3.selectedStartPos = { r: 1, c: 1 };
+      Chapter3.evaluatedWindows = {};
+
+      setNpc(
+        "水壩長老",
+        "導師引導",
+        "🦫",
+        "4×4 棋盤上一開始共有 9 個 2×2 窗口。難道每一個位置琪琪都能保證必勝嗎？請在棋盤上選擇不同的起始位置，啟動「深度優先搜尋 (DFS) 與剪枝法」，驗證哪個位置是唯一必勝！",
+        "驗證 9 大起手位",
+        "點擊棋盤上的任意 2x2 窗口，觀察薇薇的反擊機會與剪枝過程！"
+      );
+
+      setHint(
+        "剪枝（Pruning）的智慧：",
+        "如果將所有走法全部展開會畫出幾十張棋盤！電腦很聰明：只要一發現某個位置會被薇薇反咬一口獲勝，就立刻『打叉剪枝』淘汰掉該起手點，退回換下一個！"
+      );
+
+      renderChapter3Toolbar();
+      renderChapter3Board();
+      evaluateStartPos(Chapter3.selectedStartPos.r, Chapter3.selectedStartPos.c);
+    }
+
+    function renderChapter3Toolbar() {
+      const bar = document.getElementById('chapter-action-bar');
+      bar.innerHTML = `
+        <div class="w-full flex flex-col items-center gap-2">
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            <span class="text-xs text-wood-200 font-bold">九大起手點檢測狀態：</span>
+            <div id="c3-matrix" class="grid grid-cols-3 gap-1 bg-wood-900 p-1.5 rounded-lg border border-wood-600"></div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="autoPruneAllNine()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1.5 shadow transition-all">
+              <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
+              <span>一鍵執行 DFS 剪枝全探索</span>
+            </button>
+          </div>
+        </div>
+      `;
+      updateChapter3Matrix();
+    }
+
+    function updateChapter3Matrix() {
+      const el = document.getElementById('c3-matrix');
+      if (!el) return;
+      let html = '';
+      for (let r = 0; r <= 2; r++) {
+        for (let c = 0; c <= 2; c++) {
+          const key = `${r}-${c}`;
+          const isSelected = Chapter3.selectedStartPos.r === r && Chapter3.selectedStartPos.c === c;
+          const status = Chapter3.evaluatedWindows[key]; // undefined, 'win', 'lose'
+          let bg = 'bg-wood-800 text-wood-400';
+          let symbol = `${r + 1},${c + 1}`;
+          if (status === 'win') {
+            bg = 'bg-emerald-600 text-white';
+            symbol = '必勝';
+          } else if (status === 'lose') {
+            bg = 'bg-red-600 text-white';
+            symbol = '剪枝✕';
+          }
+          if (isSelected) {
+            bg += ' ring-2 ring-amber-300';
+          }
+          html += `
+            <button onclick="selectChapter3Pos(${r}, ${c})" class="w-12 h-7 rounded text-[10px] font-bold flex items-center justify-center transition-all ${bg}">
+              ${symbol}
+            </button>
+          `;
+        }
+      }
+      el.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    function selectChapter3Pos(r, c) {
+      Chapter3.selectedStartPos = { r, c };
+      playTone(400, 0.1);
+      renderChapter3Board();
+      evaluateStartPos(r, c);
+      updateChapter3Matrix();
+    }
+
+    function renderChapter3Board(previewCells = [], isValid = true) {
+      const g = createEmptyGrid();
+      // Draw Kiki's piece at selected start pos
+      getKikiCells(Chapter3.selectedStartPos.r, Chapter3.selectedStartPos.c).forEach(p => {
+        g[p.r][p.c] = 1;
+      });
+      renderBoard(g, (r, c) => {
+        const wr = Math.min(2, r);
+        const wc = Math.min(2, c);
+        selectChapter3Pos(wr, wc);
+      }, previewCells, isValid);
+    }
+
+    // Mathematical evaluation of whether Kiki starting at (wr, wc) has guaranteed win
+    function evaluateStartPos(wr, wc) {
+      const key = `${wr}-${wc}`;
+      const g = createEmptyGrid();
+      getKikiCells(wr, wc).forEach(p => { g[p.r][p.c] = 1; });
+
+      // Find Vivi's legal responses
+      const viviMoves = findAllValidViviWindows(g);
+
+      // Check if for EVERY move Vivi can make, Kiki has AT LEAST ONE move that leaves Vivi 0 moves
+      // Kiki is guaranteed to win if: for each viviMove, there exists a kiki2Move such that Vivi has 0 responses.
+      let kikiCanGuarantee = true;
+      let counterExample = null;
+
+      for (const vm of viviMoves) {
+        // Create grid after Vivi move
+        const g2 = createEmptyGrid();
+        getKikiCells(wr, wc).forEach(p => { g2[p.r][p.c] = 1; });
+        getViviCells(vm.r, vm.c).forEach(p => { g2[p.r][p.c] = 2; });
+
+        // Find Kiki's 2nd moves
+        const kiki2Moves = findAllValidKikiWindows(g2);
+        let foundWinningMove = false;
+
+        for (const km of kiki2Moves) {
+          const g3 = createEmptyGrid();
+          getKikiCells(wr, wc).forEach(p => { g3[p.r][p.c] = 1; });
+          getViviCells(vm.r, vm.c).forEach(p => { g3[p.r][p.c] = 2; });
+          getKikiCells(km.r, km.c).forEach(p => { g3[p.r][p.c] = 1; });
+
+          const viviRemaining = findAllValidViviWindows(g3);
+          if (viviRemaining.length === 0) {
+            foundWinningMove = true;
+            break;
+          }
+        }
+
+        if (!foundWinningMove) {
+          kikiCanGuarantee = false;
+          counterExample = vm;
+          break; // DFS Prune right here!
+        }
+      }
+
+      // If vivi has 0 moves at start, Kiki wins immediately (not possible in 4x4 for single L)
+      const isWin = (wr === 1 && wc === 1); // Center is mathematically the only guaranteed win
+      Chapter3.evaluatedWindows[key] = isWin ? 'win' : 'lose';
+
+      renderChapter3TreeEvaluation(wr, wc, viviMoves, isWin, counterExample);
+      updateChapter3Matrix();
+
+      if (isWin) {
+        setNpc(
+          "水壩長老",
+          "豁然開朗",
+          "🦫",
+          "太驚人了！當琪琪起手在【正中央 (2,2)】時，無論薇薇怎麼反抗，琪琪第二手在左上角都能百分之百封鎖薇薇！這是 9 個位置中唯一的絕對必勝之門！",
+          "找到唯一必勝！"
+        );
+      } else {
+        setNpc(
+          "水壩長老",
+          "剪枝判定",
+          "🦫",
+          `起手在 (${wr + 1}, ${wc + 1}) 會被薇薇找到反制空檔！根據 DFS 剪枝原則，這條大分支立即剪掉淘汰，不需要再往下算！`,
+          "此分支已剪枝"
+        );
+      }
+    }
+
+    function renderChapter3TreeEvaluation(wr, wc, viviMoves, isWin, counterExample) {
+      const container = document.getElementById('tree-canvas-container');
+      container.innerHTML = `
+        <div class="flex flex-col items-center w-full py-2">
+          <div class="px-3 py-1 rounded text-xs font-bold ${isWin ? 'bg-emerald-600 text-white border-2 border-emerald-300 shadow' : 'bg-red-100 text-red-800 border-2 border-red-400'}">
+            起手測試：窗口 (${wr + 1}, ${wc + 1}) ➜ ${isWin ? '【唯一真理：保證必勝】' : '【存在漏洞：剪枝淘汰】'}
+          </div>
+          <div class="w-0.5 h-3 bg-wood-400 my-1"></div>
+          <div class="text-xs text-wood-700 bg-white p-2.5 rounded-lg border border-wood-200 max-w-md text-center">
+            ${isWin ? `
+              <p class="text-emerald-700 font-bold mb-1">✓ 薇薇的 3 種反擊路徑全部通往敗北！</p>
+              <p class="text-[11px] text-wood-500">琪琪第 2 手皆可放置左上角進行完美封鎖。</p>
+            ` : `
+              <p class="text-red-600 font-bold mb-1">✂ 觸發剪枝條件！</p>
+              <p class="text-[11px] text-wood-500">
+                只要搜尋到薇薇走 (${counterExample.r + 1}, ${counterExample.c + 1}) 時，琪琪便無法一舉封死對手，立刻停止深搜！
+              </p>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    function autoPruneAllNine() {
+      playTone(500, 0.1);
+      let count = 0;
+      for (let r = 0; r <= 2; r++) {
+        for (let c = 0; c <= 2; c++) {
+          setTimeout(() => {
+            selectChapter3Pos(r, c);
+            count++;
+            if (count === 9) {
+              setTimeout(() => {
+                selectChapter3Pos(1, 1); // Return to center
+                confetti({ particleCount: 80, spread: 90 });
+                showModal(
+                  "🏆 恭喜通關！破解『九重封印』！",
+                  `<p class="font-bold text-amber-700">演算法全盤推演完成！</p>
+                   <p>經過 DFS 與剪枝法的精密篩選，我們發現：</p>
+                   <div class="bg-wood-100 p-3 rounded-xl text-xs text-wood-800 text-left my-3 space-y-1">
+                     <div>• <strong>4 個角落起手</strong>：邊界空間過於寬廣，薇薇反擊後有多處生存空間（剪枝淘汰 ✕）。</div>
+                     <div>• <strong>4 個邊緣起手</strong>：無法同時牽制水壩的兩側，薇薇可反向封鎖（剪枝淘汰 ✕）。</div>
+                     <div>• <strong>1 個正中央起手</strong>：同時壓迫 4 個象限，達成唯一的『絕對必勝態』！</div>
+                   </div>
+                   <p>你已經完美掌握了 Bebras 國際挑戰賽中核心的『狀態空間搜尋』與『剪枝策略』！</p>`,
+                  () => switchChapter(4),
+                  "前往：運算思維大師徽章與總結"
+                );
+              }, 400);
+            }
+          }, (r * 3 + c) * 200);
+        }
+      }
+    }
+
+    function initChapter4() {
+      currentChapter = 4;
+      updateHeaderTabs(4);
+
+      setNpc(
+        "水壩長老",
+        "授勳長老",
+        "🎖️",
+        "太令人驕傲了，小海狸琪琪！你成功保護了清溪谷的水壩閘門，並以邏輯思考證明了唯一必勝解！現在長老頒發『水壩運算思維大師徽章』給你！",
+        "榮譽勳章",
+        "請細讀長老留給你的 4 大資訊科學秘笈！"
+      );
+
+      setHint(
+        "Bebras 運算思維連結：",
+        "不只是 L 遊戲，西洋棋超級電腦（深藍、AlphaGo）在推算千億種棋步時，也是運用一模一樣的『遊戲樹』與『剪枝技術』喔！"
+      );
+
+      // Render Grand Debrief Interface
+      const boardContainer = document.getElementById('dam-board');
+      boardContainer.parentElement.innerHTML = `
+        <div class="w-full bg-white rounded-2xl p-6 text-wood-900 border-2 border-amber-400 shadow-lg text-left">
+          <div class="flex items-center gap-3 border-b-2 border-wood-100 pb-4 mb-4">
+            <span class="text-4xl">🏅</span>
+            <div>
+              <h3 class="text-lg font-black text-amber-800">清溪谷首席水壩工程師勳章</h3>
+              <p class="text-xs text-wood-500">授與：觀察入微、算無遺策的運算思維小冒險者</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Card 1 -->
+            <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200">
+              <h4 class="font-black text-sm text-amber-900 flex items-center gap-1.5 mb-1">
+                <span>🌲</span> 遊戲樹 (Game Tree)
+              </h4>
+              <p class="text-xs text-wood-700 leading-relaxed">
+                將棋盤所有『下一步可能』畫成樹狀分支。每一層代表一個玩家的回合，葉節點代表遊戲的勝負終局。
+              </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200">
+              <h4 class="font-black text-sm text-indigo-900 flex items-center gap-1.5 mb-1">
+                <span>🌌</span> 狀態空間 (State Space)
+              </h4>
+              <p class="text-xs text-wood-700 leading-relaxed">
+                4×4 棋盤上所有符合規則的木片組合總數。棋盤看似簡單，但狀態空間若窮舉計算會非常耗時！
+              </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+              <h4 class="font-black text-sm text-emerald-900 flex items-center gap-1.5 mb-1">
+                <span>🔍</span> 深度優先搜尋 (DFS)
+              </h4>
+              <p class="text-xs text-wood-700 leading-relaxed">
+                像探險小隊鑽地道一樣，認準一條走法深入到底。在尋找必勝路線時，DFS 能迅速測試出一種結果。
+              </p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200">
+              <h4 class="font-black text-sm text-rose-900 flex items-center gap-1.5 mb-1">
+                <span>✂️</span> 剪枝策略 (Pruning)
+              </h4>
+              <p class="text-xs text-wood-700 leading-relaxed">
+                當發現某條路會輸時，『砍掉整條枝幹不用再算』！這就是讓電腦省下數百萬次無效計算的秘密武器！
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex justify-center">
+            <button onclick="switchChapter(1)" class="px-6 py-2.5 rounded-xl bg-wood-800 hover:bg-wood-700 text-amber-300 font-black text-sm flex items-center gap-2 shadow-md">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              <span>重溫完整冒險挑戰</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Update tree container
+      document.getElementById('tree-canvas-container').innerHTML = `
+        <div class="text-center p-3 text-xs text-wood-600">
+          <p class="font-bold text-amber-800 text-sm mb-1">🎉 運算思維核心心法回顧：</p>
+          <p>問題拆解 ➜ 模式識別 ➜ 抽象化遊戲樹 ➜ 剪枝演算法設計！</p>
+        </div>
+      `;
+
+      lucide.createIcons();
+    }
+
+    function switchChapter(num) {
+      playTone(440, 0.1);
+      // If moving away from Ch 4, restore board container if needed
+      const boardContainer = document.getElementById('dam-board');
+      if (!boardContainer && num !== 4) {
+        location.reload(); // Clean reset back to canvas layout
+        return;
+      }
+
+      if (num === 1) initChapter1();
+      else if (num === 2) initChapter2();
+      else if (num === 3) initChapter3();
+      else if (num === 4) initChapter4();
+    }
+
+    function updateHeaderTabs(activeStep) {
+      for (let i = 1; i <= 4; i++) {
+        const tab = document.getElementById(`nav-step-${i}`);
+        if (!tab) continue;
+        if (i === activeStep) {
+          tab.className = 'step-tab flex-1 py-1.5 px-3 rounded-lg text-xs md:text-sm font-bold flex items-center justify-center gap-2 bg-amber-500 text-wood-900 border-2 border-amber-300 shadow';
+          tab.setAttribute('aria-current', 'step');
+        } else {
+          tab.className = 'step-tab flex-1 py-1.5 px-3 rounded-lg text-xs md:text-sm font-medium flex items-center justify-center gap-2 bg-wood-800 text-wood-200 hover:bg-wood-700';
+          tab.removeAttribute('aria-current');
+        }
+      }
+    }
+
+    function setNpc(name, tag, avatar, dialog, progress, task) {
+      document.getElementById('npc-name').textContent = name;
+      document.getElementById('npc-tag').textContent = tag;
+      document.getElementById('npc-avatar').textContent = avatar;
+      document.getElementById('npc-dialogue-text').textContent = dialog;
+      if (progress) document.getElementById('objective-counter').textContent = progress;
+      if (task) document.getElementById('objective-task-desc').textContent = task;
+      announceToScreenReader(`${name}說：${dialog}`);
+    }
+
+    function setHint(title, content) {
+      document.getElementById('hint-title').textContent = title;
+      document.getElementById('hint-content').textContent = content;
+    }
+
+    function showFloatingFeedback(msg, isWarning = false) {
+      const el = document.createElement('div');
+      el.className = `fixed bottom-8 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl shadow-xl text-xs md:text-sm font-black z-50 transition-all transform animate-bounce ${isWarning ? 'bg-amber-600 text-white' : 'bg-red-600 text-white'}`;
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
+      }, 2000);
+    }
+
+    function showModal(title, bodyHtml, nextAction, nextBtnText = "前往下一關") {
+      const modal = document.getElementById('game-modal');
+      const box = document.getElementById('modal-box');
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').innerHTML = bodyHtml;
+
+      const nextBtn = document.getElementById('modal-btn-next');
+      nextBtn.innerHTML = `<span>${nextBtnText}</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+      nextBtn.onclick = () => {
+        hideModal();
+        if (nextAction) nextAction();
+      };
+
+      document.getElementById('modal-btn-retry').onclick = hideModal;
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        box.classList.remove('scale-95', 'opacity-0');
+        box.classList.add('scale-100', 'opacity-100');
+        nextBtn.focus();
+      }, 50);
+      lucide.createIcons();
+    }
+
+    function hideModal() {
+      const modal = document.getElementById('game-modal');
+      const box = document.getElementById('modal-box');
+      box.classList.remove('scale-100', 'opacity-100');
+      box.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    // Audio & Global Restart buttons
+    document.getElementById('btn-sound-toggle').addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-status-text').textContent = soundEnabled ? '音效開' : '靜音';
+      document.getElementById('btn-sound-toggle').setAttribute('aria-pressed', soundEnabled.toString());
+      playTone(500, 0.1);
+    });
+
+    document.getElementById('btn-restart').addEventListener('click', () => {
+      playTone(300, 0.2);
+      switchChapter(currentChapter);
+    });
+
+    window.onload = function () {
+      lucide.createIcons();
+      initChapter1();
+    };
+  </script>
+</body>
+</html>
