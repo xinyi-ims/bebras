@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>海狸魔法師的白開水之謎（六年級進階版） - 運算思維探索任務</title>
+  <style>
+    :root {
+      --primary-color: #1d4ed8;
+      --primary-hover: #1e40af;
+      --accent-color: #d97706;
+      --accent-light: #fef3c7;
+      --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #fef3c7 100%);
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #334155;
+      --border-color: #94a3b8;
+      --focus-ring: #2563eb;
+      --success-green: #15803d;
+      --success-bg: #dcfce7;
+      --danger-red: #b91c1c;
+      --danger-bg: #fee2e2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 10px;
+      background: #000;
+      color: #fff;
+      padding: 8px 16px;
+      z-index: 1000;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .skip-link:focus {
+      top: 10px;
+    }
+
+    button:focus-visible, select:focus-visible, a:focus-visible {
+      outline: 4px solid var(--focus-ring);
+      outline-offset: 3px;
+    }
+
+    .game-container {
+      max-width: 1020px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      border: 3px solid #cbd5e1;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: white;
+      padding: 1.6rem 1.25rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.85rem;
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-grade {
+      display: inline-block;
+      background: #38bdf8;
+      color: #082f49;
+      font-weight: 800;
+      font-size: 0.92rem;
+      padding: 0.3rem 0.85rem;
+      border-radius: 9999px;
+      margin-top: 0.25rem;
+    }
+
+    main {
+      padding: 1.5rem;
+    }
+
+    .mission-status-bar {
+      display: flex;
+      justify-content: space-around;
+      background: #f1f5f9;
+      padding: 0.85rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      font-weight: bold;
+      border: 2px solid #cbd5e1;
+    }
+
+    .status-step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #64748b;
+      font-size: 1rem;
+    }
+
+    .status-step.active {
+      color: var(--primary-color);
+    }
+
+    .status-step.done {
+      color: var(--success-green);
+    }
+
+    .story-card {
+      background: #f8fafc;
+      border-left: 6px solid #2563eb;
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+    }
+
+    .experiments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .experiment-card {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .cups-tag {
+      display: inline-flex;
+      gap: 6px;
+      margin-bottom: 0.65rem;
+    }
+
+    .cup-badge {
+      display: inline-block;
+      min-width: 32px;
+      height: 32px;
+      line-height: 28px;
+      padding: 0 6px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 2px solid #475569;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .beaver-svg-wrap {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 0.75rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .features-list {
+      text-align: left;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      background: #f1f5f9;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      min-height: 80px;
+    }
+
+    .features-list ul {
+      padding-left: 1.2rem;
+    }
+
+    .investigation-section {
+      background: #fffbeb;
+      border: 2px dashed #d97706;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .section-heading {
+      font-size: 1.3rem;
+      color: #92400e;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .clues-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .clue-item {
+      background: #ffffff;
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      border-left: 5px solid #d97706;
+      font-size: 0.96rem;
+      line-height: 1.5;
+    }
+
+    .beaker-choices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .choice-btn {
+      flex: 1 1 calc(16.666% - 0.75rem);
+      min-width: 95px;
+      background: #ffffff;
+      border: 3px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 0.85rem 0.5rem;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      transition: all 0.2s;
+    }
+
+    .choice-btn:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+      transform: translateY(-2px);
+    }
+
+    .feedback-box {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .feedback-box.hint {
+      background: #eff6ff;
+      border: 2px solid #60a5fa;
+      color: #1e40af;
+    }
+
+    .feedback-box.wrong {
+      background: var(--danger-bg);
+      border: 2px solid #f87171;
+      color: var(--danger-red);
+    }
+
+    .feedback-box.success {
+      background: var(--success-bg);
+      border: 2px solid #4ade80;
+      color: var(--success-green);
+    }
+
+    .stage2-section {
+      display: none;
+      background: #f0fdfa;
+      border: 3px solid #0d9488;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 1.75rem;
+      animation: fadeIn 0.4s ease-in;
+    }
+
+    .stage2-section.active {
+      display: block;
+    }
+
+    .matrix-table-wrap {
+      overflow-x: auto;
+      margin-top: 1.25rem;
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .matrix-table th, .matrix-table td {
+      border: 1px solid #cbd5e1;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .matrix-table th {
+      background: #0f766e;
+      color: white;
+      font-weight: 700;
+    }
+
+    .matrix-select {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 2px solid #94a3b8;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .matrix-select:focus {
+      border-color: var(--primary-color);
+    }
+
+    .debrief-section {
+      display: none;
+      background: #f8fafc;
+      border: 3px solid #3b82f6;
+      border-radius: 16px;
+      padding: 1.75rem;
+      margin-top: 1.75rem;
+      animation: fadeIn 0.4s ease-in;
+    }
+
+    .debrief-section.show {
+      display: block;
+    }
+
+    .debrief-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .debrief-card {
+      background: #ffffff;
+      padding: 1.1rem;
+      border-radius: 12px;
+      border: 1px solid #bfdbfe;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+
+    .debrief-card h3 {
+      font-size: 1.1rem;
+      color: #1e40af;
+      margin-bottom: 0.4rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.6rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-success {
+      background: var(--success-green);
+      color: white;
+    }
+    .btn-success:hover {
+      background: #166534;
+    }
+
+    .btn-restart {
+      background: #475569;
+      color: white;
+    }
+    .btn-restart:hover {
+      background: #334155;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 0.5rem; }
+      header h1 { font-size: 1.45rem; }
+      .choice-btn { min-width: 46%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 無障礙快速跳轉 -->
+  <a href="#main-content" class="skip-link">跳至主要內容區</a>
+
+  <div class="game-container">
+    <header role="banner">
+      <h1>🧙‍♂️ 海狸魔法師的白開水之謎</h1>
+      <span class="badge-grade">國小六年級 ‧ 運算思維進階矩陣挑戰</span>
+      <p style="margin-top: 0.5rem; font-size: 0.95rem; opacity: 0.95;">
+        國際運算思維挑戰賽 (Bebras) 經典任務：集合交集、補集與特徵矩陣消去法
+      </p>
+    </header>
+
+    <main id="main-content" role="main">
+      <!-- 關卡進度指示條 -->
+      <nav class="mission-status-bar" aria-label="任務進度條">
+        <div id="step-ind-1" class="status-step active" aria-current="step">
+          <span>①</span> 找出零效力「白開水」
+        </div>
+        <div id="step-ind-2" class="status-step">
+          <span>②</span> 還原全藥劑特徵矩陣
+        </div>
+        <div id="step-ind-3" class="status-step">
+          <span>③</span> 運算思維學術解密
+        </div>
+      </nav>
+
+      <!-- 任務簡報 -->
+      <section class="story-card" aria-labelledby="story-title">
+        <h2 id="story-title" style="font-size: 1.25rem; color: #1e3a8a; margin-bottom: 0.5rem;">
+          📜 高級探偵任務簡報
+        </h2>
+        <p>
+          糊塗的海狸魔法師調配了 <strong>5 種魔法藥劑</strong>，效果分別是：
+          <strong>① 耳朵變長</strong>、<strong>② 牙齒變長</strong>、<strong>③ 鬍鬚捲曲</strong>、<strong>④ 鼻子變白</strong>、<strong>⑤ 眼睛變白</strong>。
+        </p>
+        <p>
+          桌上有標記為 <strong>A、B、C、D、E、F</strong> 的 6 個燒杯。其中 5 杯有魔法，但有 <strong>1 杯是完全沒有魔法效果的「純淨白開水」</strong>。
+        </p>
+        <p>
+          魔法師透過 3 次混合實驗記錄了海狸的變身特徵。六年級的運算思維偵探，請先<strong>找出哪一杯是白開水</strong>，接著進一步<strong>破解所有燒杯的真實配方</strong>！
+        </p>
+      </section>
+
+      <section aria-labelledby="exp-heading">
+        <h2 id="exp-heading" style="font-size: 1.25rem; margin-bottom: 1rem; color: #0f172a;">
+          🔍 實驗觀察對比區
+        </h2>
+
+        <div class="experiments-grid">
+          <!-- 海狸原貌 -->
+          <article class="experiment-card" style="border-color: #94a3b8;">
+            <h3 class="card-title">海狸原貌（對照組）</h3>
+            <div class="cups-tag">
+              <span class="cup-badge" style="background:#e2e8f0;">平常狀態</span>
+            </div>
+            <div class="beaver-svg-wrap">
+              <svg width="130" height="130" viewBox="0 0 140 140" role="img" aria-label="海狸原本模樣：短圓耳、黑眼睛、黑鼻子、短牙齒、直鬍鬚">
+                <title>海狸原本模樣</title>
+                <ellipse cx="45" cy="40" rx="12" ry="16" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="95" cy="40" rx="12" ry="16" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="70" cy="80" rx="46" ry="40" fill="#d97706" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="54" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <ellipse cx="86" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <circle cx="56" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <circle cx="84" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <rect x="62" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <rect x="71" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <path d="M 60 84 Q 70 80 80 84 Q 70 94 60 84 Z" fill="#0f172a"/>
+                <line x1="20" y1="84" x2="48" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="18" y1="92" x2="46" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="22" y1="100" x2="48" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="120" y1="84" x2="92" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="122" y1="92" x2="94" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="118" y1="100" x2="92" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="features-list">
+              <strong>基準特徵（未改變）：</strong>
+              <ul>
+                <li>耳朵：短圓</li>
+                <li>牙齒：一般短牙</li>
+                <li>鬍鬚：直挺挺</li>
+                <li>鼻子：黑色</li>
+                <li>眼睛：黑色</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- 實驗 1 -->
+          <article class="experiment-card" style="border-color: #0284c7;">
+            <h3 class="card-title" style="color: #0284c7;">實驗 1</h3>
+            <div class="cups-tag" aria-label="喝下 A, B, C 三杯">
+              <span class="cup-badge">A</span>
+              <span class="cup-badge">B</span>
+              <span class="cup-badge">C</span>
+            </div>
+            <div class="beaver-svg-wrap">
+              <svg width="130" height="130" viewBox="0 0 140 140" role="img" aria-label="實驗1：耳朵變長、牙齒變長、鼻子變白。共3處變化。">
+                <title>實驗1海狸變身圖</title>
+                <ellipse cx="45" cy="24" rx="10" ry="24" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="95" cy="24" rx="10" ry="24" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="70" cy="80" rx="46" ry="40" fill="#d97706" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="54" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <ellipse cx="86" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <circle cx="56" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <circle cx="84" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <rect x="61" y="96" width="8" height="25" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <rect x="71" y="96" width="8" height="25" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <path d="M 60 84 Q 70 80 80 84 Q 70 94 60 84 Z" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="20" y1="84" x2="48" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="18" y1="92" x2="46" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="22" y1="100" x2="48" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="120" y1="84" x2="92" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="122" y1="92" x2="94" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="118" y1="100" x2="92" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="features-list">
+              <strong>變化數：3 種（滿效）</strong>
+              <ul>
+                <li>✨ 耳朵長</li>
+                <li>✨ 牙齒長</li>
+                <li>✨ 鼻子白</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- 實驗 2 -->
+          <article class="experiment-card" style="border-color: #9333ea;">
+            <h3 class="card-title" style="color: #9333ea;">實驗 2</h3>
+            <div class="cups-tag" aria-label="喝下 A, D, E 三杯">
+              <span class="cup-badge">A</span>
+              <span class="cup-badge">D</span>
+              <span class="cup-badge">E</span>
+            </div>
+            <div class="beaver-svg-wrap">
+              <svg width="130" height="130" viewBox="0 0 140 140" role="img" aria-label="實驗2：耳朵變長、眼睛變白。牙齒短、鼻子黑、鬍鬚直。共2處變化。">
+                <title>實驗2海狸變身圖</title>
+                <ellipse cx="45" cy="24" rx="10" ry="24" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="95" cy="24" rx="10" ry="24" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="70" cy="80" rx="46" ry="40" fill="#d97706" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="54" cy="72" rx="4.5" ry="6.5" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <ellipse cx="86" cy="72" rx="4.5" ry="6.5" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <circle cx="56" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <circle cx="84" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <rect x="62" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <rect x="71" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <path d="M 60 84 Q 70 80 80 84 Q 70 94 60 84 Z" fill="#0f172a"/>
+                <line x1="20" y1="84" x2="48" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="18" y1="92" x2="46" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="22" y1="100" x2="48" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="120" y1="84" x2="92" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="122" y1="92" x2="94" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="118" y1="100" x2="92" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="features-list">
+              <strong>變化數：僅 2 種（缺 1）</strong>
+              <ul>
+                <li>✨ 耳朵長</li>
+                <li>✨ 眼睛白</li>
+                <li style="color: #b91c1c;">⚠️ 必有 1 杯是白開水</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- 實驗 3 -->
+          <article class="experiment-card" style="border-color: #059669;">
+            <h3 class="card-title" style="color: #059669;">實驗 3</h3>
+            <div class="cups-tag" aria-label="喝下 C, D, F 三杯">
+              <span class="cup-badge">C</span>
+              <span class="cup-badge">D</span>
+              <span class="cup-badge">F</span>
+            </div>
+            <div class="beaver-svg-wrap">
+              <svg width="130" height="130" viewBox="0 0 140 140" role="img" aria-label="實驗3：鬍鬚變捲曲、鼻子變白。耳朵短、眼睛黑、牙齒短。共2處變化。">
+                <title>實驗3海狸變身圖</title>
+                <ellipse cx="45" cy="40" rx="12" ry="16" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="95" cy="40" rx="12" ry="16" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="70" cy="80" rx="46" ry="40" fill="#d97706" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="54" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <ellipse cx="86" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <circle cx="56" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <circle cx="84" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <rect x="62" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <rect x="71" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <path d="M 60 84 Q 70 80 80 84 Q 70 94 60 84 Z" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 46 87 Q 35 83 25 87 Q 15 90 20 83 Q 26 77 15 82" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 46 93 Q 32 91 23 95 Q 14 98 18 90 Q 23 85 13 90" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 46 99 Q 34 97 24 101 Q 16 104 20 97 Q 24 92 14 96" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 94 87 Q 105 83 115 87 Q 125 90 120 83 Q 114 77 125 82" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 94 93 Q 108 91 117 95 Q 126 98 122 90 Q 117 85 127 90" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 94 99 Q 106 97 116 101 Q 124 104 120 97 Q 116 92 126 96" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="features-list">
+              <strong>變化數：僅 2 種（缺 1）</strong>
+              <ul>
+                <li>✨ 鬍鬚捲</li>
+                <li>✨ 鼻子白</li>
+                <li style="color: #b91c1c;">⚠️ 必有 1 杯是白開水</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="stage1-box" class="investigation-section" aria-labelledby="stage1-title">
+        <h2 id="stage1-title" class="section-heading">
+          🎯 第一階段：鎖定「白開水」燒杯
+        </h2>
+        
+        <div class="clues-grid">
+          <div class="clue-item">
+            <strong>🧮 集合補集思維 (Complement)：</strong><br>
+            實驗 1 喝下 <code>{A, B, C}</code> 出現 3 種變化！這證明：<br>
+            A、B、C 都是有效藥劑。白開水 <code>Water ∈ {D, E, F}</code>。
+          </div>
+          <div class="clue-item">
+            <strong>🔗 集合交集比對 (Intersection)：</strong><br>
+            • 實驗 2 喝 <code>{A, D, E}</code> 只有 2 變，已知 A 為藥，故 <code>Water ∈ {D, E}</code>。<br>
+            • 實驗 3 喝 <code>{C, D, F}</code> 只有 2 變，已知 C 為藥，故 <code>Water ∈ {D, F}</code>。
+          </div>
+        </div>
+
+        <p id="water-question-label" style="font-size: 1.15rem; font-weight: bold; color: #1e293b; text-align: center;">
+          請問集合交集 <code>{D, E} ∩ {D, F}</code> 是哪一個燒杯？（點擊進行判定）
+        </p>
+
+        <div class="beaker-choices" role="group" aria-labelledby="water-question-label">
+          <button type="button" class="choice-btn" data-cup="A" aria-label="選擇燒杯 A">
+            <span>🧪 A</span><span style="font-size: 0.8rem; color:#64748b;">燒杯 A</span>
+          </button>
+          <button type="button" class="choice-btn" data-cup="B" aria-label="選擇燒杯 B">
+            <span>🧪 B</span><span style="font-size: 0.8rem; color:#64748b;">燒杯 B</span>
+          </button>
+          <button type="button" class="choice-btn" data-cup="C" aria-label="選擇燒杯 C">
+            <span>🧪 C</span><span style="font-size: 0.8rem; color:#64748b;">燒杯 C</span>
+          </button>
+          <button type="button" class="choice-btn" data-cup="D" aria-label="選擇燒杯 D">
+            <span>🧪 D</span><span style="font-size: 0.8rem; color:#64748b;">燒杯 D</span>
+          </button>
+          <button type="button" class="choice-btn" data-cup="E" aria-label="選擇燒杯 E">
+            <span>🧪 E</span><span style="font-size: 0.8rem; color:#64748b;">燒杯 E</span>
+          </button>
+          <button type="button" class="choice-btn" data-cup="F" aria-label="選擇燒杯 F">
+            <span>🧪 F</span><span style="font-size: 0.8rem; color:#64748b;">燒杯 F</span>
+          </button>
+        </div>
+
+        <div id="stage1-feedback" class="feedback-box" role="status" aria-live="polite"></div>
+      </section>
+
+      <section id="stage2-box" class="stage2-section" aria-labelledby="stage2-title">
+        <h2 id="stage2-title" style="color: #0f766e; font-size: 1.35rem; display: flex; align-items: center; gap: 0.5rem;">
+          🧬 第二階段（六年級專屬）：破解「全藥劑特徵對應矩陣」
+        </h2>
+        <p style="margin-top: 0.5rem; color: #115e59; font-size: 1.02rem;">
+          太精彩了！你已經確認 <strong>D 是白開水（無效果）</strong>！<br>
+          現在，魔法師需要你運用<strong>「變數比對消去法」</strong>，把 A、B、C、E、F 這 5 杯的精確功能全部還原出來：
+        </p>
+
+        <div style="background: #e6fffa; border-left: 4px solid #0d9488; padding: 0.85rem; margin: 1rem 0; border-radius: 6px; font-size: 0.95rem;">
+          💡 <strong>矩陣推理密技提示：</strong><br>
+          1. 實驗 1 <code>{A,B,C}</code> 與實驗 2 <code>{A,D,E}</code> 唯一共同的真正藥劑只有 <strong>A</strong>！兩次實驗共同出現的唯一變化是什麼？→ 那就是 A 的功能！<br>
+          2. 實驗 1 <code>{A,B,C}</code> 與實驗 3 <code>{C,D,F}</code> 唯一共同的真正藥劑只有 <strong>C</strong>！比對兩者相同的變化，就能鎖定 C！<br>
+          3. 知道了 A、C 和白開水 D，剩下的 B、E、F 就水落石出了！
+        </div>
+
+        <form id="matrix-form" onsubmit="return false;">
+          <div class="matrix-table-wrap">
+            <table class="matrix-table" aria-label="燒杯與魔法特徵對應配對表">
+              <thead>
+                <tr>
+                  <th scope="col">燒杯代號</th>
+                  <th scope="col">推理指引狀態</th>
+                  <th scope="col">選擇對應效果</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><strong>燒杯 A</strong></th>
+                  <td>實驗 1 與 實驗 2 的共通藥劑</td>
+                  <td>
+                    <select id="select-A" class="matrix-select" aria-label="燒杯 A 的魔法效果">
+                      <option value="">-- 請選擇效果 --</option>
+                      <option value="ears">耳朵變長</option>
+                      <option value="teeth">牙齒變長</option>
+                      <option value="whiskers">鬍鬚捲曲</option>
+                      <option value="nose">鼻子變白</option>
+                      <option value="eyes">眼睛變白</option>
+                      <option value="water">白開水（無效果）</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><strong>燒杯 B</strong></th>
+                  <td>實驗 1 扣除 A 與 C 後的剩餘效果</td>
+                  <td>
+                    <select id="select-B" class="matrix-select" aria-label="燒杯 B 的魔法效果">
+                      <option value="">-- 請選擇效果 --</option>
+                      <option value="ears">耳朵變長</option>
+                      <option value="teeth">牙齒變長</option>
+                      <option value="whiskers">鬍鬚捲曲</option>
+                      <option value="nose">鼻子變白</option>
+                      <option value="eyes">眼睛變白</option>
+                      <option value="water">白開水（無效果）</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><strong>燒杯 C</strong></th>
+                  <td>實驗 1 與 實驗 3 的共通藥劑</td>
+                  <td>
+                    <select id="select-C" class="matrix-select" aria-label="燒杯 C 的魔法效果">
+                      <option value="">-- 請選擇效果 --</option>
+                      <option value="ears">耳朵變長</option>
+                      <option value="teeth">牙齒變長</option>
+                      <option value="whiskers">鬍鬚捲曲</option>
+                      <option value="nose">鼻子變白</option>
+                      <option value="eyes">眼睛變白</option>
+                      <option value="water">白開水（無效果）</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><strong>燒杯 D</strong></th>
+                  <td>第一階段已確認</td>
+                  <td>
+                    <select id="select-D" class="matrix-select" disabled aria-label="燒杯 D 已確認為白開水">
+                      <option value="water" selected>白開水（無效果）</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><strong>燒杯 E</strong></th>
+                  <td>實驗 2 扣除 A 與 D 後的效果</td>
+                  <td>
+                    <select id="select-E" class="matrix-select" aria-label="燒杯 E 的魔法效果">
+                      <option value="">-- 請選擇效果 --</option>
+                      <option value="ears">耳朵變長</option>
+                      <option value="teeth">牙齒變長</option>
+                      <option value="whiskers">鬍鬚捲曲</option>
+                      <option value="nose">鼻子變白</option>
+                      <option value="eyes">眼睛變白</option>
+                      <option value="water">白開水（無效果）</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><strong>燒杯 F</strong></th>
+                  <td>實驗 3 扣除 C 與 D 後的效果</td>
+                  <td>
+                    <select id="select-F" class="matrix-select" aria-label="燒杯 F 的魔法效果">
+                      <option value="">-- 請選擇效果 --</option>
+                      <option value="ears">耳朵變長</option>
+                      <option value="teeth">牙齒變長</option>
+                      <option value="whiskers">鬍鬚捲曲</option>
+                      <option value="nose">鼻子變白</option>
+                      <option value="eyes">眼睛變白</option>
+                      <option value="water">白開水（無效果）</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="text-align: center; margin-top: 1.25rem;">
+            <button id="btn-check-matrix" type="button" class="btn btn-success">
+              ✅ 驗證全藥劑配方矩陣
+            </button>
+          </div>
+        </form>
+
+        <div id="stage2-feedback" class="feedback-box" role="status" aria-live="polite"></div>
+      </section>
+
+      <section id="debrief-panel" class="debrief-section" aria-labelledby="debrief-title">
+        <h2 id="debrief-title" style="color: #1e3a8a; font-size: 1.4rem;">
+          🏆 榮獲【運算思維大師】徽章！資訊科學深度解密
+        </h2>
+        <p style="margin-top: 0.5rem; color: #334155; font-size: 1.05rem;">
+          恭喜你！六年級的你展現了國中甚至高中等級的邏輯推理實力。你在本遊戲中所使用的思考步驟，就是資訊科學家與程式設計師解決難題的核心利器：
+        </p>
+
+        <div class="debrief-grid">
+          <div class="debrief-card">
+            <h3>1. 集合論與布林邏輯 (Sets & Boolean)</h3>
+            <p>你運用了補集（實驗1排除A,B,C）以及交集運算 <code>{D, E} ∩ {D, F} = {D}</code>。在資料庫 (SQL) 與搜尋引擎中，電腦每天都在處理數百萬次這類 AND / NOT 的集合過濾！</p>
+          </div>
+          <div class="debrief-card">
+            <h3>2. 約束滿足問題 (CSP & Elimination)</h3>
+            <p>第二階段還原 A~F 配方時，每一杯的藥效都是一組「變數約束」。如同數獨 (Sudoku) 演算法，先填入已知確定值（D是水、A是耳朵），系統就能以連鎖消去法求解！</p>
+          </div>
+          <div class="debrief-card">
+            <h3>3. 特徵矩陣與真值表 (Feature Matrix)</h3>
+            <p>把「燒杯」與「變身特徵」排成二維表進行交叉分析，這正是機器學習特徵工程（Feature Engineering）與二元分類的最基礎原型。</p>
+          </div>
+          <div class="debrief-card">
+            <h3>4. 演算法思維 (Algorithmic Thinking)</h3>
+            <p>你沒有漫無目的亂猜，而是定義了一套「比較共通項目 → 定位單一特徵 → 遞迴回推」的高效演算法流程。</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <button id="btn-replay-all" class="btn btn-restart" type="button">
+            🔄 重新挑戰本任務
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      // 元素快取
+      const choiceButtons = document.querySelectorAll('.choice-btn');
+      const stage1Feedback = document.getElementById('stage1-feedback');
+      const stage2Box = document.getElementById('stage2-box');
+      const stage2Feedback = document.getElementById('stage2-feedback');
+      const debriefPanel = document.getElementById('debrief-panel');
+      const btnCheckMatrix = document.getElementById('btn-check-matrix');
+      const btnReplayAll = document.getElementById('btn-replay-all');
+
+      const stepInd1 = document.getElementById('step-ind-1');
+      const stepInd2 = document.getElementById('step-ind-2');
+      const stepInd3 = document.getElementById('step-ind-3');
+
+      // 階段一引導反饋字典（針對六年級思維引導）
+      const stage1FeedbackMap = {
+        'A': {
+          status: 'wrong',
+          title: '❌ 燒杯 A 絕對是真藥劑！',
+          content: '【邏輯檢驗】：實驗 1 (A+B+C) 引發了整整 3 個變化！若 A 是白開水，三杯中只有兩杯有藥效，不可能湊出 3 種變化。因此 A 一定具有魔法效力！再想一想交集在哪裡？'
+        },
+        'B': {
+          status: 'wrong',
+          title: '❌ 燒杯 B 是貨真價實的魔法藥水！',
+          content: '【邏輯檢驗】：實驗 1 出現了 3 個變化，證明集合 {A, B, C} 裡全是真藥劑，完全沒有白開水。B 已經被排除了！'
+        },
+        'C': {
+          status: 'wrong',
+          title: '❌ 燒杯 C 不是白開水喔！',
+          content: '【邏輯檢驗】：實驗 1 出現了 3 種變化，C 必定有魔法效力。在實驗 3 裡，也是因為有 C，海狸鼻子才變白的！請重新檢視缺效力的實驗！'
+        },
+        'E': {
+          status: 'hint',
+          title: '🧐 非常敏銳的觀察，但還差關鍵一步！',
+          content: '【邏輯檢驗】：實驗 2 只有 2 個變化，確實代表白開水落在 {D, E} 之中。但是請看實驗 3——實驗 3 根本沒有使用 E，卻也同樣只出現了 2 個變化！這說明沒效力的水必須「同時」出現在實驗 2 和 3 中。'
+        },
+        'F': {
+          status: 'hint',
+          title: '🧐 推理方向很對，請比對實驗 2！',
+          content: '【邏輯檢驗】：實驗 3 只有 2 個變化，因此白開水在 {D, F} 之中。但實驗 2 也同樣少了一種效果，而實驗 2 裡完全沒有 F！哪一杯同時存在於兩個缺效力的實驗呢？'
+        },
+        'D': {
+          status: 'success',
+          title: '🎯 卓越的集合推導！完全正確！答案就是【燒杯 D】！',
+          content: '【邏輯推導完成】：\n1. 補集：由實驗 1 可得 Water ∉ {A, B, C}，故 Water ∈ {D, E, F}。\n2. 條件一：實驗 2 缺 1 效力，Water ∈ {D, E}。\n3. 條件二：實驗 3 缺 1 效力，Water ∈ {D, F}。\n4. 交集：{D, E} ∩ {D, F} = {D}！\n\n恭喜完成第一階段！下方已解鎖【全藥劑特徵矩陣】，請繼續攻克全配方！'
+        }
+      };
+
+      // 正確特徵配對答案 (Stage 2)
+      // A: ears, B: teeth, C: nose, D: water, E: eyes, F: whiskers
+      const correctMatrix = {
+        'select-A': 'ears',
+        'select-B': 'teeth',
+        'select-C': 'nose',
+        'select-E': 'eyes',
+        'select-F': 'whiskers'
+      };
+
+      choiceButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+          const cup = this.getAttribute('data-cup');
+          const fb = stage1FeedbackMap[cup];
+          if (!fb) return;
+
+          stage1Feedback.className = 'feedback-box show ' + fb.status;
+          stage1Feedback.innerHTML = `
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem; font-weight: bold;">
+              ${fb.title}
+            </h3>
+            <p style="white-space: pre-line; line-height: 1.6;">
+              ${fb.content}
+            </p>
+          `;
+
+          stage1Feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+          if (fb.status === 'success') {
+            // 更新狀態指示
+            stepInd1.className = 'status-step done';
+            stepInd2.className = 'status-step active';
+            
+            // 標示 D 燒杯按鈕
+            choiceButtons.forEach(b => {
+              if (b.getAttribute('data-cup') === 'D') {
+                b.style.borderColor = '#16a34a';
+                b.style.backgroundColor = '#dcfce7';
+                b.setAttribute('aria-pressed', 'true');
+              } else {
+                b.setAttribute('aria-pressed', 'false');
+              }
+            });
+
+            // 啟動第二階段
+            stage2Box.classList.add('active');
+            setTimeout(() => {
+              stage2Box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+          }
+        });
+      });
+
+      btnCheckMatrix.addEventListener('click', function () {
+        const valA = document.getElementById('select-A').value;
+        const valB = document.getElementById('select-B').value;
+        const valC = document.getElementById('select-C').value;
+        const valE = document.getElementById('select-E').value;
+        const valF = document.getElementById('select-F').value;
+
+        // 檢查是否全部填寫
+        if (!valA || !valB || !valC || !valE || !valF) {
+          stage2Feedback.className = 'feedback-box show hint';
+          stage2Feedback.innerHTML = `
+            <h3 style="font-weight:bold; font-size:1.1rem;">⚠️ 還沒填完喔！</h3>
+            <p>請將 A、B、C、E、F 這 5 個燒杯的效果全都填上，才能進行矩陣綜合驗證！</p>
+          `;
+          stage2Feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+
+        // 檢查是否有重複選擇（除了不能重複的水）
+        const selectedValues = [valA, valB, valC, valE, valF];
+        const uniqueValues = new Set(selectedValues);
+        if (uniqueValues.size < selectedValues.length) {
+          stage2Feedback.className = 'feedback-box show wrong';
+          stage2Feedback.innerHTML = `
+            <h3 style="font-weight:bold; font-size:1.1rem;">⚠️ 出現重複效果！</h3>
+            <p>魔法師調配的 5 種藥劑效果各自不同（耳朵長、牙齒長、鬍鬚捲、鼻子白、眼睛白），每種效果只能被一個燒杯領走喔！請再檢查一下。</p>
+          `;
+          stage2Feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+
+        // 逐一比對正確性
+        let errors = [];
+        if (valA !== correctMatrix['select-A']) {
+          errors.push('• 燒杯 A 錯誤：比對實驗 1 {A,B,C} 與實驗 2 {A,D,E}，兩次都有 A，唯一的共同變化是「耳朵變長」喔！');
+        }
+        if (valC !== correctMatrix['select-C']) {
+          errors.push('• 燒杯 C 錯誤：比對實驗 1 {A,B,C} 與實驗 3 {C,D,F}，兩次都有 C，唯一的共同變化是「鼻子變白」！');
+        }
+        if (valB !== correctMatrix['select-B'] && valA === 'ears' && valC === 'nose') {
+          errors.push('• 燒杯 B 錯誤：既然 A 是耳朵長、C 是鼻子白，實驗 1 的第三個效果「牙齒變長」就一定是 B 的作用！');
+        }
+        if (valE !== correctMatrix['select-E']) {
+          errors.push('• 燒杯 E 錯誤：實驗 2 喝了 A、D、E，A 是耳朵長、D 是白開水，那「眼睛變白」一定是哪一杯的功勞？');
+        }
+        if (valF !== correctMatrix['select-F']) {
+          errors.push('• 燒杯 F 錯誤：實驗 3 喝了 C、D、F，C 是鼻子白、D 是白開水，那麼「鬍鬚捲曲」必定來自 F！');
+        }
+
+        if (errors.length > 0) {
+          stage2Feedback.className = 'feedback-box show wrong';
+          stage2Feedback.innerHTML = `
+            <h3 style="font-weight:bold; font-size:1.15rem;">🔍 發現部分推理矛盾：</h3>
+            <p style="white-space: pre-line; margin-top: 0.5rem; line-height: 1.6;">
+              ${errors.join('\n')}
+            </p>
+          `;
+          stage2Feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          // 全部正確！
+          stage2Feedback.className = 'feedback-box show success';
+          stage2Feedback.innerHTML = `
+            <h3 style="font-weight:bold; font-size:1.2rem;">🎉 狂賀！全藥劑矩陣完全解密成功！</h3>
+            <p style="margin-top: 0.5rem; line-height: 1.6;">
+              <strong>完整配方清單：</strong><br>
+              🧪 A = 耳朵變長 | 🧪 B = 牙齒變長 | 🧪 C = 鼻子變白<br>
+              💧 D = 白開水 (無效) | 🧪 E = 眼睛變白 | 🧪 F = 鬍鬚捲曲<br><br>
+              你完美展現了「變數比對消去」的演算法實力！
+            </p>
+          `;
+
+          stepInd2.className = 'status-step done';
+          stepInd3.className = 'status-step active';
+          debriefPanel.classList.add('show');
+
+          setTimeout(() => {
+            debriefPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 350);
+        }
+      });
+
+      btnReplayAll.addEventListener('click', function () {
+        // 重置階段一
+        stage1Feedback.className = 'feedback-box';
+        stage1Feedback.innerHTML = '';
+        choiceButtons.forEach(btn => {
+          btn.style.borderColor = '';
+          btn.style.backgroundColor = '';
+          btn.removeAttribute('aria-pressed');
+        });
+
+        // 重置階段二
+        stage2Box.classList.remove('active');
+        stage2Feedback.className = 'feedback-box';
+        stage2Feedback.innerHTML = '';
+        ['select-A', 'select-B', 'select-C', 'select-E', 'select-F'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+
+        // 重置階段三
+        debriefPanel.classList.remove('show');
+
+        // 重置進度條
+        stepInd1.className = 'status-step active';
+        stepInd2.className = 'status-step';
+        stepInd3.className = 'status-step';
+
+        document.getElementById('story-title').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // 鍵盤無障礙導航 (燒杯選項方向鍵切換)
+      const beakerGroup = document.querySelector('.beaker-choices');
+      beakerGroup.addEventListener('keydown', function (e) {
+        const buttons = Array.from(choiceButtons);
+        const currentIndex = buttons.indexOf(document.activeElement);
+        if (currentIndex === -1) return;
+
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          buttons[(currentIndex + 1) % buttons.length].focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          buttons[(currentIndex - 1 + buttons.length) % buttons.length].focus();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

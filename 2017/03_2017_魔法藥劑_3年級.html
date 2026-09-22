@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>海狸魔法師的白開水冒險（國小三年級探索版） - 找碴小偵探</title>
+  <style>
+    /* 專為國小三年級打造的明亮、活潑、高易讀性無障礙色彩 */
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-yellow: #f59e0b;
+      --accent-bubble: #fef08a;
+      --fun-green: #16a34a;
+      --fun-purple: #9333ea;
+      --fun-orange: #ea580c;
+      --card-bg: #ffffff;
+      --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #fef9c3 100%);
+      --text-main: #0f172a;
+      --text-muted: #334155;
+      --focus-ring: #2563eb;
+      --success-border: #22c55e;
+      --success-bg: #dcfce7;
+      --error-border: #f87171;
+      --error-bg: #fee2e2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    /* 無障礙快速跳轉至主內容 (WCAG 2.0) */
+    .skip-link {
+      position: absolute;
+      top: -50px;
+      left: 12px;
+      background: #000;
+      color: #fff;
+      padding: 10px 18px;
+      z-index: 9999;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .skip-link:focus {
+      top: 12px;
+    }
+
+    /* 鍵盤焦點高對比光暈 */
+    button:focus-visible, a:focus-visible {
+      outline: 4px solid var(--focus-ring);
+      outline-offset: 4px;
+    }
+
+    .main-wrapper {
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 26px;
+      box-shadow: 0 14px 35px rgba(30, 58, 138, 0.12);
+      border: 4px solid #bfdbfe;
+      overflow: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      color: #ffffff;
+      text-align: center;
+      padding: 1.75rem 1.25rem;
+      border-bottom: 5px solid #60a5fa;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.4rem;
+    }
+
+    .badge-grade {
+      display: inline-block;
+      background: #fde047;
+      color: #713f12;
+      font-weight: 900;
+      font-size: 1.05rem;
+      padding: 0.35rem 1.1rem;
+      border-radius: 9999px;
+      border: 2px solid #ca8a04;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+    main {
+      padding: 1.5rem;
+    }
+
+    /* 故事導引卡片 */
+    .story-section {
+      background: #eff6ff;
+      border: 3px dashed #3b82f6;
+      border-radius: 20px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.15rem;
+    }
+
+    .story-section h2 {
+      color: #1e3a8a;
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .story-section p {
+      margin-bottom: 0.5rem;
+    }
+
+    /* 找找看海狸變身特徵區 */
+    .section-title {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #1e293b;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .beaver-card {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 3px solid #cbd5e1;
+      padding: 1.1rem 0.8rem;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .beaver-card.exp1 { border-color: #0284c7; background: #f0f9ff; }
+    .beaver-card.exp2 { border-color: #9333ea; background: #faf5ff; }
+    .beaver-card.exp3 { border-color: #059669; background: #ecfdf5; }
+
+    .beaver-card h3 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      margin-bottom: 0.35rem;
+    }
+
+    .potion-tags {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .potion-cup {
+      display: inline-block;
+      min-width: 34px;
+      height: 34px;
+      line-height: 30px;
+      padding: 0 4px;
+      border-radius: 10px;
+      background: #ffffff;
+      font-weight: 900;
+      font-size: 1.1rem;
+      border: 2px solid #475569;
+      color: #0f172a;
+    }
+
+    .beaver-svg-container {
+      width: 145px;
+      height: 145px;
+      margin: 0 auto 0.75rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 變化計數徽章 */
+    .count-badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 1rem;
+      font-weight: 900;
+      margin-bottom: 0.6rem;
+    }
+    .count-badge.full { background: #dcfce7; color: #15803d; border: 2px solid #86efac; }
+    .count-badge.missing { background: #fee2e2; color: #b91c1c; border: 2px solid #fca5a5; }
+
+    .change-list {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 0.6rem 0.75rem;
+      font-size: 1rem;
+      text-align: left;
+      border: 1px solid #cbd5e1;
+      min-height: 95px;
+    }
+
+    .change-list ul {
+      padding-left: 1.3rem;
+      line-height: 1.5;
+    }
+
+    /* 偵探推理互動區 */
+    .detective-zone {
+      background: #fffbeb;
+      border: 3px solid #f59e0b;
+      border-radius: 22px;
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .hint-bubble {
+      background: #ffffff;
+      border-left: 6px solid #f59e0b;
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .prompt-text {
+      text-align: center;
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #78350f;
+      margin-bottom: 1.1rem;
+    }
+
+    /* 燒杯大按鈕 */
+    .beaker-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .beaker-btn {
+      background: #ffffff;
+      border: 3px solid #cbd5e1;
+      border-radius: 18px;
+      padding: 1rem 0.5rem;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .beaker-btn:hover {
+      transform: translateY(-4px) scale(1.03);
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .beaker-btn .cup-icon {
+      font-size: 2.1rem;
+    }
+
+    .beaker-btn .cup-name {
+      font-size: 1.15rem;
+      color: #1e293b;
+      font-weight: 900;
+    }
+
+    /* 反饋訊息框 */
+    .feedback-box {
+      display: none;
+      padding: 1.25rem;
+      border-radius: 16px;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-top: 1rem;
+    }
+
+    .feedback-box.show {
+      display: block;
+      animation: popIn 0.3s ease-out;
+    }
+
+    .feedback-box.tryagain {
+      background: var(--error-bg);
+      border: 3px solid var(--error-border);
+      color: #991b1b;
+    }
+
+    .feedback-box.clue {
+      background: #eff6ff;
+      border: 3px solid #93c5fd;
+      color: #1e40af;
+    }
+
+    .feedback-box.success {
+      background: var(--success-bg);
+      border: 3px solid var(--success-border);
+      color: #14532d;
+    }
+
+    /* 成功通關解密區 */
+    .celebrate-zone {
+      display: none;
+      background: #f0fdf4;
+      border: 4px solid #16a34a;
+      border-radius: 22px;
+      padding: 1.75rem;
+      margin-top: 1.75rem;
+      text-align: center;
+    }
+
+    .celebrate-zone.show {
+      display: block;
+      animation: popIn 0.4s ease-out;
+    }
+
+    .badge-award {
+      font-size: 3.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      text-align: left;
+      margin: 1.5rem 0;
+    }
+
+    .concept-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 1.1rem;
+      border: 2px solid #86efac;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+    }
+
+    .concept-card h4 {
+      font-size: 1.2rem;
+      color: #15803d;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-replay {
+      background: #475569;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 800;
+      padding: 0.85rem 2rem;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+    .btn-replay:hover { background: #334155; }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 768px) {
+      .beaker-grid { grid-template-columns: repeat(3, 1fr); }
+      header h1 { font-size: 1.6rem; }
+      .prompt-text { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      .beaker-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <!-- 無障礙快速跳至主內容 (WCAG 2.0) -->
+  <a href="#game-main" class="skip-link">跳到遊戲內容區</a>
+
+  <div class="main-wrapper">
+    <header role="banner">
+      <h1>🧙‍♂️ 海狸魔法師的白開水冒險</h1>
+      <span class="badge-grade">三年級 ‧ 找碴小偵探的運算思維任務</span>
+      <p style="margin-top: 0.4rem; font-size: 1.1rem; opacity: 0.95;">
+        誰在偷懶沒有魔法？一起比對變身特徵，抓出那杯純白開水！
+      </p>
+    </header>
+
+    <main id="game-main" role="main">
+      <!-- 冒險故事指引 -->
+      <section class="story-section" aria-labelledby="story-title">
+        <h2 id="story-title">📜 魔法學徒小任務</h2>
+        <p>
+          糊塗的海狸魔法師煮了 <strong>5 種神奇藥水</strong>，海狸喝了會有 5 種有趣的變身：
+          <strong>①耳朵變長</strong>、<strong>②牙齒變長</strong>、<strong>③鬍鬚捲捲</strong>、<strong>④鼻子變白</strong>、<strong>⑤眼睛變白</strong>！
+        </p>
+        <p>
+          魔法師把藥水倒進了 <strong>A、B、C、D、E、F</strong> 六個燒杯中。可是，他不小心把 <strong>1 杯完全沒有魔法的「純白開水」</strong> 也混了進去！
+        </p>
+        <p style="color: #b45309; font-weight: 800;">
+          💡 小偵探任務：看看三次喝藥水實驗，到底哪一杯燒杯裡面裝的是「白開水」呢？
+        </p>
+      </section>
+
+      <!-- 實驗觀察對比區（SVG 完整純原生繪製，含無障礙標籤） -->
+      <section aria-labelledby="compare-title">
+        <h2 id="compare-title" class="section-title">
+          🔍 海狸變身觀察室（大家來找碴！）
+        </h2>
+
+        <div class="cards-grid">
+          <!-- 海狸原貌 -->
+          <article class="beaver-card" style="border-color: #94a3b8; background: #f8fafc;">
+            <h3 style="color: #475569;">海狸平常的模樣</h3>
+            <div class="potion-tags">
+              <span class="potion-cup" style="background:#e2e8f0; font-size:0.95rem;">正常</span>
+            </div>
+            <div class="beaver-svg-container">
+              <svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="海狸原本的模樣：圓圓的小耳朵、黑黑的眼睛、小短牙、黑鼻子與直直的鬍鬚">
+                <title>海狸原本模樣</title>
+                <!-- 正常圓圓耳朵 -->
+                <ellipse cx="45" cy="40" rx="12" ry="16" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="95" cy="40" rx="12" ry="16" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <!-- 臉蛋主體 -->
+                <ellipse cx="70" cy="80" rx="46" ry="40" fill="#d97706" stroke="#78350f" stroke-width="3"/>
+                <!-- 黑眼睛 -->
+                <ellipse cx="54" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <ellipse cx="86" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <!-- 臉頰與腮幫子 -->
+                <circle cx="56" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <circle cx="84" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <!-- 正常小短牙 -->
+                <rect x="62" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <rect x="71" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <!-- 黑鼻子 -->
+                <path d="M 60 84 Q 70 80 80 84 Q 70 94 60 84 Z" fill="#0f172a"/>
+                <!-- 直直的鬍鬚 -->
+                <line x1="20" y1="84" x2="48" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="18" y1="92" x2="46" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="22" y1="100" x2="48" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="120" y1="84" x2="92" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="122" y1="92" x2="94" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="118" y1="100" x2="92" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="count-badge" style="background:#f1f5f9; color:#475569; border:2px solid #cbd5e1;">對照組基準</div>
+            <div class="change-list">
+              <strong>平常模樣記號：</strong>
+              <ul>
+                <li>👂 耳朵：圓圓小小的</li>
+                <li>🦷 牙齒：短門牙</li>
+                <li>👃 鼻子：黑鼻頭</li>
+              </ul>
+            </div>
+          </article>
+          <!-- 實驗 1 -->
+          <article class="beaver-card exp1">
+            <h3 style="color: #0284c7;">實驗 1</h3>
+            <div class="potion-tags" aria-label="喝下 A, B, C 三杯">
+              <span class="potion-cup">A</span>
+              <span class="potion-cup">B</span>
+              <span class="potion-cup">C</span>
+            </div>
+            <div class="beaver-svg-container">
+              <svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="實驗1海狸變身圖：耳朵變很長、牙齒變超長、鼻子變成白色！共3個大變化！">
+                <title>實驗1變身圖</title>
+                <!-- 變身1：耳朵長長 -->
+                <ellipse cx="45" cy="24" rx="10" ry="24" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="95" cy="24" rx="10" ry="24" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="70" cy="80" rx="46" ry="40" fill="#d97706" stroke="#78350f" stroke-width="3"/>
+                <!-- 黑眼睛 (沒變) -->
+                <ellipse cx="54" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <ellipse cx="86" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <circle cx="56" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <circle cx="84" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <!-- 變身2：大長牙 -->
+                <rect x="61" y="96" width="8" height="25" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <rect x="71" y="96" width="8" height="25" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <!-- 變身3：白鼻子 -->
+                <path d="M 60 84 Q 70 80 80 84 Q 70 94 60 84 Z" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+                <!-- 直鬍鬚 (沒變) -->
+                <line x1="20" y1="84" x2="48" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="18" y1="92" x2="46" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="22" y1="100" x2="48" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="120" y1="84" x2="92" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="122" y1="92" x2="94" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="118" y1="100" x2="92" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="count-badge full">🎉 數一數：剛好 3 種變化！</div>
+            <div class="change-list">
+              <strong>變身清單：</strong>
+              <ul>
+                <li>✨ ① 耳朵變長了</li>
+                <li>✨ ② 牙齒變長了</li>
+                <li>✨ ③ 鼻子變白了</li>
+              </ul>
+              <div style="font-size:0.85rem; color:#15803d; font-weight:bold; margin-top:4px;">
+                👉 喝3杯有3變，全是真正藥水！
+              </div>
+            </div>
+          </article>
+
+          <!-- 實驗 2 -->
+          <article class="beaver-card exp2">
+            <h3 style="color: #9333ea;">實驗 2</h3>
+            <div class="potion-tags" aria-label="喝下 A, D, E 三杯">
+              <span class="potion-cup">A</span>
+              <span class="potion-cup">D</span>
+              <span class="potion-cup">E</span>
+            </div>
+            <div class="beaver-svg-container">
+              <svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="實驗2海狸變身圖：耳朵變很長、眼睛變成白色。牙齒短、鼻子黑、鬍鬚直。只有2個變化。">
+                <title>實驗2變身圖</title>
+                <!-- 變身1：耳朵長長 -->
+                <ellipse cx="45" cy="24" rx="10" ry="24" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="95" cy="24" rx="10" ry="24" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="70" cy="80" rx="46" ry="40" fill="#d97706" stroke="#78350f" stroke-width="3"/>
+                <!-- 變身2：白眼睛 -->
+                <ellipse cx="54" cy="72" rx="4.5" ry="6.5" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <ellipse cx="86" cy="72" rx="4.5" ry="6.5" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <circle cx="56" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <circle cx="84" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <!-- 短牙齒 (沒變) -->
+                <rect x="62" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <rect x="71" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <!-- 黑鼻子 (沒變) -->
+                <path d="M 60 84 Q 70 80 80 84 Q 70 94 60 84 Z" fill="#0f172a"/>
+                <!-- 直鬍鬚 (沒變) -->
+                <line x1="20" y1="84" x2="48" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="18" y1="92" x2="46" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="22" y1="100" x2="48" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="120" y1="84" x2="92" y2="87" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="122" y1="92" x2="94" y2="92" stroke="#0f172a" stroke-width="2.5"/>
+                <line x1="118" y1="100" x2="92" y2="97" stroke="#0f172a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="count-badge missing">⚠️ 數一數：只有 2 種變化！</div>
+            <div class="change-list">
+              <strong>變身清單：</strong>
+              <ul>
+                <li>✨ ① 耳朵變長了</li>
+                <li>✨ ② 眼睛變白了</li>
+                <li style="color:#b91c1c; font-weight:bold;">❓ 少了1種！必有白開水</li>
+              </ul>
+              <div style="font-size:0.85rem; color:#b91c1c; font-weight:bold; margin-top:4px;">
+                👉 白開水在 D 或 E 裡面！
+              </div>
+            </div>
+          </article>
+
+          <!-- 實驗 3 -->
+          <article class="beaver-card exp3">
+            <h3 style="color: #059669;">實驗 3</h3>
+            <div class="potion-tags" aria-label="喝下 C, D, F 三杯">
+              <span class="potion-cup">C</span>
+              <span class="potion-cup">D</span>
+              <span class="potion-cup">F</span>
+            </div>
+            <div class="beaver-svg-container">
+              <svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="實驗3海狸變身圖：鼻子變成白色、鬍鬚變成捲捲的。耳朵圓、眼睛黑、牙齒短。也是只有2個變化。">
+                <title>實驗3變身圖</title>
+                <!-- 正常耳朵 (沒變) -->
+                <ellipse cx="45" cy="40" rx="12" ry="16" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="95" cy="40" rx="12" ry="16" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+                <ellipse cx="70" cy="80" rx="46" ry="40" fill="#d97706" stroke="#78350f" stroke-width="3"/>
+                <!-- 黑眼睛 (沒變) -->
+                <ellipse cx="54" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <ellipse cx="86" cy="72" rx="4.5" ry="6.5" fill="#0f172a"/>
+                <circle cx="56" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <circle cx="84" cy="94" r="15" fill="#fcd34d" stroke="#78350f" stroke-width="2"/>
+                <!-- 短牙齒 (沒變) -->
+                <rect x="62" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <rect x="71" y="96" width="7" height="12" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+                <!-- 變身1：白鼻子 -->
+                <path d="M 60 84 Q 70 80 80 84 Q 70 94 60 84 Z" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+                <!-- 變身2：捲捲鬍鬚 -->
+                <path d="M 46 87 Q 35 83 25 87 Q 15 90 20 83 Q 26 77 15 82" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 46 93 Q 32 91 23 95 Q 14 98 18 90 Q 23 85 13 90" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 46 99 Q 34 97 24 101 Q 16 104 20 97 Q 24 92 14 96" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 94 87 Q 105 83 115 87 Q 125 90 120 83 Q 114 77 125 82" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 94 93 Q 108 91 117 95 Q 126 98 122 90 Q 117 85 127 90" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+                <path d="M 94 99 Q 106 97 116 101 Q 124 104 120 97 Q 116 92 126 96" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <div class="count-badge missing">⚠️ 數一數：只有 2 種變化！</div>
+            <div class="change-list">
+              <strong>變身清單：</strong>
+              <ul>
+                <li>✨ ① 鼻子變白了</li>
+                <li>✨ ② 鬍鬚變捲了</li>
+                <li style="color:#b91c1c; font-weight:bold;">❓ 少了1種！必有白開水</li>
+              </ul>
+              <div style="font-size:0.85rem; color:#b91c1c; font-weight:bold; margin-top:4px;">
+                👉 白開水在 D 或 F 裡面！
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <!-- 偵探推理問答區 -->
+      <section class="detective-zone" aria-labelledby="question-title">
+        <h2 id="question-title" class="section-title" style="color: #92400e;">
+          🕵️ 小偵探思考筆記
+        </h2>
+
+        <div class="hint-bubble">
+          <strong>💡 聰明小偵探的 2 個大線索：</strong><br>
+          1. <strong>實驗 1</strong> 喝下 A、B、C 跑出 <strong>3 種變化</strong>，說明 A、B、C 都是有魔法的藥水，<strong>沒有白開水</strong>！<br>
+          2. <strong>實驗 2</strong>（A、D、E）和 <strong>實驗 3</strong>（C、D、F）都<strong>只有 2 種變化</strong>，說明「白開水」一定<strong>同時出現在實驗 2 和實驗 3 裡</strong>！
+        </div>
+
+        <p id="beaker-choose-label" class="prompt-text">
+          👇 請點擊你認為裝著「白開水」的燒杯：
+        </p>
+
+        <!-- 燒杯大按鈕群組（支援全鍵盤方向鍵導航與報讀） -->
+        <div class="beaker-grid" role="group" aria-labelledby="beaker-choose-label">
+          <button type="button" class="beaker-btn" data-cup="A" aria-label="選擇燒杯 A">
+            <span class="cup-icon" aria-hidden="true">🧪</span>
+            <span class="cup-name">燒杯 A</span>
+          </button>
+          <button type="button" class="beaker-btn" data-cup="B" aria-label="選擇燒杯 B">
+            <span class="cup-icon" aria-hidden="true">🧪</span>
+            <span class="cup-name">燒杯 B</span>
+          </button>
+          <button type="button" class="beaker-btn" data-cup="C" aria-label="選擇燒杯 C">
+            <span class="cup-icon" aria-hidden="true">🧪</span>
+            <span class="cup-name">燒杯 C</span>
+          </button>
+          <button type="button" class="beaker-btn" data-cup="D" aria-label="選擇燒杯 D">
+            <span class="cup-icon" aria-hidden="true">🧪</span>
+            <span class="cup-name">燒杯 D</span>
+          </button>
+          <button type="button" class="beaker-btn" data-cup="E" aria-label="選擇燒杯 E">
+            <span class="cup-icon" aria-hidden="true">🧪</span>
+            <span class="cup-name">燒杯 E</span>
+          </button>
+          <button type="button" class="beaker-btn" data-cup="F" aria-label="選擇燒杯 F">
+            <span class="cup-icon" aria-hidden="true">🧪</span>
+            <span class="cup-name">燒杯 F</span>
+          </button>
+        </div>
+
+        <!-- 即時反饋訊息框 (WCAG 2.0 aria-live 狀態) -->
+        <div id="feedback-panel" class="feedback-box" role="status" aria-live="polite">
+          <!-- 動態注入偵探提示 -->
+        </div>
+      </section>
+
+      <!-- 破關榮譽榜與運算思維啟蒙區 -->
+      <section id="celebrate-zone" class="celebrate-zone" aria-labelledby="award-title">
+        <div class="badge-award" aria-hidden="true">🏅✨</div>
+        <h3 id="award-title" style="font-size: 1.8rem; color: #15803d; font-weight: 900;">
+          太神啦！你榮獲【運算思維小偵探】金牌徽章！
+        </h3>
+        <p style="font-size: 1.25rem; color: #166534; margin-top: 0.5rem;">
+          三年級的你成功透過「找不同」與「捉迷藏比對」，抓出偷懶的白開水！
+        </p>
+
+        <div class="concepts-grid">
+          <div class="concept-card">
+            <h4>👀 1. 仔細找碴（特徵拆解）</h4>
+            <p>你把整隻海狸的臉分成耳朵、牙齒、鼻子、眼睛和鬍鬚，一個部位一個部位檢查，沒有被弄糊塗！</p>
+          </div>
+          <div class="concept-card">
+            <h4>🔢 2. 數數比對（模式識別）</h4>
+            <p>你發現了規則：喝 3 杯如果有 3 個變化就是滿滿魔法；如果喝 3 杯只有 2 個變化，代表一定有 1 杯在偷懶！</p>
+          </div>
+          <div class="concept-card">
+            <h4>🎯 3. 找出共同點（集合交集）</h4>
+            <p>實驗 2 偷懶的在 D 或 E，實驗 3 偷懶的在 D 或 F。兩邊都有出現的「共通大嫌疑犯」就是 D！</p>
+          </div>
+        </div>
+
+        <button id="btn-restart" type="button" class="btn-replay">
+          🔄 再玩一次
+        </button>
+      </section>
+    </main>
+  </div>
+  <script>
+    (function () {
+      // 取得頁面元素
+      const beakerButtons = document.querySelectorAll('.beaker-btn');
+      const feedbackPanel = document.getElementById('feedback-panel');
+      const celebrateZone = document.getElementById('celebrate-zone');
+      const btnRestart = document.getElementById('btn-restart');
+
+      // 專為國小三年級學童撰寫的「蘇格拉底溫柔引導反饋」
+      const feedbackBook = {
+        'A': {
+          type: 'tryagain',
+          title: '🧐 燒杯 A 不是白開水喔！',
+          content: '你看「實驗 1」喝下 A、B、C 之後，海狸一下子變出了 3 個變化耶！如果 A 是沒效力的白開水，海狸怎麼可能變出 3 個魔法呢？這代表 A 一定是有真正魔法的藥水喔！'
+        },
+        'B': {
+          type: 'tryagain',
+          title: '🧐 燒杯 B 裡面有很厲害的魔法喔！',
+          content: '「實驗 1」喝了 A、B、C，三杯都有發揮魔法，變出了 3 種特徵！所以 A、B、C 通通都不是白開水，燒杯 B 被排除囉！'
+        },
+        'C': {
+          type: 'tryagain',
+          title: '🧐 燒杯 C 不是白開水喔！',
+          content: '在「實驗 1」裡 C 已經證明自己有魔法了！在「實驗 3」也是因為加了 C，海狸的鼻子才會變成白色的呢！再想想看別的燒杯吧！'
+        },
+        'E': {
+          type: 'clue',
+          title: '💡 哇！你好細心，發現實驗 2 缺了魔法！',
+          content: '你發現實驗 2 只有 2 個變化，代表 D 或 E 其中一杯是水！\n但是請看看「實驗 3」——實驗 3 裡面根本沒有裝 E，為什麼也同樣少了一種變化呢？這說明沒魔法的白開水，在實驗 2 和實驗 3「都必須在場」才對喔！'
+        },
+        'F': {
+          type: 'clue',
+          title: '💡 很有偵探頭腦！但再比對一下實驗 2 喔！',
+          content: '實驗 3 只有 2 個變化，所以 D 或 F 確實很可疑！\n可是請再看一眼「實驗 2」——實驗 2 裡沒有用 F，卻也少了一個魔法！哪一杯燒杯是實驗 2 和實驗 3「兩邊都加進去」的呢？'
+        },
+        'D': {
+          type: 'success',
+          title: '🎉 太棒了！抓到你啦！答案就是【燒杯 D】！',
+          content: '【小偵探破案大功告成！】\n1. 實驗 1 告訴我們 A、B、C 都是真正的魔法藥水。\n2. 實驗 2 少了一個魔法，水在 {D, E} 裡面。\n3. 實驗 3 也少了一個魔法，水在 {D, F} 裡面。\n兩次實驗都少了一個魔法、而且兩次都有加進去的燒杯就是「D」！\n你真的太聰明了！'
+        }
+      };
+
+      // 監聽按鈕點擊
+      beakerButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+          const cup = this.getAttribute('data-cup');
+          checkAnswer(cup);
+        });
+      });
+
+      function checkAnswer(cup) {
+        const item = feedbackBook[cup];
+        if (!item) return;
+
+        feedbackPanel.className = 'feedback-box show ' + item.type;
+        feedbackPanel.innerHTML = `
+          <h3 style="font-weight: 900; font-size: 1.3rem; margin-bottom: 0.35rem;">
+            ${item.title}
+          </h3>
+          <p style="white-space: pre-line; font-size: 1.15rem; line-height: 1.6;">
+            ${item.content}
+          </p>
+        `;
+
+        // 螢幕平滑捲動，讓學生第一時間看見提示
+        feedbackPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        if (item.type === 'success') {
+          celebrateZone.classList.add('show');
+          // 亮起成功的 D 燒杯
+          beakerButtons.forEach(b => {
+            if (b.getAttribute('data-cup') === 'D') {
+              b.style.borderColor = '#16a34a';
+              b.style.backgroundColor = '#dcfce7';
+              b.setAttribute('aria-pressed', 'true');
+            } else {
+              b.setAttribute('aria-pressed', 'false');
+            }
+          });
+          setTimeout(() => {
+            celebrateZone.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 350);
+        } else {
+          celebrateZone.classList.remove('show');
+        }
+      }
+
+      // 重新開始
+      btnRestart.addEventListener('click', function () {
+        feedbackPanel.className = 'feedback-box';
+        feedbackPanel.innerHTML = '';
+        celebrateZone.classList.remove('show');
+        beakerButtons.forEach(btn => {
+          btn.style.borderColor = '';
+          btn.style.backgroundColor = '';
+          btn.removeAttribute('aria-pressed');
+        });
+        document.getElementById('beaker-choose-label').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // 支援鍵盤無障礙方向鍵選台（WCAG 2.0 Keyboard Accessible）
+      const beakerGroup = document.querySelector('.beaker-grid');
+      beakerGroup.addEventListener('keydown', function (e) {
+        const buttons = Array.from(beakerButtons);
+        const currentIndex = buttons.indexOf(document.activeElement);
+        if (currentIndex === -1) return;
+
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const nextIndex = (currentIndex + 1) % buttons.length;
+          buttons[nextIndex].focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prevIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+          buttons[prevIndex].focus();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
